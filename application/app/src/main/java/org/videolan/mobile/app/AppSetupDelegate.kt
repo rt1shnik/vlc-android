@@ -34,10 +34,6 @@ import org.videolan.libvlc.LibVLCFactory
 import org.videolan.libvlc.MediaFactory
 import org.videolan.libvlc.interfaces.ILibVLCFactory
 import org.videolan.libvlc.interfaces.IMediaFactory
-import org.videolan.mobile.app.delegates.IIndexersDelegate
-import org.videolan.mobile.app.delegates.IMediaContentDelegate
-import org.videolan.mobile.app.delegates.IndexersDelegate
-import org.videolan.mobile.app.delegates.MediaContentDelegate
 import org.videolan.resources.AppContextProvider
 import org.videolan.resources.VLCInstance
 import org.videolan.tools.AppScope
@@ -53,9 +49,7 @@ interface AppDelegate {
     fun Context.setupApplication()
 }
 
-class AppSetupDelegate : AppDelegate,
-        IMediaContentDelegate by MediaContentDelegate(),
-        IIndexersDelegate by IndexersDelegate() {
+class AppSetupDelegate : AppDelegate {
 
     // Store AppContextProvider to prevent GC
     override val appContextProvider = AppContextProvider
@@ -72,13 +66,6 @@ class AppSetupDelegate : AppDelegate,
 
         if (BuildConfig.DEBUG) {
             Settings.getInstance(this)
-            if (Settings.showTvUi) {
-                // Register movipedia to resume tv shows/movies
-                setupContentResolvers()
-
-                // Setup Moviepedia indexing after Medialibrary scan
-                setupIndexers()
-            }
         }
         AppContextProvider.setLocale(Settings.getInstance(this).getString("set_locale", ""))
 

@@ -426,7 +426,6 @@ class MediaParsingService : LifecycleService(), DevicesDiscoveryCb {
             } catch (t: Throwable) {
                 //catching here as isHeld is not thread safe
             }
-            localBroadcastManager.sendBroadcast(Intent(ACTION_CONTENT_INDEXING))
             //todo reenable entry point when ready
             if (::notificationActor.isInitialized) notificationActor.trySend(Hide)
             //Delay service stop to ensure service goes foreground.
