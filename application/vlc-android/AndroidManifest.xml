@@ -595,20 +595,6 @@
             android:exported="false"/>
 
         <receiver
-            android:name=".TvReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.media.tv.action.PREVIEW_PROGRAM_ADDED_TO_WATCH_NEXT"/>
-                <action android:name="android.media.tv.ACTION_WATCH_NEXT_PROGRAM_BROWSABLE_DISABLED"/>
-                <action android:name="android.media.tv.action.PREVIEW_PROGRAM_BROWSABLE_DISABLED"/>
-                <action android:name="android.media.tv.action.INITIALIZE_PROGRAMS"/>
-
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </receiver>
-        <receiver
             android:name=".StoragesMonitor"
             android:enabled="false"
             android:exported="true">
