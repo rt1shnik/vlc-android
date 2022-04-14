@@ -590,10 +590,6 @@
             android:theme="@style/Theme.VLC.Player"
             tools:ignore="LockedOrientationActivity" /> <!-- TV components -->
 
-        <service
-            android:name=".RecommendationsService"
-            android:exported="false"/>
-
         <receiver
             android:name=".StoragesMonitor"
             android:enabled="false"
@@ -625,18 +621,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"/>
         </provider>
-
-        <service
-            android:name=".PreviewVideoInputService"
-            android:permission="android.permission.BIND_TV_INPUT">
-            <intent-filter>
-                <action android:name="android.media.tv.TvInputService"/>
-            </intent-filter>
-
-            <meta-data
-                android:name="android.media.tv.input"
-                android:resource="@xml/previewinputservice"/>
-        </service>
     </application>
 
 </manifest>

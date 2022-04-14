@@ -293,10 +293,6 @@ class PlaylistManager(val service: PlaybackService) : MediaWrapperList.EventList
             val audio = isAudioList() // check before dispatching in saveMediaMeta()
             launch(start = CoroutineStart.UNDISPATCHED) {
                 saveMediaMeta().join()
-                if (AndroidDevices.isAndroidTv && AndroidUtil.isOOrLater && video) {
-                    setResumeProgram(service.applicationContext, it)
-                    updateNextProgramAfterThumbnailGeneration(service, service.applicationContext, it)
-                }
             }
         }
         service.setSleepTimer(null)
@@ -972,12 +968,6 @@ class PlaylistManager(val service: PlaybackService) : MediaWrapperList.EventList
                     } else {
                         if (isBenchmark) player.setCurrentStats()
                         determinePrevAndNextIndices(true)
-                        if (!hasNext()) getCurrentMedia()?.let {
-                            if (AndroidDevices.isAndroidTv && AndroidUtil.isOOrLater && !isAudioList()) {
-                                setResumeProgram(service.applicationContext, it)
-                                updateNextProgramAfterThumbnailGeneration(service, service.applicationContext, it)
-                            }
-                        }
                         next()
                     }
                 }

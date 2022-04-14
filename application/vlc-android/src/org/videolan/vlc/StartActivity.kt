@@ -49,11 +49,6 @@ import org.videolan.vlc.gui.video.VideoPlayerActivity
 import org.videolan.vlc.media.MediaUtils
 import org.videolan.vlc.util.FileUtils
 import org.videolan.vlc.util.Permissions
-import org.videolan.vlc.util.checkWatchNextId
-import videolan.org.commontools.TV_CHANNEL_PATH_APP
-import videolan.org.commontools.TV_CHANNEL_PATH_VIDEO
-import videolan.org.commontools.TV_CHANNEL_QUERY_VIDEO_ID
-import videolan.org.commontools.TV_CHANNEL_SCHEME
 
 private const val SEND_CRASH_RESULT = 0
 private const val TAG = "VLC/StartActivity"
@@ -107,8 +102,7 @@ class StartActivity : FragmentActivity() {
         val intent = intent
         val action = intent?.action
 
-        if ((Intent.ACTION_VIEW == action || ACTION_VIEW_ARC == action)
-                && TV_CHANNEL_SCHEME != intent.data?.scheme) {
+        if (Intent.ACTION_VIEW == action || ACTION_VIEW_ARC == action) {
             startPlaybackFromApp(intent)
             return
         } else if (Intent.ACTION_SEND == action) {
@@ -153,21 +147,6 @@ class StartActivity : FragmentActivity() {
             val serviceInent = Intent(ACTION_PLAY_FROM_SEARCH, null, this, PlaybackService::class.java)
                     .putExtra(EXTRA_SEARCH_BUNDLE, intent.extras)
             launchForeground(serviceInent)
-        } else if (Intent.ACTION_VIEW == action && intent.data != null) { //launch from TV Channel
-            val data = intent.data
-            val path = data!!.path
-            if (path == "/$TV_CHANNEL_PATH_APP")
-                startApplication(tv, firstRun, upgrade, 0, removeOldDevices)
-            else if (path == "/$TV_CHANNEL_PATH_VIDEO") {
-                var id = java.lang.Long.valueOf(data.getQueryParameter(TV_CHANNEL_QUERY_VIDEO_ID)!!)
-                val ctx = this
-                lifecycleScope.launch(Dispatchers.IO) {
-                    id = checkWatchNextId(ctx, id)
-                    withContext(Dispatchers.Main) {
-                        MediaUtils.openMediaNoUi(ctx, id)
-                    }
-                }
-            }
         } else {
             if (action != null && action.startsWith("vlc.mediashortcut:")) {
                 val split = action.split(":")

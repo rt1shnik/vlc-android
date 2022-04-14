@@ -241,10 +241,6 @@ class MediaParsingService : LifecycleService(), DevicesDiscoveryCb {
         if (reload > 0) return
         if (path.isNullOrEmpty()) medialibrary.reload()
         else medialibrary.reload(path)
-        val ctx = this
-        lifecycleScope.launch(Dispatchers.IO) {
-            cleanupWatchNextList(ctx)
-        }
     }
 
     private fun setupMedialibrary(upgrade: Boolean, parse: Boolean, removeDevices:Boolean) {
