@@ -211,10 +211,9 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
     private var previousMediaPath: String? = null
 
     private val isInteractive: Boolean
-        @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
         get() {
             val pm = applicationContext.getSystemService<PowerManager>()!!
-            return if (AndroidUtil.isLolliPopOrLater) pm.isInteractive else pm.isScreenOn
+            return pm.isInteractive
         }
 
     val playlistObserver = Observer<List<MediaWrapper>> { mediaWrappers -> if (mediaWrappers != null) overlayDelegate.playlistAdapter.update(mediaWrappers) }
