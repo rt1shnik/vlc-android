@@ -534,7 +534,7 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
                 hudBinding.lifecycleOwner = player
                 updateOrientationIcon()
                 overlayBackground = player.findViewById(R.id.player_overlay_background)
-                if (!AndroidDevices.isChromeBook && !player.isTv
+                if (!AndroidDevices.isChromeBook
                         && player.settings.getBoolean("enable_casting", true)) {
                     PlaybackService.renderer.observe(player) { rendererItem -> hudRightBinding.videoRenderer.setImageDrawable(AppCompatResources.getDrawable(player, if (rendererItem == null) R.drawable.ic_player_renderer else R.drawable.ic_player_renderer_on)) }
                     RendererDelegate.renderers.observe(player) { rendererItems -> updateRendererVisibility() }
@@ -631,7 +631,7 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     fun resetHudLayout() {
         if (!::hudBinding.isInitialized) return
-        if (!player.isTv && !AndroidDevices.isChromeBook) {
+        if (!AndroidDevices.isChromeBook) {
             hudBinding.orientationToggle.setVisible()
         }
     }
@@ -684,23 +684,18 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
 
     fun updateHudMargins() {
         //here, we override the default Android overscan
-        val overscanHorizontal = if (player.isTv) 32.dp else 8.dp
-        val overscanVertical = if (player.isTv) player.resources.getDimension(R.dimen.tv_overscan_vertical).toInt() else 8.dp
+        val overscanHorizontal = 8.dp
+        val overscanVertical = 8.dp
         if (::hudBinding.isInitialized) {
             val largeMargin = player.resources.getDimension(R.dimen.large_margins_center)
             val smallMargin = player.resources.getDimension(R.dimen.small_margins_sides)
 
 
-            applyMargin(hudBinding.playerOverlayTracks, if (!player.isTv) smallMargin.toInt() else overscanHorizontal, false)
-            applyMargin(hudBinding.playerOverlayAdvFunction, if (!player.isTv) smallMargin.toInt() else overscanHorizontal, true)
+            applyMargin(hudBinding.playerOverlayTracks, smallMargin.toInt(), false)
+            applyMargin(hudBinding.playerOverlayAdvFunction, smallMargin.toInt(), true)
 
             hudBinding.playerOverlaySeekbar.setPadding(overscanHorizontal, 0, overscanHorizontal, 0)
             hudBinding.bookmarkMarkerContainer.setPadding(overscanHorizontal, 0, overscanHorizontal, 0)
-
-            if (player.isTv) {
-                applyMargin(hudBinding.playerOverlayTimeContainer, overscanHorizontal, false)
-                applyMargin(hudBinding.playerOverlayLengthContainer, overscanHorizontal, true)
-            }
 
             if (player.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                 hudBinding.playerSpaceLeft.setGone()
@@ -810,7 +805,7 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
                 hudBinding.playlistPrevious.visibility = if (show) View.VISIBLE else View.INVISIBLE
                 hudBinding.playlistNext.visibility = if (show) View.VISIBLE else View.INVISIBLE
             }
-            hudBinding.orientationToggle.visibility = if (player.isTv || AndroidDevices.isChromeBook) View.INVISIBLE else if (show) View.VISIBLE else View.INVISIBLE
+            hudBinding.orientationToggle.visibility = if (AndroidDevices.isChromeBook) View.INVISIBLE else if (show) View.VISIBLE else View.INVISIBLE
         }
         if (::hudRightBinding.isInitialized) {
             val secondary = player.displayManager.isSecondary

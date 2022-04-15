@@ -184,7 +184,6 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
     val resizeDelegate: VideoPlayerResizeDelegate by lazy(LazyThreadSafetyMode.NONE) { VideoPlayerResizeDelegate(this@VideoPlayerActivity) }
     private val playerKeyListenerDelegate: PlayerKeyListenerDelegate by lazy(LazyThreadSafetyMode.NONE) { PlayerKeyListenerDelegate(this@VideoPlayerActivity) }
     val tipsDelegate: VideoTipsDelegate by lazy(LazyThreadSafetyMode.NONE) { VideoTipsDelegate(this@VideoPlayerActivity) }
-    var isTv: Boolean = false
 
     private val dialogsDelegate = DialogDelegate()
     private var baseContextWrappingDelegate: AppCompatDelegate? = null
@@ -458,11 +457,10 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         overlayDelegate.updateOrientationIcon()
 
         // Extra initialization when no secondary display is detected
-        isTv = Settings.showTvUi
         if (displayManager.isPrimary) {
             // Orientation
             // Tips
-            if (!BuildConfig.DEBUG && !isTv && !settings.getBoolean(PREF_TIPS_SHOWN, false)
+            if (!BuildConfig.DEBUG && !settings.getBoolean(PREF_TIPS_SHOWN, false)
                 && !isBenchmark
             ) {
                 tipsDelegate.init()
@@ -476,7 +474,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         val yRange = dm.widthPixels.coerceAtMost(dm.heightPixels)
         val xRange = dm.widthPixels.coerceAtLeast(dm.heightPixels)
         val sc = ScreenConfig(dm, xRange, yRange, resources.configuration.orientation)
-        touchDelegate = VideoTouchDelegate(this, generateTouchFlags(), sc, isTv)
+        touchDelegate = VideoTouchDelegate(this, generateTouchFlags(), sc, false)
         UiTools.setRotationAnimation(this)
         if (savedInstanceState != null) {
             savedTime = savedInstanceState.getLong(KEY_TIME)
@@ -522,7 +520,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
      *
      * @return the flag corresponding to the gesture the user wants to use
      */
-    private fun generateTouchFlags() = if (!isTv) {
+    private fun generateTouchFlags() = run {
         val audioTouch = (!AndroidUtil.isLolliPopOrLater || !audiomanager.isVolumeFixed) && settings.getBoolean(ENABLE_VOLUME_GESTURE, true)
         val brightnessTouch = !AndroidDevices.isChromeBook && settings.getBoolean(ENABLE_BRIGHTNESS_GESTURE, true)
         ((if (audioTouch) TOUCH_FLAG_AUDIO_VOLUME else 0)
@@ -530,7 +528,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
                 + (if (settings.getBoolean(ENABLE_DOUBLE_TAP_SEEK, true)) TOUCH_FLAG_DOUBLE_TAP_SEEK else 0)
                 + (if (settings.getBoolean(ENABLE_DOUBLE_TAP_PLAY, true)) TOUCH_FLAG_PLAY else 0)
                 + (if (settings.getBoolean(ENABLE_SWIPE_SEEK, true)) TOUCH_FLAG_SWIPE_SEEK else 0))
-    } else 0
+    }
 
     override fun fireDialog(dialog: Dialog) {
         DialogActivity.dialog = dialog
@@ -1495,7 +1493,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         // Show the MainActivity if it is not in background.
         if (showUI && intent.getBooleanExtra(FROM_EXTERNAL, false)) {
             val i = Intent().apply {
-                setClassName(applicationContext, if (isTv) TV_AUDIOPLAYER_ACTIVITY else MOBILE_MAIN_ACTIVITY)
+                setClassName(applicationContext, MOBILE_MAIN_ACTIVITY)
             }
             startActivity(i)
         }
