@@ -37,7 +37,6 @@ import org.videolan.tools.containsPath
 import org.videolan.vlc.MediaParsingService
 import org.videolan.vlc.gui.helpers.MedialibraryUtils
 import org.videolan.vlc.gui.helpers.ThreeStatesCheckbox
-import org.videolan.vlc.repository.DirectoryRepository
 import org.videolan.vlc.util.getDescriptionSpan
 import org.videolan.vlc.util.isSchemeFile
 
@@ -46,7 +45,6 @@ import org.videolan.vlc.util.isSchemeFile
 class StorageBrowserAdapter(browserContainer: BrowserContainer<MediaLibraryItem>) : BaseBrowserAdapter(browserContainer) {
 
     private var mediaDirsLocation: MutableList<String> = mutableListOf()
-    private lateinit var customDirsLocation: List<String>
     var bannedFolders: List<String> = listOf()
     private var updateJob : Job? = null
 
@@ -67,7 +65,7 @@ class StorageBrowserAdapter(browserContainer: BrowserContainer<MediaLibraryItem>
             vh.bindingContainer.setItem(storage)
             updateJob?.join()
             if (updateJob?.isCancelled == true) return@launch
-            val hasContextMenu = customDirsLocation.contains(storagePath) && !multiSelectHelper.inActionMode
+            val hasContextMenu = false
             val checked = browserContainer.scannedDirectory || mediaDirsLocation.containsPath(storagePath)
             vh.bindingContainer.setHasContextMenu(hasContextMenu)
             val banned = MedialibraryUtils.isBanned(uri, bannedFolders)
@@ -126,7 +124,6 @@ class StorageBrowserAdapter(browserContainer: BrowserContainer<MediaLibraryItem>
             folders.forEach {
                 mediaDirsLocation.add(Uri.decode(if (it.startsWith("file://")) it.substring(7) else it))
             }
-            customDirsLocation = DirectoryRepository.getInstance(context).getCustomDirectories().map { it.path }
         }
     }
 

@@ -154,7 +154,6 @@ dependencies {
     api project(':extension-api')
     api project(':application:tools')
     api project(':application:resources')
-    api project(':application:mediadb')
     api project(':application:live-plot-graph')
 
 

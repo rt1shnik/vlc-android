@@ -40,7 +40,6 @@ import org.videolan.vlc.ExternalMonitor
 import org.videolan.vlc.R
 import org.videolan.vlc.gui.helpers.hf.StoragePermissionsDelegate
 import org.videolan.vlc.gui.helpers.hf.getDocumentFiles
-import org.videolan.vlc.repository.DirectoryRepository
 import org.videolan.vlc.util.FileUtils
 import java.io.File
 
@@ -68,25 +67,9 @@ open class FileBrowserProvider(
         var storageAccess = false
         val internalmemoryTitle = context.getString(R.string.internal_memory)
         val browserStorage = context.getString(R.string.browser_storages)
-        val storages = DirectoryRepository.getInstance(context).getMediaDirectories()
         val devices = mutableListOf<MediaLibraryItem>()
         if (!filePicker && showDummyCategory) devices.add(DummyItem(browserStorage))
-        for (mediaDirLocation in storages) {
-            val file = File(mediaDirLocation)
-            if (!file.exists() || !file.canRead()) continue
-            storageAccess = true
-            val directory = MLServiceLocator.getAbstractMediaWrapper(AndroidUtil.PathToUri(mediaDirLocation))
-            directory.type = MediaWrapper.TYPE_DIR
-            if (AndroidDevices.EXTERNAL_PUBLIC_DIRECTORY == mediaDirLocation) {
-                directory.setDisplayTitle(internalmemoryTitle)
-                storagePosition = devices.size
-            } else {
-                val deviceName = FileUtils.getStorageTag(directory.title)
-                if (deviceName != null) directory.setDisplayTitle(deviceName)
-                directory.addStateFlags(MediaLibraryItem.FLAG_STORAGE)
-            }
-            devices.add(directory)
-        }
+
         if (AndroidUtil.isMarshMallowOrLater && !storageAccess) {
             storageObserver = Observer { if (it == true) launch { browseRoot() } }
             StoragePermissionsDelegate.storageAccessGranted.observeForever(storageObserver)

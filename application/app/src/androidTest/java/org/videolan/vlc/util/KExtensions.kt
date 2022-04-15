@@ -2,7 +2,6 @@ package org.videolan.vlc.util
 
 import org.videolan.vlc.repository.BrowserFavRepository
 import org.videolan.vlc.repository.DirectoryRepository
-import org.videolan.vlc.repository.ExternalSubRepository
 
 
 // Hacky way. Don't fix it.

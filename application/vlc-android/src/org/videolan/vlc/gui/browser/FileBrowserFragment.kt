@@ -23,30 +23,21 @@
 
 package org.videolan.vlc.gui.browser
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
-import org.videolan.medialibrary.MLServiceLocator
 import org.videolan.medialibrary.interfaces.media.MediaWrapper
 import org.videolan.medialibrary.media.MediaLibraryItem
 import org.videolan.resources.AndroidDevices
-import org.videolan.resources.CTX_FAV_ADD
 import org.videolan.tools.removeFileProtocole
-import org.videolan.vlc.ExternalMonitor
 import org.videolan.vlc.R
 import org.videolan.vlc.gui.SecondaryActivity
 import org.videolan.vlc.gui.helpers.MedialibraryUtils
-import org.videolan.vlc.gui.helpers.hf.OtgAccess
-import org.videolan.vlc.gui.helpers.hf.requestOtgRoot
 import org.videolan.vlc.util.FileUtils
 import org.videolan.vlc.viewmodels.browser.TYPE_FILE
 import org.videolan.vlc.viewmodels.browser.getBrowserModel
@@ -114,14 +105,6 @@ open class FileBrowserFragment : BaseBrowserFragment() {
         viewModel.browseRoot()
     }
 
-    override fun onCtxAction(position: Int, option: Long) {
-        val mw = this.adapter.getItem(position) as MediaWrapper?
-        when (option) {
-            CTX_FAV_ADD -> lifecycleScope.launch { browserFavRepository.addLocalFavItem(mw!!.uri, mw.title, mw.artworkURL) }
-            else -> super.onCtxAction(position, option)
-        }
-    }
-
     override fun onMainActionClick(v: View, position: Int, item: MediaLibraryItem) {}
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -145,7 +128,7 @@ open class FileBrowserFragment : BaseBrowserFragment() {
                 val isScanned = withContext(Dispatchers.IO) { MedialibraryUtils.isScanned(it) }
                 menu.findItem(R.id.ml_menu_scan)?.isVisible = !isRootDirectory && it.startsWith("file") && !isScanned
             }
-            val isFavorite = mrl != null && browserFavRepository.browserFavExists(mrl!!.toUri())
+            val isFavorite = false
 
             item.setIcon(if (isFavorite)
                 R.drawable.ic_menu_bookmark_w

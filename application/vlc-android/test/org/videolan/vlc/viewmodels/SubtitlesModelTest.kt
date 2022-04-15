@@ -19,7 +19,6 @@ import org.videolan.vlc.BaseTest
 import org.videolan.vlc.R
 import org.videolan.vlc.database.ExternalSubDao
 import org.videolan.vlc.gui.dialogs.State
-import org.videolan.vlc.repository.ExternalSubRepository
 import org.videolan.vlc.util.TestCoroutineContextProvider
 import org.videolan.vlc.util.TestUtil
 import org.videolan.vlc.util.applyMock

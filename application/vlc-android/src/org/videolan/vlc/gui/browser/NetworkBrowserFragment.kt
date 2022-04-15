@@ -33,7 +33,6 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 import org.videolan.libvlc.Dialog
 import org.videolan.medialibrary.interfaces.media.MediaWrapper
-import org.videolan.resources.CTX_FAV_ADD
 import org.videolan.tools.NetworkMonitor
 import org.videolan.vlc.R
 import org.videolan.vlc.gui.SecondaryActivity
@@ -86,7 +85,7 @@ class NetworkBrowserFragment : BaseBrowserFragment(), IDialogManager {
         val item = menu.findItem(R.id.ml_menu_save)
         item.isVisible = !isRootDirectory
         lifecycleScope.launchWhenStarted {
-            val isFavorite = mrl != null && browserFavRepository.browserFavExists(mrl!!.toUri())
+            val isFavorite = false
             item.setIcon(if (isFavorite) R.drawable.ic_menu_bookmark_w else R.drawable.ic_menu_bookmark_outline_w)
             item.setTitle(if (isFavorite) R.string.favorites_remove else R.string.favorites_add)
             mrl?.let {
@@ -123,14 +122,6 @@ class NetworkBrowserFragment : BaseBrowserFragment(), IDialogManager {
                view?.let { Snackbar.make(it, "${dialog.title}: ${dialog.text}", Snackbar.LENGTH_LONG).show() }
                goBack()
             }
-        }
-    }
-
-    override fun onCtxAction(position: Int, option: Long) {
-        val mw = this.adapter.getItem(position) as MediaWrapper
-        when (option) {
-            CTX_FAV_ADD -> lifecycleScope.launch { browserFavRepository.addNetworkFavItem(mw.uri, mw.title, mw.artworkURL) }
-            else -> super.onCtxAction(position, option)
         }
     }
 

@@ -29,18 +29,11 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import org.videolan.libvlc.util.MediaBrowser
 import org.videolan.medialibrary.media.MediaLibraryItem
 import org.videolan.tools.livedata.LiveDataset
-import org.videolan.vlc.mediadb.models.BrowserFav
 import org.videolan.vlc.providers.BrowserProvider
-import org.videolan.vlc.repository.BrowserFavRepository
-import org.videolan.vlc.util.convertFavorites
 
 class BrowserFavoritesModel(private val context: Context) : ViewModel() {
     val favorites = LiveDataset<MediaLibraryItem>()
@@ -52,19 +45,6 @@ class FavoritesProvider(
         dataset: LiveDataset<MediaLibraryItem>,
         scope: CoroutineScope
 ) : BrowserProvider(context, dataset, null, false) {
-    private val browserFavRepository = BrowserFavRepository.getInstance(context)
-
-    init {
-        browserFavRepository.browserFavorites
-                .onEach { list ->
-                    convertFavorites(list.sortedWith(compareBy(BrowserFav::title, BrowserFav::type))).let {
-                        dataset.postValue(it as MutableList<MediaLibraryItem>)
-                        parseSubDirectories()
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .launchIn(scope)
-    }
 
     override suspend fun requestBrowsing(url: String?, eventListener: MediaBrowser.EventListener, interact : Boolean) = withContext(coroutineContextProvider.IO) {
         initBrowser()

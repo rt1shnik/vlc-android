@@ -22,11 +22,8 @@ import org.videolan.tools.AppScope
 import org.videolan.vlc.R
 import org.videolan.vlc.gui.DialogActivity
 import org.videolan.vlc.gui.MainActivity
-import org.videolan.vlc.repository.BrowserFavRepository
 
 class NetworkServerDialog : VLCBottomSheetDialogFragment(), AdapterView.OnItemSelectedListener, TextWatcher, View.OnClickListener {
-
-    private lateinit var browserFavRepository: BrowserFavRepository
 
     private lateinit var protocols: Array<String>
     private lateinit var editAddressLayout: TextInputLayout
@@ -60,7 +57,6 @@ class NetworkServerDialog : VLCBottomSheetDialogFragment(), AdapterView.OnItemSe
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        if (!::browserFavRepository.isInitialized) browserFavRepository = BrowserFavRepository.getInstance(requireActivity())
         val v = inflater.inflate(R.layout.network_server_dialog, container, false)
 
         editAddressLayout = v.findViewById(R.id.server_domain)
@@ -112,19 +108,6 @@ class NetworkServerDialog : VLCBottomSheetDialogFragment(), AdapterView.OnItemSe
         editUsername.editText!!.addTextChangedListener(this)
 
         updateUrl()
-    }
-
-    private fun saveServer() {
-        val name = if (editServername.text.toString().isEmpty())
-            editAddress.text.toString()
-        else
-            editServername.text.toString()
-        val uri = url.text.toString().toUri()
-        AppScope.launch {
-            if (::networkUri.isInitialized) browserFavRepository.deleteBrowserFav(networkUri)
-            browserFavRepository.addNetworkFavItem(uri, name, null)
-            dismiss()
-        }
     }
 
     private fun updateUrl() {
@@ -216,9 +199,6 @@ class NetworkServerDialog : VLCBottomSheetDialogFragment(), AdapterView.OnItemSe
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.server_save -> {
-                saveServer()
-            }
             R.id.server_cancel -> dismiss()
         }
     }

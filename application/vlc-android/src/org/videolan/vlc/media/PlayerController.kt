@@ -5,7 +5,6 @@ import android.net.Uri
 import android.support.v4.media.session.PlaybackStateCompat
 import android.widget.Toast
 import androidx.annotation.MainThread
-import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -21,7 +20,6 @@ import org.videolan.resources.VLCOptions
 import org.videolan.tools.*
 import org.videolan.vlc.BuildConfig
 import org.videolan.vlc.PlaybackService
-import org.videolan.vlc.repository.SlaveRepository
 import kotlin.math.abs
 
 @ObsoleteCoroutinesApi
@@ -35,7 +33,6 @@ class PlayerController(val context: Context) : IVLCVout.Callback, MediaPlayer.Ev
     private val settings by lazy(LazyThreadSafetyMode.NONE) { Settings.getInstance(context) }
     val progress by lazy(LazyThreadSafetyMode.NONE) { MutableLiveData<Progress>().apply { value = Progress() } }
     val speed by lazy(LazyThreadSafetyMode.NONE) { MutableLiveData<Float>().apply { value = 1.0F } }
-    private val slaveRepository by lazy { SlaveRepository.getInstance(context) }
 
     var mediaplayer = newMediaPlayer()
         private set
@@ -204,10 +201,6 @@ class PlayerController(val context: Context) : IVLCVout.Callback, MediaPlayer.Ev
         val slaves = mw.slaves
         slaves?.let { it.forEach { slave -> media.addSlave(slave) } }
         media.release()
-        slaveRepository.getSlaves(mw.location).forEach { slave ->
-            if (!slaves.contains(slave)) mediaplayer.addSlave(slave.type, slave.uri.toUri(), false)
-        }
-        slaves?.let { slaveRepository.saveSlaves(mw) }
     }
 
     private fun newMediaPlayer() : MediaPlayer {

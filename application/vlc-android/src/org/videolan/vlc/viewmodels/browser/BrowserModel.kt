@@ -34,7 +34,6 @@ import org.videolan.tools.CoroutineContextProvider
 import org.videolan.tools.Settings
 import org.videolan.vlc.gui.helpers.MedialibraryUtils
 import org.videolan.vlc.providers.*
-import org.videolan.vlc.repository.DirectoryRepository
 import org.videolan.vlc.util.*
 import org.videolan.vlc.viewmodels.BaseModel
 import org.videolan.vlc.viewmodels.tv.TvBrowserModel
@@ -111,12 +110,6 @@ open class BrowserModel(
     fun updateShowHiddenFiles(value: Boolean) {
         provider.updateShowHiddenFiles(value)
     }
-
-    fun addCustomDirectory(path: String) = DirectoryRepository.getInstance(context).addCustomDirectory(path)
-
-    fun deleteCustomDirectory(path: String) = DirectoryRepository.getInstance(context).deleteCustomDirectory(path)
-
-    suspend fun customDirectoryExists(path: String) = DirectoryRepository.getInstance(context).customDirectoryExists(path)
 
     class Factory(val context: Context, val url: String?, private val type: Long, private val showHiddenFiles: Boolean, private val showDummyCategory: Boolean = true, private val pickerType: PickerType = PickerType.SUBTITLE) : ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {

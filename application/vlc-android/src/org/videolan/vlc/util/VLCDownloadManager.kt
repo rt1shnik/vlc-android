@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Environment
 import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
@@ -23,7 +22,6 @@ import org.videolan.tools.isStarted
 import org.videolan.vlc.R
 import org.videolan.vlc.gui.dialogs.SubtitleItem
 import org.videolan.vlc.gui.helpers.hf.getExtWritePermission
-import org.videolan.vlc.repository.ExternalSubRepository
 
 
 object VLCDownloadManager: BroadcastReceiver(), LifecycleObserver {
@@ -32,17 +30,6 @@ object VLCDownloadManager: BroadcastReceiver(), LifecycleObserver {
     private lateinit var defaultSubsDirectory : String
 
     override fun onReceive(context: Context, intent: Intent?) {
-        intent?.run {
-            val id = getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0L)
-            ExternalSubRepository.getInstance(context).getDownloadingSubtitle(id)?.let { subtitleItem ->
-                val (state, localUri) = getDownloadState(id)
-                when(state) {
-                    DownloadManager.STATUS_SUCCESSFUL -> dlDeferred?.complete(SubDlSuccess(id, subtitleItem, localUri))
-                    DownloadManager.STATUS_FAILED -> dlDeferred?.complete(SubDlFailure(id))
-                    else -> return
-                }
-            }
-        }
     }
 
     init {
@@ -56,12 +43,6 @@ object VLCDownloadManager: BroadcastReceiver(), LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun unRegister() {
-        ExternalSubRepository.getInstance(AppContextProvider.appContext).downloadingSubtitles.observeForever {
-            it?.keys?.forEach {
-                downloadManager.remove(it)
-            }
-        }
-
         AppContextProvider.appContext.applicationContext.unregisterReceiver(this)
     }
 
@@ -72,7 +53,6 @@ object VLCDownloadManager: BroadcastReceiver(), LifecycleObserver {
         request.setDestinationInExternalFilesDir(context, getDownloadPath(subtitleItem), "")
         val id = downloadManager.enqueue(request)
         val deferred = CompletableDeferred<SubDlResult>().also { dlDeferred = it }
-        ExternalSubRepository.getInstance(context.applicationContext).addDownloadingItem(id, subtitleItem)
         when (val result = deferred.await()) {
             is SubDlFailure -> downloadFailed(result.id, context)
             is SubDlSuccess -> downloadSuccessful(result.id, result.subtitleItem, result.localUri, context)
@@ -83,19 +63,9 @@ object VLCDownloadManager: BroadcastReceiver(), LifecycleObserver {
         val extractDirectory = getFinalDirectory(context, subtitleItem) ?: return
         val downloadedPaths = FileUtils.unpackZip(localUri, extractDirectory)
         subtitleItem.run {
-            ExternalSubRepository.getInstance(context).removeDownloadingItem(id)
             downloadedPaths.forEach {
-                if (Extensions.SUBTITLES.contains(".${it.split('.').last()}")) {
-                    ExternalSubRepository.getInstance(context).saveDownloadedSubtitle(
-                        idSubtitle,
-                        it,
-                        mediaUri.path!!,
-                        subLanguageID,
-                        movieReleaseName
-                    )
-                }
-                else
-                    Toast.makeText(context, R.string.subtitles_download_failed, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.subtitles_download_failed, Toast.LENGTH_SHORT)
+                    .show()
             }
             withContext(Dispatchers.IO) { FileUtils.deleteFile(localUri) }
         }
@@ -112,7 +82,6 @@ object VLCDownloadManager: BroadcastReceiver(), LifecycleObserver {
 
     private fun downloadFailed(id: Long, context: Context) {
         Toast.makeText(context, R.string.subtitles_download_failed, Toast.LENGTH_SHORT).show()
-        ExternalSubRepository.getInstance(context).removeDownloadingItem(id)
     }
 
     private fun getDownloadPath(subtitleItem: SubtitleItem) = "VLC/${subtitleItem.movieReleaseName}_${subtitleItem.idSubtitle}.zip"

@@ -3,10 +3,8 @@ package org.videolan.vlc.viewmodels
 import android.content.Context
 import android.net.Uri
 import android.text.Html
-import android.text.SpannableString
 import android.text.Spanned
 import android.util.Log
-import androidx.core.text.HtmlCompat
 import androidx.core.text.toSpanned
 import androidx.databinding.Observable
 import androidx.databinding.ObservableBoolean
@@ -23,7 +21,6 @@ import org.videolan.vlc.R
 import org.videolan.resources.opensubtitles.OpenSubtitle
 import org.videolan.vlc.gui.dialogs.State
 import org.videolan.vlc.gui.dialogs.SubtitleItem
-import org.videolan.vlc.repository.ExternalSubRepository
 import org.videolan.resources.opensubtitles.OpenSubtitleRepository
 import org.videolan.tools.CoroutineContextProvider
 import org.videolan.tools.putSingle
@@ -47,11 +44,6 @@ class SubtitlesModel(private val context: Context, private val mediaUri: Uri, pr
     val observableResultDescription = ObservableField<Spanned>()
 
     private val apiResultLiveData: MutableLiveData<List<OpenSubtitle>> = MutableLiveData()
-    private val downloadedLiveData = Transformations.map(ExternalSubRepository.getInstance(context).getDownloadedSubtitles(mediaUri)) { list ->
-        list.map { SubtitleItem(it.idSubtitle, mediaUri, it.subLanguageID, it.movieReleaseName, State.Downloaded, "") }
-    }
-
-    private val downloadingLiveData = ExternalSubRepository.getInstance(context).downloadingSubtitles
 
     val result: MediatorLiveData<List<SubtitleItem>> = MediatorLiveData()
     val history: MediatorLiveData<List<SubtitleItem>> = MediatorLiveData()
@@ -67,20 +59,6 @@ class SubtitlesModel(private val context: Context, private val mediaUri: Uri, pr
                 }
             }
         })
-
-        history.apply {
-            addSource(downloadedLiveData) {
-                viewModelScope.launch {
-                    value = merge(it, downloadingLiveData.value?.values?.filter { it.mediaUri == mediaUri })
-                }
-            }
-
-            addSource(downloadingLiveData) {
-                viewModelScope.launch {
-                    value = merge(downloadedLiveData.value, it?.values?.filter { it.mediaUri == mediaUri })
-                }
-            }
-        }
 
         result.apply {
             addSource(apiResultLiveData) {
@@ -184,10 +162,6 @@ class SubtitlesModel(private val context: Context, private val mediaUri: Uri, pr
                 isApiLoading.postValue(false)
             }
         }
-    }
-
-    fun deleteSubtitle(mediaPath: String, idSubtitle: String) {
-        ExternalSubRepository.getInstance(context).deleteSubtitle(mediaPath, idSubtitle)
     }
 
     fun getLastUsedLanguage(): List<String> {

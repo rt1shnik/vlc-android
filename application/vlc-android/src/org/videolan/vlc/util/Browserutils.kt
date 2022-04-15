@@ -25,7 +25,6 @@ import org.videolan.medialibrary.MLServiceLocator
 import org.videolan.medialibrary.interfaces.media.MediaWrapper
 import org.videolan.medialibrary.media.MediaLibraryItem
 import org.videolan.resources.AndroidDevices
-import org.videolan.vlc.mediadb.models.BrowserFav
 import java.io.File
 
 fun isSchemeStreaming(scheme: String?): Boolean = when {
@@ -57,27 +56,3 @@ fun Uri.isSD() = this.path != null && this.path?.startsWith("/storage") == true 
 fun String?.isSchemeSMB() = this == "smb"
 
 fun String?.isSchemeDistant() = !this.isSchemeFile()
-
-fun convertFavorites(browserFavs: List<BrowserFav>?) = browserFavs?.filter {
-    it.uri.scheme != "file" || File(it.uri.path).exists()
-}?.map { (uri, _, title, iconUrl) ->
-    MLServiceLocator.getAbstractMediaWrapper(uri).apply {
-        setDisplayTitle(Uri.decode(title))
-        type = MediaWrapper.TYPE_DIR
-        iconUrl?.let { artworkURL = Uri.decode(it) }
-        setStateFlags(MediaLibraryItem.FLAG_FAVORITE)
-    }
-} ?: emptyList()
-
-/**
- * Converts a [BrowserFav] to a [MediaWrapper]
- * @return a [MediaWrapper]
- */
-fun convertFavorite(browserFav: BrowserFav): MediaWrapper? {
-    return  MLServiceLocator.getAbstractMediaWrapper(browserFav.uri).apply {
-        setDisplayTitle(Uri.decode(browserFav.title))
-        type = MediaWrapper.TYPE_DIR
-        browserFav.iconUrl?.let { artworkURL = Uri.decode(it) }
-        setStateFlags(MediaLibraryItem.FLAG_FAVORITE)
-    }
-}

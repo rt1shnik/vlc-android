@@ -217,7 +217,6 @@ class MLStorageBrowserFragment : BaseFragment(), IStorageFragmentDelegate by Sto
             }
 
             lifecycleScope.launch(CoroutineExceptionHandler { _, _ -> }) {
-                localViewModel.addCustomDirectory(f.canonicalPath).join()
                 localViewModel.browseRoot()
             }
         })

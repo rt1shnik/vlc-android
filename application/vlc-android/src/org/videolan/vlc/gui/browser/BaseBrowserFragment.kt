@@ -63,7 +63,6 @@ import org.videolan.vlc.interfaces.IEventsHandler
 import org.videolan.vlc.interfaces.IRefreshable
 import org.videolan.vlc.media.MediaUtils
 import org.videolan.vlc.media.PlaylistManager
-import org.videolan.vlc.repository.BrowserFavRepository
 import org.videolan.vlc.util.Permissions
 import org.videolan.vlc.util.isSchemeSupported
 import org.videolan.vlc.viewmodels.browser.BrowserModel
@@ -98,7 +97,6 @@ abstract class BaseBrowserFragment : MediaBrowserFragment<BrowserModel>(), IRefr
     protected abstract val categoryTitle: String
 
     protected lateinit var binding: DirectoryBrowserBinding
-    protected lateinit var browserFavRepository: BrowserFavRepository
 
     protected abstract fun createFragment(): Fragment
     protected abstract fun browseRoot()
@@ -118,7 +116,6 @@ abstract class BaseBrowserFragment : MediaBrowserFragment<BrowserModel>(), IRefr
         }
         showHiddenFiles = Settings.getInstance(requireContext()).getBoolean("browser_show_hidden_files", false)
         isRootDirectory = defineIsRoot()
-        browserFavRepository = BrowserFavRepository.getInstance(requireContext())
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -432,7 +429,6 @@ abstract class BaseBrowserFragment : MediaBrowserFragment<BrowserModel>(), IRefr
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.ml_menu_save -> {
-                toggleFavorite()
                 menu?.let { onPrepareOptionsMenu(it) }
                 true
             }
@@ -470,16 +466,6 @@ abstract class BaseBrowserFragment : MediaBrowserFragment<BrowserModel>(), IRefr
     private fun addToScannedFolders(mw: MediaWrapper) {
         MedialibraryUtils.addDir(mw.uri.toString(), requireActivity().applicationContext)
         Snackbar.make(binding.root, getString(R.string.scanned_directory_added, mw.uri.toString().toUri().lastPathSegment), Snackbar.LENGTH_LONG).show()
-    }
-
-    private fun toggleFavorite() = lifecycleScope.launch {
-        val mw = currentMedia ?: return@launch
-        when {
-            browserFavRepository.browserFavExists(mw.uri) -> browserFavRepository.deleteBrowserFav(mw.uri)
-            mw.uri.scheme == "file" -> browserFavRepository.addLocalFavItem(mw.uri, mw.title, mw.artworkURL)
-            else -> browserFavRepository.addNetworkFavItem(mw.uri, mw.title, mw.artworkURL)
-        }
-        activity?.invalidateOptionsMenu()
     }
 
     override fun onClick(v: View, position: Int, item: MediaLibraryItem) {
@@ -521,13 +507,6 @@ abstract class BaseBrowserFragment : MediaBrowserFragment<BrowserModel>(), IRefr
                 if (!isEmpty) flags = flags or CTX_PLAY
                 val isFileBrowser = this@BaseBrowserFragment is FileBrowserFragment && item.uri.scheme == "file"
                 val isNetworkBrowser = this@BaseBrowserFragment is NetworkBrowserFragment
-                if (isFileBrowser || isNetworkBrowser) {
-                    val favExists = browserFavRepository.browserFavExists(mw.uri)
-                    flags = if (favExists) {
-                        if (isNetworkBrowser) flags or CTX_FAV_EDIT or CTX_FAV_REMOVE
-                        else flags or CTX_FAV_REMOVE
-                    } else flags or CTX_FAV_ADD
-                }
                 if (isFileBrowser && !isRootDirectory && !MedialibraryUtils.isScanned(item.uri.toString())) {
                     flags = flags or CTX_ADD_SCANNED
                 }
@@ -567,7 +546,6 @@ abstract class BaseBrowserFragment : MediaBrowserFragment<BrowserModel>(), IRefr
             }
             CTX_ADD_TO_PLAYLIST -> requireActivity().addToPlaylist(mw.tracks, SavePlaylistDialog.KEY_NEW_TRACKS)
             CTX_DOWNLOAD_SUBTITLES -> MediaUtils.getSubs(requireActivity(), mw)
-            CTX_FAV_REMOVE -> lifecycleScope.launch(Dispatchers.IO) { browserFavRepository.deleteBrowserFav(mw.uri) }
             CTX_ADD_SCANNED -> addToScannedFolders(mw)
             CTX_FIND_METADATA -> {
                 val intent = Intent().apply {

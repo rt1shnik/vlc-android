@@ -43,7 +43,6 @@ import org.videolan.tools.removeFileProtocole
 import org.videolan.vlc.R
 import org.videolan.vlc.gui.ContentActivity
 import org.videolan.vlc.providers.PickerType
-import org.videolan.vlc.repository.DirectoryRepository
 import org.videolan.vlc.util.FileUtils
 import org.videolan.vlc.viewmodels.browser.BrowserModel
 import org.videolan.vlc.viewmodels.browser.TYPE_PICKER
@@ -133,9 +132,6 @@ class FilePickerFragment : FileBrowserFragment(), BrowserContainer<MediaLibraryI
 
     override fun defineIsRoot() = mrl?.run {
         if (startsWith("file")) {
-            val path = removeFileProtocole()
-            val rootDirectories = runBlocking(Dispatchers.IO) { DirectoryRepository.getInstance(requireContext()).getMediaDirectories() }
-            for (directory in rootDirectories) if (path.startsWith(directory)) return false
             return true
         } else length < 7
     } ?: true

@@ -59,7 +59,6 @@ class SubtitleDownloaderDialogFragment : VLCBottomSheetDialogFragment() {
             is SubtitleClick -> when (subtitleEvent.item.state) {
                 State.NotDownloaded -> VLCDownloadManager.download(requireActivity(), subtitleEvent.item)
                 State.Downloaded -> deleteSubtitleDialog(requireActivity(), DialogInterface.OnClickListener { _, _ ->
-                    subtitleEvent.item.mediaUri.path?.let { viewModel.deleteSubtitle(it, subtitleEvent.item.idSubtitle) }
                 }
                         , DialogInterface.OnClickListener { _, _ -> })
                 else -> return@actor

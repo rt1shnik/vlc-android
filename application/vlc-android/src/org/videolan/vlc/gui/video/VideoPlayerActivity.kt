@@ -63,7 +63,6 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -105,8 +104,6 @@ import org.videolan.vlc.interfaces.IPlaybackSettingsController
 import org.videolan.vlc.media.NO_LENGTH_PROGRESS_MAX
 import org.videolan.vlc.media.VideoResumeStatus
 import org.videolan.vlc.media.WaitConfirmation
-import org.videolan.vlc.repository.ExternalSubRepository
-import org.videolan.vlc.repository.SlaveRepository
 import org.videolan.vlc.util.*
 import org.videolan.vlc.util.FileUtils
 import org.videolan.vlc.util.FileUtils.getUri
@@ -206,8 +203,6 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
 
     var isBenchmark = false
 
-    private val addedExternalSubs = ArrayList<org.videolan.vlc.mediadb.models.ExternalSub>()
-    private var downloadedSubtitleLiveData: LiveData<List<org.videolan.vlc.mediadb.models.ExternalSub>>? = null
     private var previousMediaPath: String? = null
 
     private val isInteractive: Boolean
@@ -321,15 +316,6 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
             } else if (time == 0L) service?.currentMediaWrapper?.time?.let { time = it }
             return if (forcedTime == -1L) time else forcedTime
         }
-
-    private val downloadedSubtitleObserver = Observer<List<org.videolan.vlc.mediadb.models.ExternalSub>> { externalSubs ->
-        for (externalSub in externalSubs) {
-            if (!addedExternalSubs.contains(externalSub)) {
-                service?.addSubtitleTrack(externalSub.subtitlePath, currentSpuTrack == -2)
-                addedExternalSubs.add(externalSub)
-            }
-        }
-    }
 
     private val screenRotation: Int
         get() {
@@ -751,9 +737,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         // Clear Intent to restore playlist on activity restart
         intent = Intent()
         handler.removeCallbacksAndMessages(null)
-        removeDownloadedSubtitlesObserver()
         previousMediaPath = null
-        addedExternalSubs.clear()
         medialibrary.resumeBackgroundOperations()
     }
 
@@ -890,9 +874,6 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         if (data.hasExtra(EXTRA_MRL)) {
             val subtitleUri = data.getStringExtra(EXTRA_MRL)!!.toUri()
             service?.addSubtitleTrack(getUri(subtitleUri) ?: subtitleUri, false)
-            service?.currentMediaWrapper?.let {
-                SlaveRepository.getInstance(this).saveSlave(it.location, IMedia.Slave.Type.Subtitle, 2, data.getStringExtra(EXTRA_MRL)!!)
-            }
             addNextTrack = true
         } else if (BuildConfig.DEBUG) Log.d(TAG, "Subtitle selection dialog was cancelled")
     }
@@ -1445,8 +1426,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         setESTracks()
         if (overlayDelegate.isHudRightBindingInitialized() && overlayDelegate.hudRightBinding.playerOverlayTitle.length() == 0)
             overlayDelegate.hudRightBinding.playerOverlayTitle.text = mw.title
-        // Get possible subtitles
-        observeDownloadedSubtitles()
+
         optionsDelegate?.setup()
         settings.edit { remove(VIDEO_PAUSED) }
         if (isInPictureInPictureMode && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -1961,25 +1941,6 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         }
     }
 
-    private fun removeDownloadedSubtitlesObserver() {
-        downloadedSubtitleLiveData?.removeObserver(downloadedSubtitleObserver)
-        downloadedSubtitleLiveData = null
-    }
-
-    private fun observeDownloadedSubtitles() {
-        service?.let { service ->
-            val uri = service.currentMediaWrapper?.uri ?: return
-            val path = uri.path ?: return
-            if (previousMediaPath == null || path != previousMediaPath) {
-                previousMediaPath = path
-                removeDownloadedSubtitlesObserver()
-                downloadedSubtitleLiveData = ExternalSubRepository.getInstance(this).getDownloadedSubtitles(uri).apply {
-                    observe(this@VideoPlayerActivity, downloadedSubtitleObserver)
-                }
-            }
-        }
-    }
-
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     fun getScreenOrientation(mode: PlayerOrientationMode): Int {
         return if (!mode.locked) {
@@ -2166,7 +2127,6 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
             this.service?.removeCallback(this)
             this.service = null
             handler.sendEmptyMessage(AUDIO_SERVICE_CONNECTION_FAILED)
-            removeDownloadedSubtitlesObserver()
             previousMediaPath = null
         }
     }

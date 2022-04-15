@@ -31,7 +31,6 @@ import org.videolan.medialibrary.media.Storage
 import org.videolan.resources.AndroidDevices
 import org.videolan.tools.livedata.LiveDataset
 import org.videolan.vlc.R
-import org.videolan.vlc.repository.DirectoryRepository
 import java.io.File
 import java.util.*
 
@@ -40,26 +39,8 @@ import java.util.*
 class StorageProvider(context: Context, dataset: LiveDataset<MediaLibraryItem>, url: String?, showHiddenFiles: Boolean): FileBrowserProvider(context, dataset, url, false, showHiddenFiles) {
 
     override suspend fun browseRootImpl() {
-        val storages = DirectoryRepository.getInstance(context).getMediaDirectories()
-        val customDirectories = DirectoryRepository.getInstance(context).getCustomDirectories()
         var storage: Storage
         val storagesList = ArrayList<MediaLibraryItem>()
-        for (mediaDirLocation in storages) {
-            if (!File(mediaDirLocation).exists()) continue
-            if (mediaDirLocation.isEmpty()) continue
-            storage = Storage(Uri.fromFile(File(mediaDirLocation)))
-            if (AndroidDevices.EXTERNAL_PUBLIC_DIRECTORY == mediaDirLocation)
-                storage.name = context.getString(R.string.internal_memory)
-            storagesList.add(storage)
-        }
-        customLoop@ for (customDir in customDirectories) {
-            for (mediaDirLocation in storages) {
-                if (mediaDirLocation.isEmpty()) continue
-                if (customDir.path.startsWith(mediaDirLocation)) continue@customLoop
-            }
-            storage = Storage(customDir.path.toUri())
-            storagesList.add(storage)
-        }
         dataset.value = storagesList
     }
 

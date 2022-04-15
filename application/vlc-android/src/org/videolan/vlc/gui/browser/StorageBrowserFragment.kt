@@ -151,7 +151,7 @@ class StorageBrowserFragment : FileBrowserFragment(), BrowserContainer<MediaLibr
             val storage = adapter.getItem(position) as Storage
             val path = storage.uri.path ?: return
             lifecycleScope.launchWhenStarted {
-                val isCustom = viewModel.customDirectoryExists(path)
+                val isCustom = false
                 if (isCustom && isAdded) showContext(requireActivity(), this@StorageBrowserFragment, position, item.title, CTX_CUSTOM_REMOVE)
             }
         }
@@ -160,7 +160,6 @@ class StorageBrowserFragment : FileBrowserFragment(), BrowserContainer<MediaLibr
     override fun onCtxAction(position: Int, option: Long) {
         val storage = adapter.getItem(position) as Storage
         val path = storage.uri.path ?: return
-        viewModel.deleteCustomDirectory(path)
         viewModel.remove(storage)
         (activity as AudioPlayerContainerActivity).updateLib()
     }
@@ -200,7 +199,6 @@ class StorageBrowserFragment : FileBrowserFragment(), BrowserContainer<MediaLibr
             }
 
             lifecycleScope.launch(CoroutineExceptionHandler { _, _ -> }) {
-                viewModel.addCustomDirectory(f.canonicalPath).join()
                 viewModel.browseRoot()
             }
         })

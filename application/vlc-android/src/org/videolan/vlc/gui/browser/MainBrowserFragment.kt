@@ -53,7 +53,6 @@ import org.videolan.vlc.gui.view.EmptyLoadingState
 import org.videolan.vlc.gui.view.EmptyLoadingStateView
 import org.videolan.vlc.gui.view.TitleListView
 import org.videolan.vlc.media.MediaUtils
-import org.videolan.vlc.repository.BrowserFavRepository
 import org.videolan.vlc.util.Permissions
 import org.videolan.vlc.viewmodels.browser.*
 
@@ -63,7 +62,6 @@ class MainBrowserFragment : BaseFragment(), View.OnClickListener, CtxActionRecei
 
     private lateinit var networkMonitor: NetworkMonitor
     private var currentCtx: MainBrowserContainer? = null
-    private lateinit var browserFavRepository: BrowserFavRepository
     private lateinit var localEntry: TitleListView
     private lateinit var localViewModel: BrowserModel
 
@@ -149,7 +147,6 @@ class MainBrowserFragment : BaseFragment(), View.OnClickListener, CtxActionRecei
     override fun getTitle() = getString(R.string.browse)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        browserFavRepository = BrowserFavRepository.getInstance(requireContext())
         networkMonitor = NetworkMonitor.getInstance(requireContext())
         super.onCreate(savedInstanceState)
     }
@@ -381,11 +378,6 @@ class MainBrowserFragment : BaseFragment(), View.OnClickListener, CtxActionRecei
                 val isEmpty = (viewModel as? BrowserModel)?.isFolderEmpty(mw) ?: true
                 if (!isEmpty) flags = flags or CTX_PLAY
                 val isFileBrowser = isFile && item.uri.scheme == "file"
-                val favExists = withContext(Dispatchers.IO) { browserFavRepository.browserFavExists(mw.uri) }
-                flags = if (favExists) {
-                    if (withContext(Dispatchers.IO) { browserFavRepository.isFavNetwork(mw.uri) }) flags or CTX_FAV_EDIT or CTX_FAV_REMOVE
-                    else flags or CTX_FAV_REMOVE
-                } else flags or CTX_FAV_ADD
                 if (isFileBrowser) {
                     if (localViewModel.provider.hasMedias(mw)) flags = flags or CTX_ADD_FOLDER_PLAYLIST
                     if (localViewModel.provider.hasSubfolders(mw)) flags = flags or CTX_ADD_FOLDER_AND_SUB_PLAYLIST
@@ -404,10 +396,8 @@ class MainBrowserFragment : BaseFragment(), View.OnClickListener, CtxActionRecei
                 ?: return
         when (option) {
             CTX_PLAY -> MediaUtils.openMedia(activity, mw)
-            CTX_FAV_REMOVE -> lifecycleScope.launch(Dispatchers.IO) { browserFavRepository.deleteBrowserFav(mw.uri) }
             CTX_ADD_FOLDER_PLAYLIST -> requireActivity().addToPlaylistAsync(mw.uri.toString(), false)
             CTX_ADD_FOLDER_AND_SUB_PLAYLIST -> requireActivity().addToPlaylistAsync(mw.uri.toString(), true)
-            CTX_FAV_EDIT -> showAddServerDialog(mw)
         }
     }
 }
