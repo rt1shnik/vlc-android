@@ -835,14 +835,12 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
             return
         }
         service?.run {
-            val tv = Settings.showTvUi
             val interactive = isInteractive
-            wasPaused = !isPlaying || (!tv && !interactive)
+            wasPaused = !isPlaying || !interactive
             if (wasPaused) settings.putSingle(VIDEO_PAUSED, true)
             if (!isFinishing) {
                 currentAudioTrack = audioTrack
                 currentSpuTrack = spuTrack
-                if (tv) finish() // Leave player on TV, restauration can be difficult
             }
 
             if (isMute) mute(false)
