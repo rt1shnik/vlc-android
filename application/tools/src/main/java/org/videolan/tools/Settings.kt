@@ -63,8 +63,7 @@ object Settings : SingletonHolder<SharedPreferences, Context>({ init(it.applicat
         audioControlsChangeListener = listener
     }
 
-    val showTvUi : Boolean
-        get() = !overrideTvUI && device.isTv || tvUI
+    const val showTvUi : Boolean = false
 }
 
 const val KEY_CURRENT_SETTINGS_VERSION = "current_settings_version"
