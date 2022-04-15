@@ -9,7 +9,6 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.view.KeyEvent
-import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
 import org.videolan.medialibrary.Tools
@@ -21,7 +20,6 @@ import org.videolan.tools.PLAYBACK_HISTORY
 import org.videolan.tools.Settings
 import org.videolan.tools.removeQuery
 import org.videolan.tools.retrieveParent
-import org.videolan.vlc.extensions.ExtensionsManager
 import org.videolan.vlc.gui.helpers.MediaComparators
 import org.videolan.vlc.media.MediaSessionBrowser
 import org.videolan.vlc.util.VoiceSearchParams
@@ -142,10 +140,6 @@ internal class MediaSessionCallback(private val playbackService: PlaybackService
         playbackService.lifecycleScope.launch {
             val context = playbackService.applicationContext
             try {
-                if (mediaId.startsWith(ExtensionsManager.EXTENSION_PREFIX)) {
-                    val id = mediaId.replace(ExtensionsManager.EXTENSION_PREFIX + "_" + mediaId.split("_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1] + "_", "")
-                    onPlayFromUri(id.toUri(), null)
-                } else {
                     val mediaIdUri = Uri.parse(mediaId)
                     val position = mediaIdUri.getQueryParameter("i")?.toInt() ?: 0
                     val page = mediaIdUri.getQueryParameter("p")
@@ -226,7 +220,6 @@ internal class MediaSessionCallback(private val playbackService: PlaybackService
                             }
                         }
                     }
-                }
             } catch (e: Exception) {
                 Log.e(TAG, "Could not play media: $mediaId", e)
                 when {

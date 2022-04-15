@@ -28,7 +28,6 @@ import android.content.*
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.core.content.edit
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
@@ -43,13 +42,9 @@ import org.videolan.resources.*
 import org.videolan.tools.*
 import org.videolan.vlc.BuildConfig
 import org.videolan.vlc.R
-import org.videolan.vlc.extensions.ExtensionManagerService
-import org.videolan.vlc.extensions.ExtensionsManager
-import org.videolan.vlc.extensions.api.VLCExtensionItem
 import org.videolan.vlc.gui.*
 import org.videolan.vlc.gui.audio.AudioBrowserFragment
 import org.videolan.vlc.gui.browser.BaseBrowserFragment
-import org.videolan.vlc.gui.browser.ExtensionBrowser
 import org.videolan.vlc.gui.browser.MainBrowserFragment
 import org.videolan.vlc.gui.helpers.UiTools.isTablet
 import org.videolan.vlc.gui.preferences.PreferencesActivity
@@ -67,15 +62,8 @@ class Navigator : BottomNavigationView.OnNavigationItemSelectedListener, Lifecyc
         private set
     private lateinit var activity: MainActivity
     private lateinit var settings: SharedPreferences
-    private var extensionsService: ExtensionManagerService? = null
     override lateinit var navigationView: List<NavigationBarView>
     override lateinit var appbarLayout: AppBarLayout
-
-    override lateinit var extensionsManager: ExtensionsManager
-    override var extensionServiceConnection: ServiceConnection? = null
-    override var extensionManagerService: ExtensionManagerService? = null
-    private val isExtensionServiceBinded: Boolean
-        get() = extensionServiceConnection != null
 
     override fun MainActivity.setupNavigation(state: Bundle?) {
         activity = this
@@ -91,21 +79,13 @@ class Navigator : BottomNavigationView.OnNavigationItemSelectedListener, Lifecyc
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
-        if (currentFragment === null && !currentIdIsExtension()) showFragment(if (currentFragmentId != 0) currentFragmentId else settings.getInt("fragment_id", defaultFragmentId))
+        if (currentFragment === null) showFragment(if (currentFragmentId != 0) currentFragmentId else settings.getInt("fragment_id", defaultFragmentId))
         navigationView.forEach { it.setOnItemSelectedListener(this) }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onStop() {
         navigationView.forEach { it.setOnItemSelectedListener(null) }
-        if (isExtensionServiceBinded) {
-            activity.unbindService(extensionServiceConnection!!)
-            extensionServiceConnection = null
-        }
-        if (currentIdIsExtension()) {
-            val name = extensionsManager.getExtensions(activity.application, false)[currentFragmentId].componentName().packageName
-            settings.putSingle("current_extension_name", name)
-        }
     }
 
     private fun getNewFragment(id: Int): Fragment {
@@ -144,8 +124,6 @@ class Navigator : BottomNavigationView.OnNavigationItemSelectedListener, Lifecyc
         // Slide down the audio player if needed.
         activity.slideDownAudioPlayer()
     }
-
-    override fun currentIdIsExtension() = idIsExtension(currentFragmentId)
 
     private fun idIsExtension(id: Int) = id in 1..100
 
@@ -188,58 +166,35 @@ class Navigator : BottomNavigationView.OnNavigationItemSelectedListener, Lifecyc
         val current = currentFragment
 
         appbarLayout.setExpanded(true, true)
-        if (item.groupId == R.id.extensions_group) {
-            if (currentFragmentId == id) {
-                clearBackstackFromClass(ExtensionBrowser::class.java)
-                return false
-            } else
-                extensionsService?.openExtension(id)
-        } else {
-            if (isExtensionServiceBinded) extensionsService?.disconnect()
 
-            if (current == null) {
+        if (current == null) {
+            return false
+        }
+        if (current is BaseFragment && current.actionMode != null) current.stopActionMode()
+
+        if (currentFragmentId == id) { /* Already selected */
+            // Go back at root level of current mProvider
+            if ((current as? BaseBrowserFragment)?.isStarted() == false) {
+                activity.supportFragmentManager.popBackStackImmediate(
+                    "root",
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE
+                )
+            } else {
                 return false
             }
-            if (current is BaseFragment && current.actionMode != null) current.stopActionMode()
-
-            if (currentFragmentId == id) { /* Already selected */
-                // Go back at root level of current mProvider
-                if ((current as? BaseBrowserFragment)?.isStarted() == false) {
-                    activity.supportFragmentManager.popBackStackImmediate("root", FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                } else {
-                    return false
-                }
-            } else when (id) {
-                R.id.nav_settings -> activity.startActivityForResult(Intent(activity, PreferencesActivity::class.java), ACTIVITY_RESULT_PREFERENCES)
-                else -> {
-                    activity.slideDownAudioPlayer()
-                    showFragment(id)
-                }
+        } else when (id) {
+            R.id.nav_settings -> activity.startActivityForResult(
+                Intent(
+                    activity,
+                    PreferencesActivity::class.java
+                ), ACTIVITY_RESULT_PREFERENCES
+            )
+            else -> {
+                activity.slideDownAudioPlayer()
+                showFragment(id)
             }
         }
         return true
-    }
-
-    override fun displayExtensionItems(extensionId: Int, title: String, items: List<VLCExtensionItem>, showParams: Boolean, refresh: Boolean) {
-        if (refresh && currentFragment is ExtensionBrowser) {
-            (currentFragment as ExtensionBrowser).doRefresh(title, items)
-        } else {
-            val fragment = ExtensionBrowser()
-            fragment.arguments = bundleOf(ExtensionBrowser.KEY_ITEMS_LIST to ArrayList(items),
-                ExtensionBrowser.KEY_SHOW_FAB to showParams, ExtensionBrowser.KEY_TITLE to title)
-            extensionsService?.let { fragment.setExtensionService(it) }
-            when {
-                currentFragment !is ExtensionBrowser -> //case: non-extension to extension root
-                    showFragment(fragment, extensionId, title)
-                currentFragmentId == extensionId -> //case: extension root to extension sub dir
-                    showFragment(fragment, extensionId, title)
-                else -> { //case: extension to other extension root
-                    clearBackstackFromClass(ExtensionBrowser::class.java)
-                    showFragment(fragment, extensionId, title)
-                }
-            }
-        }
-        updateCheckedItem(extensionId)
     }
 
     private fun updateCheckedItem(id: Int) {
@@ -268,14 +223,7 @@ interface INavigator {
     var appbarLayout: AppBarLayout
     var currentFragmentId : Int
 
-
-    var extensionsManager: ExtensionsManager
-    var extensionServiceConnection: ServiceConnection?
-    var extensionManagerService: ExtensionManagerService?
-
     fun MainActivity.setupNavigation(state: Bundle?)
-    fun currentIdIsExtension() : Boolean
-    fun displayExtensionItems(extensionId: Int, title: String, items: List<VLCExtensionItem>, showParams: Boolean, refresh: Boolean)
     fun reloadPreferences()
     fun configurationChanged(size:Int)
     fun getFragmentWidth(activity: Activity): Int

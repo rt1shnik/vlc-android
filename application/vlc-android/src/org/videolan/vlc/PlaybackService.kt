@@ -160,7 +160,6 @@ class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, CoroutineSc
                 VLCAppWidgetProvider.ACTION_WIDGET_INIT -> updateWidget()
                 VLCAppWidgetProvider.ACTION_WIDGET_ENABLED, VLCAppWidgetProvider.ACTION_WIDGET_DISABLED -> updateHasWidget()
                 VLCAppWidgetProvider.ACTION_WIDGET_ENABLED, VLCAppWidgetProvider.ACTION_WIDGET_DISABLED -> updateHasWidget()
-                ACTION_CAR_MODE_EXIT -> MediaSessionBrowser.unbindExtensionConnection()
                 AudioManager.ACTION_AUDIO_BECOMING_NOISY -> if (detectHeadset) {
                     if (BuildConfig.DEBUG) Log.i(TAG, "Becoming noisy")
                     wasPlaying = isPlaying
@@ -1670,20 +1669,16 @@ class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, CoroutineSc
         }
     }
 
-    override fun onLoadChildren(parentId: String, result: Result<List<MediaBrowserCompat.MediaItem>>) {
+    override fun onLoadChildren(
+        parentId: String,
+        result: Result<List<MediaBrowserCompat.MediaItem>>
+    ) {
         result.detach()
         val reload = parentId == MediaSessionBrowser.ID_LAST_ADDED && parentId != lastParentId
         lastParentId = parentId
         lifecycleScope.launch(start = CoroutineStart.UNDISPATCHED) {
             awaitMedialibraryStarted()
-            lifecycleScope.launch(Dispatchers.IO) {
-                try {
-                    result.sendResult(MediaSessionBrowser.browse(applicationContext, parentId, isShuffling))
-                    if (reload && !medialibrary.isWorking) applicationContext.reloadLibrary()
-                } catch (e: RuntimeException) {
-                    Log.e(TAG, "Failed to load children for $parentId", e)
-                }
-            }
+            Log.e(TAG, "Failed to load children for $parentId")
         }
     }
 

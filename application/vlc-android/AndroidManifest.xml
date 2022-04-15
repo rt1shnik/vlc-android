@@ -535,7 +535,6 @@
             android:theme="@style/VLCTransparentTheme"
             android:label="" />
 
-        <service android:name=".extensions.ExtensionManagerService"/>
         <service android:name=".PlaybackService">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService"/>
