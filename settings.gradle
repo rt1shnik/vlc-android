@@ -1,3 +1,2 @@
-include ':libvlc'
 include ':application:tools', ':application:resources', ':application:app', ':application:live-plot-graph'
 include ':application:vlc-android'
