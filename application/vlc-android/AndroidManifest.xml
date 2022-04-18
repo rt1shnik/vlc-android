@@ -73,6 +73,7 @@
 
         <activity
             android:name=".StartActivity"
+            android:exported="true"
             android:theme="@style/Theme.VLC.Transparent.NoUI">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -493,6 +494,7 @@
             android:icon="@mipmap/ic_launcher_reporter"
             android:launchMode="singleTask"
             android:excludeFromRecents="true"
+            android:exported="true"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -535,9 +537,11 @@
             android:theme="@style/VLCTransparentTheme"
             android:label="" />
 
-        <service android:name=".PlaybackService">
+        <service
+            android:name=".PlaybackService"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.media.browse.MediaBrowserService"/>
+                <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
         <service android:name=".MediaParsingService"/>
@@ -574,9 +578,11 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_provider_b"/>
         </receiver>
-        <receiver android:name="androidx.media.session.MediaButtonReceiver">
+        <receiver
+            android:name="androidx.media.session.MediaButtonReceiver"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON"/>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
 
