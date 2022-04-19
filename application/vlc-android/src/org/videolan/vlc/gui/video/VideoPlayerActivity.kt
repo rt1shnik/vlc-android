@@ -366,6 +366,8 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
 
     override fun createConfigurationContext(overrideConfiguration: Configuration) = super.createConfigurationContext(overrideConfiguration).getContextWithLocale(AppContextProvider.locale)
 
+    open val layoutId = R.id.player_root
+
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -385,7 +387,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         setContentView(if (displayManager.isPrimary) R.layout.player else R.layout.player_remote_control)
 
 
-        rootView = findViewById(R.id.player_root)
+        rootView = findViewById(layoutId)
 
 
         overlayDelegate.playlist = findViewById(R.id.video_playlist)
