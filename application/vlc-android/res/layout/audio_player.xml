@@ -698,7 +698,7 @@
                 app:layout_constraintTop_toTopOf="@+id/play_pause"
                 app:srcCompat="@drawable/ic_repeat_audio" />
 
-        <androidx.appcompat.widget.ViewStubCompat
+        <ViewStub
                 android:id="@+id/player_options_stub"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -708,7 +708,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.ViewStubCompat
+        <ViewStub
                 android:id="@+id/bookmarks_stub"
                 android:layout_width="0dp"
                 android:layout_height="0dp"

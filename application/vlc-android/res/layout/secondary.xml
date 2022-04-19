@@ -19,7 +19,7 @@
                 android:keyboardNavigationCluster="true"
                 tools:targetApi="o" />
 
-        <androidx.appcompat.widget.ViewStubCompat
+        <ViewStub
                 android:id="@+id/scan_viewstub"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -43,13 +43,13 @@
                 android:layout_margin="16dp" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <androidx.appcompat.widget.ViewStubCompat
+    <ViewStub
             android:id="@+id/audio_playlist_tips"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout="@layout/audio_playlist_tips" />
 
-    <androidx.appcompat.widget.ViewStubCompat
+    <ViewStub
             android:id="@+id/audio_player_tips"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

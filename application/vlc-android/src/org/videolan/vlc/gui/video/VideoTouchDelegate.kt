@@ -14,7 +14,6 @@ import android.view.*
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.ViewStubCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.ScaleGestureDetectorCompat
@@ -609,7 +608,7 @@ class VideoTouchDelegate(private val player: VideoPlayerActivity,
         seekRewindSecond.alpha = 0f
     }
 
-    private fun initSeekOverlay() = player.findViewById<ViewStubCompat>(R.id.player_seek_stub)?.setVisible()
+    private fun initSeekOverlay() = player.findViewById<ViewStub>(R.id.player_seek_stub)?.setVisible()
 
 }
 

@@ -90,7 +90,7 @@
                 android:tint="@color/grey50" />
 
         <include layout="@layout/audioplayercontainer" />
-        <androidx.appcompat.widget.ViewStubCompat
+        <ViewStub
                 android:id="@+id/audio_player_tips"
                 android:layout="@layout/audio_player_tips"
                 android:layout_height="match_parent"

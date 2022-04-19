@@ -34,7 +34,7 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:targetApi="o" />
 
-    <androidx.appcompat.widget.ViewStubCompat
+    <ViewStub
             android:id="@+id/scan_viewstub"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
             app:menu="@menu/bottom_navigation" />
 
 
-    <androidx.appcompat.widget.ViewStubCompat
+    <ViewStub
             android:id="@+id/audio_player_tips"
             android:layout="@layout/audio_player_tips"
             android:layout_height="match_parent"

@@ -25,13 +25,9 @@
 package org.videolan.vlc.gui.video
 
 import android.os.Handler
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.widget.CheckBox
 import android.widget.FrameLayout
-import androidx.appcompat.widget.ViewStubCompat
 import androidx.core.content.edit
 import androidx.core.widget.NestedScrollView
 import androidx.leanback.widget.BrowseFrameLayout
@@ -69,7 +65,7 @@ class VideoPlayerResizeDelegate(private val player: VideoPlayerActivity) {
      * Show the resize overlay. Inflate it if it's not yet
      */
     fun showResizeOverlay() {
-        player.findViewById<ViewStubCompat>(R.id.player_resize_stub)?.let {
+        player.findViewById<ViewStub>(R.id.player_resize_stub)?.let {
             resizeMainView = it.inflate() as FrameLayout
             val browseFrameLayout = resizeMainView.findViewById<BrowseFrameLayout>(R.id.resize_background)
             browseFrameLayout.onFocusSearchListener = BrowseFrameLayout.OnFocusSearchListener { focused, direction ->

@@ -6,9 +6,9 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewStub
 import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.appcompat.widget.ViewStubCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import androidx.leanback.widget.BrowseFrameLayout
@@ -119,7 +119,7 @@ class PlayerOptionsDelegate(val activity: FragmentActivity, val service: Playbac
     }
 
     fun show() {
-        activity.findViewById<ViewStubCompat>(R.id.player_options_stub)?.let {
+        activity.findViewById<ViewStub>(R.id.player_options_stub)?.let {
             rootView = it.inflate() as FrameLayout
             recyclerview = rootView.findViewById(R.id.options_list)
             val browseFrameLayout =  rootView.findViewById<BrowseFrameLayout>(R.id.options_background)
@@ -191,14 +191,14 @@ class PlayerOptionsDelegate(val activity: FragmentActivity, val service: Playbac
             ID_SHOW_AUDIO_TIPS -> {
                 hide()
                 val audioPlayerContainerActivity = activity as AudioPlayerContainerActivity
-                audioPlayerContainerActivity.findViewById<ViewStubCompat>(R.id.audio_player_tips)?.let {
+                audioPlayerContainerActivity.findViewById<ViewStub>(R.id.audio_player_tips)?.let {
                     audioPlayerContainerActivity.tipsDelegate.init(it)
                 }
             }
             ID_SHOW_PLAYLIST_TIPS -> {
                 hide()
                 val audioPlayerContainerActivity = activity as AudioPlayerContainerActivity
-                audioPlayerContainerActivity.findViewById<ViewStubCompat>(R.id.audio_playlist_tips)?.let {
+                audioPlayerContainerActivity.findViewById<ViewStub>(R.id.audio_playlist_tips)?.let {
                     audioPlayerContainerActivity.playlistTipsDelegate.init(it)
                 }
             }

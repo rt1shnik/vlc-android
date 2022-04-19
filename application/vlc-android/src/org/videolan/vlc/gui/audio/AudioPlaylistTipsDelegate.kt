@@ -29,11 +29,11 @@ import android.graphics.Typeface
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewStub
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
 import android.widget.*
 import androidx.annotation.StringRes
-import androidx.appcompat.widget.ViewStubCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.animation.doOnEnd
@@ -80,7 +80,7 @@ class AudioPlaylistTipsDelegate(private val activity: AudioPlayerContainerActivi
     private lateinit var helpTitle: TextView
     private lateinit var helpDescription: TextView
 
-    fun init(vsc: ViewStubCompat?) {
+    fun init(vsc: ViewStub?) {
         vsc?.inflate()
         audioPlaylistTips = activity.findViewById(R.id.audioPlaylistTips)
         tracksContainer = activity.findViewById(R.id.tracksContainer)

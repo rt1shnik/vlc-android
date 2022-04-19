@@ -33,7 +33,6 @@ import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
-import androidx.appcompat.widget.ViewStubCompat
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.Insets
 import androidx.core.net.toUri
@@ -401,7 +400,7 @@ open class AudioPlayerContainerActivity : BaseActivity(), KeycodeListener {
     @SuppressLint("RestrictedApi")
     fun showTipViewIfNeeded(stubId: Int, settingKey: String) {
         if (BuildConfig.DEBUG || PlaybackService.hasRenderer()) return
-        val vsc = findViewById<ViewStubCompat>(stubId)
+        val vsc = findViewById<ViewStub>(stubId)
         if (vsc != null && !settings.getBoolean(settingKey, false) && !Settings.showTvUi) {
             when (stubId) {
                 R.id.audio_player_tips -> if (tipsDelegate.currentTip == null && !shownTips.contains(stubId)) tipsDelegate.init(vsc)
