@@ -172,7 +172,7 @@
                 vlc:layout_constraintTop_toBottomOf="@+id/player_overlay_title"
                 vlc:srcCompat="@drawable/ic_abrepeat_reset_circle" />
 
-        <androidx.appcompat.widget.ViewStubCompat
+        <ViewStub
                 android:id="@+id/bookmarks_stub"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
