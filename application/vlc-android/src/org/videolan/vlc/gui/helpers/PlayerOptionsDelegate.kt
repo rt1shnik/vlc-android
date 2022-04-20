@@ -157,7 +157,7 @@ open class PlayerOptionsDelegate(val activity: FragmentActivity, val service: Pl
         this.bookmarkClickedListener = listener
     }
 
-    fun onClick(option: PlayerOption) {
+    open fun onClick(option: PlayerOption) {
         when (option.id) {
             ID_SLEEP -> {
                 showFragment(ID_SLEEP)
