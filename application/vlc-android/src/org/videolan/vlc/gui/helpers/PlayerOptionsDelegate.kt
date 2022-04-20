@@ -59,7 +59,7 @@ private const val ID_AUDIO_CONTROLS_SETTING = 20L
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
 @SuppressLint("ShowToast")
-class PlayerOptionsDelegate(val activity: FragmentActivity, val service: PlaybackService, private val showABReapeat:Boolean = true) : LifecycleObserver {
+open class PlayerOptionsDelegate(val activity: FragmentActivity, val service: PlaybackService, private val showABReapeat:Boolean = true) : LifecycleObserver {
 
     private lateinit var bookmarkClickedListener: () -> Unit
     private lateinit var recyclerview: RecyclerView
@@ -70,13 +70,17 @@ class PlayerOptionsDelegate(val activity: FragmentActivity, val service: Playbac
     private val primary = activity is VideoPlayerActivity && activity.displayManager.isPrimary
     private val isChromecast = activity is VideoPlayerActivity && activity.displayManager.isOnRenderer
     private val video = activity is VideoPlayerActivity
-    private val res = activity.resources
+    protected val res = activity.resources
     private val settings = Settings.getInstance(activity)
     private lateinit var abrBinding: PlayerOptionItemBinding
     private lateinit var ptBinding: PlayerOptionItemBinding
     private lateinit var repeatBinding: PlayerOptionItemBinding
     private lateinit var shuffleBinding: PlayerOptionItemBinding
     private lateinit var sleepBinding: PlayerOptionItemBinding
+
+    open fun onCreateOptions(options: MutableList<PlayerOption>) {
+
+    }
 
     fun setup() {
         if (!this::recyclerview.isInitialized || PlayerController.playbackState == PlaybackStateCompat.STATE_STOPPED) return
@@ -115,6 +119,7 @@ class PlayerOptionsDelegate(val activity: FragmentActivity, val service: Playbac
             options.add(PlayerOption(ID_SHOW_PLAYLIST_TIPS, R.drawable.ic_playlisttips, res.getString(R.string.playlist_tips)))
             }
         }
+        onCreateOptions(options)
         (recyclerview.adapter as OptionsAdapter).update(options)
     }
 

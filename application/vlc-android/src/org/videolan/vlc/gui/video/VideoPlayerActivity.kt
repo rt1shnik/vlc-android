@@ -1192,13 +1192,17 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
 
     override fun showAdvancedOptions() {
         if (optionsDelegate == null) service?.let {
-            optionsDelegate = PlayerOptionsDelegate(this, it)
+            optionsDelegate = createOptionsDelegate(it)
             optionsDelegate!!.setBookmarkClickedListener {
                 overlayDelegate.showBookmarks()
             }
         }
         optionsDelegate?.show()
         overlayDelegate.hideOverlay(false)
+    }
+
+    open fun createOptionsDelegate(service: PlaybackService): PlayerOptionsDelegate {
+        return PlayerOptionsDelegate(this, service)
     }
 
     private fun volumeUp() {
