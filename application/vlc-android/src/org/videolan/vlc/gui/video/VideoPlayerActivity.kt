@@ -1386,8 +1386,15 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
                             handler.sendEmptyMessageDelayed(LOADING_ANIMATION, LOADING_ANIMATION_DELAY.toLong())
                     }
                 }
+                MediaPlayer.Event.TimeChanged -> {
+                    onTimeChanged(time)
+                }
             }
         }
+    }
+
+    protected open fun onTimeChanged(time: Long) {
+
     }
 
     private var currentTracks: Pair<String, List<IMedia.Track>>? = null
