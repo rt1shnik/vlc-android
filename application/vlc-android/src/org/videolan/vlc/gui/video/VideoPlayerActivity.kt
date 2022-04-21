@@ -366,7 +366,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
 
     override fun createConfigurationContext(overrideConfiguration: Configuration) = super.createConfigurationContext(overrideConfiguration).getContextWithLocale(AppContextProvider.locale)
 
-    open val layoutId = R.id.player_root
+    open val layoutId = R.layout.player
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -384,10 +384,10 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
 
         enableCloneMode = clone ?: settings.getBoolean("enable_clone_mode", false)
         displayManager = DisplayManager(this, PlaybackService.renderer, false, enableCloneMode, isBenchmark)
-        setContentView(if (displayManager.isPrimary) R.layout.player else R.layout.player_remote_control)
+        setContentView(if (displayManager.isPrimary) layoutId else R.layout.player_remote_control)
 
 
-        rootView = findViewById(layoutId)
+        rootView = findViewById(R.id.player_root)
 
 
         overlayDelegate.playlist = findViewById(R.id.video_playlist)
