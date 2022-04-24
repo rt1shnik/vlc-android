@@ -1782,7 +1782,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
     /**
      *
      */
-    private fun pause() {
+    protected fun pause() {
         service?.pause()
         rootView?.run { keepScreenOn = false }
     }
