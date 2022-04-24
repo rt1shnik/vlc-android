@@ -97,6 +97,10 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
     lateinit var playerUiContainer:RelativeLayout
 
     lateinit var hudBinding: PlayerHudBinding
+
+    val isHudBindingIsInitialized: Boolean
+        get() = ::hudBinding.isInitialized
+
     lateinit var hudRightBinding: PlayerHudRightBinding
     private var overlayBackground: View? = null
 
@@ -426,12 +430,12 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
                 if (!player.displayManager.isPrimary)
                     overlayBackground.setVisible()
                 updateOverlayPausePlay(true)
+                player.onOverlayShown()
             } else {
                 if (overlayTimeout != VideoPlayerActivity.OVERLAY_INFINITE)
                     player.handler.sendMessageDelayed(player.handler.obtainMessage(VideoPlayerActivity.FADE_OUT), overlayTimeout.toLong())
             }
             player.handler.removeMessages(VideoPlayerActivity.FADE_OUT)
-
         }
     }
 
@@ -851,6 +855,7 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
             player.isShowing = false
             dimStatusBar(true)
             playlistSearchText.editText?.setText("")
+            player.onOverlayHidden()
         } else if (!fromUser) {
             /*
              * Try to hide the Nav Bar again.

@@ -2154,6 +2154,12 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         else -> {}
     }
 
+    open fun onOverlayHidden() {
+    }
+
+    open fun onOverlayShown() {
+    }
+
     companion object {
 
         private const val TAG = "VLC/VideoPlayerActivity"
