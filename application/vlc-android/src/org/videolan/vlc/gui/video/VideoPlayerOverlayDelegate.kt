@@ -756,8 +756,8 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
         }
         if (player.service?.hasPlaylist() == true) hudRightBinding.playlistToggle.setVisible() else hudRightBinding.playlistToggle.setGone()
         if (::hudBinding.isInitialized) {
-            hudBinding.playlistPrevious.setVisible()
-            hudBinding.playlistNext.setVisible()
+//            hudBinding.playlistPrevious.setVisible()
+//            hudBinding.playlistNext.setVisible()
         }
         hudRightBinding.playlistToggle.setOnClickListener(player)
         closeButton.setOnClickListener { togglePlaylist() }
@@ -806,8 +806,8 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
             hudBinding.playerOverlayAdvFunction.visibility = if (show) View.VISIBLE else View.INVISIBLE
             hudBinding.playerResize.visibility = if (show) View.VISIBLE else View.INVISIBLE
             if (hasPlaylist) {
-                hudBinding.playlistPrevious.visibility = if (show) View.VISIBLE else View.INVISIBLE
-                hudBinding.playlistNext.visibility = if (show) View.VISIBLE else View.INVISIBLE
+//                hudBinding.playlistPrevious.visibility = if (show) View.VISIBLE else View.INVISIBLE
+//                hudBinding.playlistNext.visibility = if (show) View.VISIBLE else View.INVISIBLE
             }
             hudBinding.orientationToggle.visibility = if (AndroidDevices.isChromeBook) View.INVISIBLE else if (show) View.VISIBLE else View.INVISIBLE
         }
