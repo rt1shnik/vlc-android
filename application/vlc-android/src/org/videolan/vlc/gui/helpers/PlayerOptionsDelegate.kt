@@ -43,7 +43,6 @@ private const val ID_BOOKMARK = 4L
 private const val ID_CHAPTER_TITLE = 5L
 private const val ID_PLAYBACK_SPEED = 6L
 private const val ID_EQUALIZER = 7L
-private const val ID_SAVE_PLAYLIST = 8L
 private const val ID_POPUP_VIDEO = 9L
 private const val ID_REPEAT = 10L
 private const val ID_SHUFFLE = 11L
@@ -106,7 +105,6 @@ open class PlayerOptionsDelegate(val activity: FragmentActivity, val service: Pl
         if (chaptersCount > 1) options.add(PlayerOption(ID_CHAPTER_TITLE, R.drawable.ic_chapter, res.getString(R.string.go_to_chapter)))
         if (::bookmarkClickedListener.isInitialized) options.add(PlayerOption(ID_BOOKMARK, R.drawable.ic_bookmark, res.getString(R.string.bookmarks)))
         if (showABReapeat) options.add(PlayerOption(ID_ABREPEAT, R.drawable.ic_abrepeat, res.getString(R.string.ab_repeat)))
-        options.add(PlayerOption(ID_SAVE_PLAYLIST, R.drawable.ic_addtoplaylist, res.getString(R.string.playlist_save)))
         if (service.playlistManager.player.canDoPassthrough() && settings.getString("aout", "0") == "0")
             options.add(PlayerOption(ID_PASSTHROUGH, R.drawable.ic_passthrough, res.getString(R.string.audio_digital_title)))
         if (!Settings.showTvUi) {
@@ -248,11 +246,6 @@ open class PlayerOptionsDelegate(val activity: FragmentActivity, val service: Pl
             ID_EQUALIZER -> {
                 newFragment = EqualizerFragment.newInstance()
                 tag = "equalizer"
-            }
-            ID_SAVE_PLAYLIST -> {
-                activity.addToPlaylist(service.media)
-                hide()
-                return
             }
             else -> return
         }
