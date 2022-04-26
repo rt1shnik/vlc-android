@@ -41,7 +41,7 @@ private const val PLAYLIST_REPEAT_MODE_KEY = "audio_repeat_mode" //we keep the o
 
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
-class PlaylistManager(val service: PlaybackService) : MediaWrapperList.EventListener, IMedia.EventListener, CoroutineScope {
+open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.EventListener, IMedia.EventListener, CoroutineScope {
     override val coroutineContext = Dispatchers.Main.immediate + SupervisorJob()
 
     companion object {
@@ -451,10 +451,14 @@ class PlaylistManager(val service: PlaybackService) : MediaWrapperList.EventList
                     VideoPlayerActivity.getIntent(PLAY_FROM_SERVICE,
                             media, false, currentIndex))
         } else if (!player.switchToVideo) { //Start the video player
-            VideoPlayerActivity.startOpened(AppContextProvider.appContext, media.uri, currentIndex)
+            startPlayer(media.uri)
             if (!hasRenderer) player.switchToVideo = true
         }
         return true
+    }
+
+    protected open fun startPlayer(uri: Uri) {
+        VideoPlayerActivity.startOpened(AppContextProvider.appContext, uri, currentIndex)
     }
 
     fun setVideoTrackEnabled(enabled: Boolean) {

@@ -588,7 +588,7 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
         super.onCreate()
         NotificationHelper.createNotificationChannels(applicationContext)
         settings = Settings.getInstance(this)
-        playlistManager = PlaylistManager(this)
+        playlistManager = createPlaylistManager()
         Util.checkCpuCompatibility(this)
 
         medialibrary = Medialibrary.getInstance()
@@ -630,6 +630,10 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
         headSetDetection.observe(this) { detectHeadset(it) }
         equalizer.observe(this) { setEqualizer(it) }
         serviceFlow.value = this
+    }
+
+    protected open fun createPlaylistManager(): PlaylistManager {
+        return PlaylistManager(this)
     }
 
     private fun setupScope() {

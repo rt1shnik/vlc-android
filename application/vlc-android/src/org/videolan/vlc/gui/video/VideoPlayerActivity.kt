@@ -2208,11 +2208,11 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
             start(context, uri, null, false, -1)
         }
 
-        fun start(context: Context, uri: Uri, fromStart: Boolean) {
+        private fun start(context: Context, uri: Uri, fromStart: Boolean) {
             start(context, uri, null, fromStart, -1)
         }
 
-        fun start(context: Context, uri: Uri, title: String) {
+        private fun start(context: Context, uri: Uri, title: String) {
             start(context, uri, title, false, -1)
         }
 
