@@ -699,7 +699,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         medialibrary.pauseBackgroundOperations()
         super.onStart()
         startedScope = MainScope()
-        PlaybackService.start(this)
+        startPlaybackService()
         PlaybackService.serviceFlow.onEach { onServiceChanged(it) }.launchIn(startedScope)
         restoreBrightness()
         val filter = IntentFilter(PLAY_FROM_SERVICE)
@@ -710,6 +710,10 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         btFilter.addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
         registerReceiver(btReceiver, btFilter)
         overlayDelegate.overlayInfo.setInvisible()
+    }
+
+    open fun startPlaybackService() {
+        PlaybackService.start(this)
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)

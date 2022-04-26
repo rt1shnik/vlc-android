@@ -86,7 +86,7 @@ private const val TAG = "VLC/PlaybackService"
 
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
-class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, CoroutineScope {
+open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, CoroutineScope {
     override val coroutineContext = Dispatchers.IO + SupervisorJob()
 
     private var position: Long = -1L
@@ -228,7 +228,7 @@ class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, CoroutineSc
         get() {
             return when {
                 playlistManager.player.isVideoPlaying() -> {//PIP
-                    val notificationIntent = Intent(this, VideoPlayerActivity::class.java).apply { putExtra(VideoPlayerActivity.FROM_EXTERNAL, true) }
+                    val notificationIntent = Intent(this, playerClass).apply { putExtra(VideoPlayerActivity.FROM_EXTERNAL, true) }
                     PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                 }
                 playlistManager.videoBackground || canSwitchToVideo() && !currentMediaHasFlag(MediaWrapper.MEDIA_FORCE_AUDIO) -> {//resume video playback
@@ -242,6 +242,8 @@ class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, CoroutineSc
                 }
             }
         }
+
+    open val playerClass: Class<*> = VideoPlayerActivity::class.java
 
     @Volatile
     private var isForeground = false
