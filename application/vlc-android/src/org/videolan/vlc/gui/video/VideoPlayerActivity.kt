@@ -1484,14 +1484,6 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
     fun switchToAudioMode(showUI: Boolean) {
         if (service == null) return
         switchingView = true
-        // Show the MainActivity if it is not in background.
-        if (showUI && intent.getBooleanExtra(FROM_EXTERNAL, false)) {
-            val i = Intent().apply {
-                setClassName(applicationContext, MOBILE_MAIN_ACTIVITY)
-            }
-            startActivity(i)
-        }
-        exitOK()
     }
 
     override fun isInPictureInPictureMode(): Boolean {
