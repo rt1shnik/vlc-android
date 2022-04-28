@@ -384,6 +384,7 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
      * show overlay
      */
     fun showOverlayTimeout(timeout: Int) {
+        val start = System.currentTimeMillis()
         player.service?.let { service ->
             if (player.tipsDelegate.currentTip != null) return
             if (player.isInPictureInPictureMode) return
@@ -409,12 +410,14 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
                     showControls(true)
                 }
                 if (!isBookmarkShown()) dimStatusBar(false)
-
                 enterAnimate(arrayOf(hudBinding.progressOverlay, hudBackground), 100.dp.toFloat()) {
+                    println("animation1 time: ${System.currentTimeMillis() - start}")
                     if (overlayTimeout != VideoPlayerActivity.OVERLAY_INFINITE)
                         player.handler.sendMessageDelayed(player.handler.obtainMessage(VideoPlayerActivity.FADE_OUT), overlayTimeout.toLong())
                 }
-                enterAnimate(arrayOf(hudRightBinding.hudRightOverlay, hudRightBackground), -100.dp.toFloat())
+                enterAnimate(arrayOf(hudRightBinding.hudRightOverlay, hudRightBackground), -100.dp.toFloat()) {
+                    println("animation2 time: ${System.currentTimeMillis() - start}")
+                }
 
                 hingeArrowLeft?.animate()?.alpha(1F)
                 hingeArrowRight?.animate()?.alpha(1F)
@@ -429,6 +432,8 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
             player.handler.removeMessages(VideoPlayerActivity.FADE_OUT)
 
         }
+        val end = System.currentTimeMillis()
+        println("showOverlayTimeout: ${end - start}")
     }
 
     fun updateOverlayPausePlay(skipAnim: Boolean = false) {
