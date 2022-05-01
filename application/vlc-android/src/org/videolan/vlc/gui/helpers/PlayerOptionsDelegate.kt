@@ -113,7 +113,6 @@ open class PlayerOptionsDelegate(val activity: FragmentActivity, val service: Pl
             options.add(PlayerOption(ID_SHOW_VIDEO_TIPS, R.drawable.ic_videotips, res.getString(R.string.tips_title)))
             } else {
             options.add(PlayerOption(ID_AUDIO_CONTROLS_SETTING, R.drawable.ic_audio_controls, res.getString(R.string.controls_setting)))
-            options.add(PlayerOption(ID_SHOW_PLAYLIST_TIPS, R.drawable.ic_playlisttips, res.getString(R.string.playlist_tips)))
             }
         }
         onCreateOptions(options)
@@ -191,13 +190,6 @@ open class PlayerOptionsDelegate(val activity: FragmentActivity, val service: Pl
                 val audioPlayerContainerActivity = activity as AudioPlayerContainerActivity
                 audioPlayerContainerActivity.findViewById<ViewStub>(R.id.audio_player_tips)?.let {
                     audioPlayerContainerActivity.tipsDelegate.init(it)
-                }
-            }
-            ID_SHOW_PLAYLIST_TIPS -> {
-                hide()
-                val audioPlayerContainerActivity = activity as AudioPlayerContainerActivity
-                audioPlayerContainerActivity.findViewById<ViewStub>(R.id.audio_playlist_tips)?.let {
-                    audioPlayerContainerActivity.playlistTipsDelegate.init(it)
                 }
             }
             ID_BOOKMARK -> {
