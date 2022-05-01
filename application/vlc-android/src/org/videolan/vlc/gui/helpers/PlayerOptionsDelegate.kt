@@ -68,7 +68,7 @@ open class PlayerOptionsDelegate(val activity: FragmentActivity, val service: Pl
 
     private val primary = activity is VideoPlayerActivity && activity.displayManager.isPrimary
     private val isChromecast = activity is VideoPlayerActivity && activity.displayManager.isOnRenderer
-    private val video = activity is VideoPlayerActivity
+    open val video = activity is VideoPlayerActivity
     protected val res = activity.resources
     private val settings = Settings.getInstance(activity)
     private lateinit var abrBinding: PlayerOptionItemBinding
