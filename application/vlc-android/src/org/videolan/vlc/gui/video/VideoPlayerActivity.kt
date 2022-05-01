@@ -724,7 +724,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
 
         unregisterReceiver(btReceiver)
         alertDialog?.dismiss()
-        val playVideoInBackground = "1" == settings.getString(KEY_VIDEO_APP_SWITCH, "0")
+        val playVideoInBackground = true
         if (displayManager.isPrimary && !isFinishing && service?.isPlaying == true
                 && playVideoInBackground) {
             switchToAudioMode(false)
