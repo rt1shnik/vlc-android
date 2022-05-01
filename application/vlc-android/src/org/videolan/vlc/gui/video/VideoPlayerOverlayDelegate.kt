@@ -83,7 +83,7 @@ import java.util.*
 
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
-class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
+open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
 
     private lateinit var playerOverlayBrightness: ConstraintLayout
     private lateinit var brightnessValueText: TextView
@@ -837,7 +837,7 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
     /**
      * hider overlay
      */
-    fun hideOverlay(fromUser: Boolean) {
+    open fun hideOverlay(fromUser: Boolean) {
         if (player.isShowing) {
             if (isBookmarkShown()) hideBookmarks()
             player.handler.removeMessages(VideoPlayerActivity.FADE_OUT)
