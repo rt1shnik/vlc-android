@@ -128,6 +128,8 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
     var videoUri: Uri? = null
     private var askResume = true
 
+    open val isVideo = true
+
     var playlistModel: PlaylistModel? = null
 
     lateinit var settings: SharedPreferences

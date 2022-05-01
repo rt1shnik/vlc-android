@@ -635,7 +635,7 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     fun resetHudLayout() {
         if (!::hudBinding.isInitialized) return
-        if (!AndroidDevices.isChromeBook) {
+        if (!AndroidDevices.isChromeBook && player.isVideo) {
             hudBinding.orientationToggle.setVisible()
         }
     }
@@ -804,12 +804,12 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
             }
             hudBinding.playerOverlayTracks.visibility = if (show) View.VISIBLE else View.INVISIBLE
             hudBinding.playerOverlayAdvFunction.visibility = if (show) View.VISIBLE else View.INVISIBLE
-            hudBinding.playerResize.visibility = if (show) View.VISIBLE else View.INVISIBLE
+            hudBinding.playerResize.visibility = if (show && player.isVideo) View.VISIBLE else View.INVISIBLE
             if (hasPlaylist) {
 //                hudBinding.playlistPrevious.visibility = if (show) View.VISIBLE else View.INVISIBLE
 //                hudBinding.playlistNext.visibility = if (show) View.VISIBLE else View.INVISIBLE
             }
-            hudBinding.orientationToggle.visibility = if (AndroidDevices.isChromeBook) View.INVISIBLE else if (show) View.VISIBLE else View.INVISIBLE
+            hudBinding.orientationToggle.visibility = if (AndroidDevices.isChromeBook) View.INVISIBLE else if (show && player.isVideo) View.VISIBLE else View.INVISIBLE
         }
         if (::hudRightBinding.isInitialized) {
             val secondary = player.displayManager.isSecondary
