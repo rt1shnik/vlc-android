@@ -237,7 +237,7 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
                     PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                 }
                 else -> { /* Show audio player */
-                    val notificationIntent = Intent(this, playerClass)
+                    val notificationIntent = Intent(this, playerClass).apply { putExtra(VideoPlayerActivity.FROM_EXTERNAL, true) }
                     PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                 }
             }

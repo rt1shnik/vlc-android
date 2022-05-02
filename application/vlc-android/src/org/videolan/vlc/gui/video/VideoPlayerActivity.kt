@@ -424,7 +424,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         overlayDelegate.dimStatusBar(true)
         handler.sendEmptyMessageDelayed(LOADING_ANIMATION, LOADING_ANIMATION_DELAY.toLong())
 
-        switchingView = false
+        switchingView = intent.hasExtra(FROM_EXTERNAL)
 
         askResume = settings.getString(KEY_VIDEO_CONFIRM_RESUME, "0") == "2"
         sDisplayRemainingTime = settings.getBoolean(KEY_REMAINING_TIME_DISPLAY, false)
