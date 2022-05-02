@@ -60,6 +60,7 @@ import androidx.core.content.getSystemService
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Lifecycle
@@ -2136,6 +2137,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
                 if (volSave > 100 && service.volume != volSave) service.setVolume(volSave)
 
                 if (!isVideo) {
+                    stopLoading()
                     overlayDelegate.showOverlay()
                 }
             }
