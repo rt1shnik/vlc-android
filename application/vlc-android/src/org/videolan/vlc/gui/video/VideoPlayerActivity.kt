@@ -2134,6 +2134,10 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
                 // delay mediaplayer loading, prevent ANR
                 if (service.volume > 100 && !isAudioBoostEnabled) service.setVolume(100)
                 if (volSave > 100 && service.volume != volSave) service.setVolume(volSave)
+
+                if (!isVideo) {
+                    overlayDelegate.showOverlay()
+                }
             }
             service.addCallback(this)
             service.playlistManager.waitForConfirmation.observe(this) {
