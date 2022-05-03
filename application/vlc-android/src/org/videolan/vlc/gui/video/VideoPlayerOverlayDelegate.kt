@@ -419,7 +419,9 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
                 }
                 if (!isBookmarkShown()) dimStatusBar(false)
                 enterAnimate(arrayOf(hudBinding.progressOverlay, hudBackground), 100.dp.toFloat()) {
-                    println("animation1 time: ${System.currentTimeMillis() - start}")
+                    val end = System.currentTimeMillis()
+                    println("animation1 time: ${end - start}")
+                    println("from click to animation end: ${end - player.touchDelegate.lastTapTimeMs}")
                     if (overlayTimeout != VideoPlayerActivity.OVERLAY_INFINITE)
                         player.handler.sendMessageDelayed(player.handler.obtainMessage(VideoPlayerActivity.FADE_OUT), overlayTimeout.toLong())
                 }

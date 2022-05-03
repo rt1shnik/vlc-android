@@ -59,6 +59,7 @@ class VideoTouchDelegate(private val player: VideoPlayerActivity,
                          var screenConfig: ScreenConfig,
                          private val tv: Boolean) {
 
+    var upTime: Long = 0
     private val resizeDelegate: VideoPlayerResizeDelegate
         get() = player.resizeDelegate
     var handler = Handler()
@@ -201,6 +202,7 @@ class VideoTouchDelegate(private val player: VideoPlayerActivity,
                         }
                     }
                     MotionEvent.ACTION_UP -> {
+                        upTime = System.currentTimeMillis()
                         val touchSlop = ViewConfiguration.get(player).scaledTouchSlop
                         if (touchAction == TOUCH_IGNORE) touchAction = TOUCH_NONE
                         // Mouse events for the core
@@ -247,11 +249,13 @@ class VideoTouchDelegate(private val player: VideoPlayerActivity,
                             }
                         }
 
+                        val doubleTapTimeout = ViewConfiguration.getDoubleTapTimeout().toLong()
+                        println("doubleTapTimeout: :$doubleTapTimeout")
                         handler.postDelayed({
                             when (numberOfTaps) {
                                 1 -> player.handler.sendEmptyMessage(if (player.isShowing) VideoPlayerActivity.HIDE_INFO else VideoPlayerActivity.SHOW_INFO)
                             }
-                        }, ViewConfiguration.getDoubleTapTimeout().toLong())
+                        }, doubleTapTimeout)
                     }
                 }
                 return touchAction != TOUCH_NONE
