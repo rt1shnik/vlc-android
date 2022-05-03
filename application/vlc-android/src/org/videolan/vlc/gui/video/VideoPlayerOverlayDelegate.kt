@@ -32,6 +32,7 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Build
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewStub
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
@@ -157,10 +158,15 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
              val halfScreenSize = player.getScreenWidth() - foldingFeature.bounds.right
              arrayOf(playerUiContainer, hudBackground, hudRightBackground, playlistContainer).forEach {
                  it?.let { view ->
-                     val lp = (view.layoutParams as RelativeLayout.LayoutParams)
+                     val lp = (view.layoutParams as ConstraintLayout.LayoutParams)
                      lp.width = halfScreenSize
-                     lp.addRule(if (onRight) RelativeLayout.ALIGN_PARENT_RIGHT else RelativeLayout.ALIGN_PARENT_LEFT)
-                     lp.removeRule(if (onRight) RelativeLayout.ALIGN_PARENT_LEFT else RelativeLayout.ALIGN_PARENT_RIGHT)
+                     if (onRight) {
+                         lp.endToEnd = 0
+                         lp.startToStart = -1
+                     } else {
+                         lp.startToStart = 0
+                         lp.endToEnd = -1
+                     }
                      view.layoutParams = lp
                  }
              }
@@ -168,16 +174,16 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
          } else {
              //device is separated and half opened. We display the controls on the bottom half and the video on the top half
              if (foldingFeature.state == FoldingFeature.State.HALF_OPENED) {
-                 val videoLayoutLP = (player.videoLayout!!.layoutParams as RelativeLayout.LayoutParams)
+                 val videoLayoutLP = (player.videoLayout!!.layoutParams as ViewGroup.LayoutParams)
                  val halfScreenSize = foldingFeature.bounds.top
                  videoLayoutLP.height = halfScreenSize
                  player.videoLayout!!.layoutParams = videoLayoutLP
                  player.findViewById<FrameLayout>(R.id.player_surface_frame).children.forEach { it.requestLayout() }
 
                  arrayOf(playerUiContainer, playlistContainer).forEach {
-                     val lp = (it.layoutParams as RelativeLayout.LayoutParams)
+                     val lp = (it.layoutParams as ConstraintLayout.LayoutParams)
                      lp.height = halfScreenSize
-                     lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+                     lp.bottomToBottom = 0
                      it.layoutParams = lp
                  }
                  arrayOf(hudBackground, hudRightBackground).forEach {
@@ -206,15 +212,15 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
     private fun resetHingeLayout() {
         arrayOf(playerUiContainer, hudBackground, hudRightBackground, playlistContainer).forEach {
             it?.let { view ->
-                val lp = (view.layoutParams as RelativeLayout.LayoutParams)
+                val lp = (view.layoutParams as ViewGroup.LayoutParams)
                 lp.width = RelativeLayout.LayoutParams.MATCH_PARENT
                 view.layoutParams = lp
             }
         }
         arrayOf(playerUiContainer, playlistContainer).forEach {
-            val lp = (it.layoutParams as RelativeLayout.LayoutParams)
+            val lp = (it.layoutParams as ConstraintLayout.LayoutParams)
             lp.height = RelativeLayout.LayoutParams.MATCH_PARENT
-            lp.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+            lp.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
             it.layoutParams = lp
         }
         if (::hudBinding.isInitialized) arrayOf(hudBackground, hudRightBackground).forEach {
@@ -222,7 +228,7 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
         }
         hingeArrowLeft.visibility = View.GONE
         hingeArrowRight.visibility = View.GONE
-        val lp = (player.videoLayout!!.layoutParams as RelativeLayout.LayoutParams)
+        val lp = (player.videoLayout!!.layoutParams as ViewGroup.LayoutParams)
         lp.height = RelativeLayout.LayoutParams.MATCH_PARENT
         player.videoLayout!!.layoutParams = lp
         player.findViewById<FrameLayout>(R.id.player_surface_frame).children.forEach { it.requestLayout() }
