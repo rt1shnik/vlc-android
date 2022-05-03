@@ -95,7 +95,7 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
     var info: TextView? = null
     var subinfo: TextView? = null
     var overlayInfo: View? = null
-    lateinit var playerUiContainer:RelativeLayout
+    lateinit var playerUiContainer:ViewGroup
 
     lateinit var hudBinding: PlayerHudBinding
 
