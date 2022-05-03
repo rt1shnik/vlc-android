@@ -479,11 +479,8 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
 
     private fun enterAnimate(views: Array<View?>, translationStart: Float, endListener:(()->Unit)? = null) = views.forEach { view ->
         view.setVisible()
-        view?.alpha = 0f
-        view?.translationY = translationStart
-        view?.animate()?.alpha(1F)?.translationY(0F)?.setDuration(150L)?.setListener(null)?.withEndAction {
-            endListener?.invoke()
-        }
+        view?.alpha = 1f
+        view?.translationY = 0F
     }
 
     private fun exitAnimate(views: Array<View?>, translationEnd: Float) = views.forEach { view ->
