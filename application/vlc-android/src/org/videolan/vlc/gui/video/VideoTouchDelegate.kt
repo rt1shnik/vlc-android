@@ -250,12 +250,17 @@ class VideoTouchDelegate(private val player: VideoPlayerActivity,
                         }
 
                         val doubleTapTimeout = ViewConfiguration.getDoubleTapTimeout().toLong()
-                        println("doubleTapTimeout: :$doubleTapTimeout")
-                        handler.postDelayed({
+                        val showHideUIRunnable = Runnable {
                             when (numberOfTaps) {
                                 1 -> player.handler.sendEmptyMessage(if (player.isShowing) VideoPlayerActivity.HIDE_INFO else VideoPlayerActivity.SHOW_INFO)
                             }
-                        }, doubleTapTimeout)
+                        }
+
+                        if (touchControls and (TOUCH_FLAG_PLAY or TOUCH_FLAG_DOUBLE_TAP_SEEK) != 0) {
+                            handler.postDelayed(showHideUIRunnable, doubleTapTimeout)
+                        } else {
+                            showHideUIRunnable.run()
+                        }
                     }
                 }
                 return touchAction != TOUCH_NONE
