@@ -112,6 +112,7 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
     lateinit var playToPause: AnimatedVectorDrawableCompat
     lateinit var pauseToPlay: AnimatedVectorDrawableCompat
 
+    private val hudBackground: View? by lazy { player.findViewById(R.id.hud_background) }
     private val hudRightBackground: View? by lazy { player.findViewById(R.id.hud_right_background) }
 
     private lateinit var abRepeatAddMarker: Button
@@ -155,7 +156,7 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
              hingeArrowLeft.visibility = if (onRight && ::hudBinding.isInitialized) View.VISIBLE else View.GONE
              hingeArrowRight.visibility = if (!onRight && ::hudBinding.isInitialized) View.VISIBLE else View.GONE
              val halfScreenSize = player.getScreenWidth() - foldingFeature.bounds.right
-             arrayOf(playerUiContainer, hudRightBackground, playlistContainer).forEach {
+             arrayOf(playerUiContainer, hudBackground, hudRightBackground, playlistContainer).forEach {
                  it?.let { view ->
                      val lp = (view.layoutParams as ConstraintLayout.LayoutParams)
                      lp.width = halfScreenSize
@@ -185,7 +186,7 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
                      lp.bottomToBottom = 0
                      it.layoutParams = lp
                  }
-                 arrayOf(hudRightBackground).forEach {
+                 arrayOf(hudBackground, hudRightBackground).forEach {
                      it?.setGone()
                  }
                  showHingeSnackIfNeeded()
@@ -209,7 +210,7 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
      * Resets the layout to normal after a fold/hinge status change
      */
     private fun resetHingeLayout() {
-        arrayOf(playerUiContainer, hudRightBackground, playlistContainer).forEach {
+        arrayOf(playerUiContainer, hudBackground, hudRightBackground, playlistContainer).forEach {
             it?.let { view ->
                 val lp = (view.layoutParams as ViewGroup.LayoutParams)
                 lp.width = RelativeLayout.LayoutParams.MATCH_PARENT
@@ -222,7 +223,7 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
             lp.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
             it.layoutParams = lp
         }
-        if (::hudBinding.isInitialized) arrayOf(hudRightBackground).forEach {
+        if (::hudBinding.isInitialized) arrayOf(hudBackground, hudRightBackground).forEach {
             it?.setVisible()
         }
         hingeArrowLeft.visibility = View.GONE
@@ -423,7 +424,7 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
                     showControls(true)
                 }
                 if (!isBookmarkShown()) dimStatusBar(false)
-                enterAnimate(arrayOf(hudBinding.progressOverlay), 100.dp.toFloat()) {
+                enterAnimate(arrayOf(hudBinding.progressOverlay, hudBackground), 100.dp.toFloat()) {
                     val end = System.currentTimeMillis()
                     println("animation1 time: ${end - start}")
                     println("from click to animation end: ${end - player.touchDelegate.lastTapTimeMs}")
@@ -875,7 +876,7 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
                 overlayBackground.setInvisible()
             }
 
-            exitAnimate(arrayOf(hudBinding.progressOverlay),100.dp.toFloat())
+            exitAnimate(arrayOf(hudBinding.progressOverlay, hudBackground),100.dp.toFloat())
             exitAnimate(arrayOf(hudRightBinding.hudRightOverlay, hudRightBackground),-100.dp.toFloat())
             hingeArrowLeft.animate().alpha(0F)
             hingeArrowRight.animate().alpha(0F)

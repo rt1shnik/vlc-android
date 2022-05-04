@@ -56,6 +56,14 @@
 
     <View
         android:layout_width="match_parent"
+        android:layout_height="130dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/hud_background"
+        android:background="@drawable/gradient_hud_player"
+        android:visibility="gone"/>
+
+    <View
+        android:layout_width="match_parent"
         android:layout_height="150dp"
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/hud_right_background"
