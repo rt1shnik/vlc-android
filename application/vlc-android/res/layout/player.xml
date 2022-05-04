@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="@dimen/tv_overscan_horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginBottom="@dimen/default_margin"
         android:layout="@layout/player_overlay_volume" />
