@@ -477,10 +477,30 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
         }
     }
 
+    class OnLayoutListener(val endListener: (() -> Unit)? = null) : View.OnLayoutChangeListener {
+        override fun onLayoutChange(
+            v: View,
+            left: Int,
+            top: Int,
+            right: Int,
+            bottom: Int,
+            oldLeft: Int,
+            oldTop: Int,
+            oldRight: Int,
+            oldBottom: Int
+        ) {
+            if (v.translationY == 0f) {
+                endListener?.invoke()
+                v.removeOnLayoutChangeListener(this)
+            }
+        }
+    }
+
     private fun enterAnimate(views: Array<View?>, translationStart: Float, endListener:(()->Unit)? = null) = views.forEach { view ->
         view.setVisible()
         view?.alpha = 1f
         view?.translationY = 0F
+        view?.addOnLayoutChangeListener(OnLayoutListener(endListener))
     }
 
     private fun exitAnimate(views: Array<View?>, translationEnd: Float) = views.forEach { view ->
