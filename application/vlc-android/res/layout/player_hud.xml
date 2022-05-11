@@ -67,10 +67,11 @@
                             vlc:layout_constraintStart_toStartOf="parent"
                             vlc:layout_constraintTop_toTopOf="parent" />
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <LinearLayout
                             android:id="@+id/stats_graphs"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:orientation="vertical"
                             android:padding="8dp"
                             vlc:layout_constraintEnd_toEndOf="parent"
                             vlc:layout_constraintStart_toStartOf="parent"
@@ -78,31 +79,24 @@
 
                         <TextView
                                 android:id="@+id/video_stats_title"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/video_information"
-                                android:textColor="@color/orange500"
-                                vlc:layout_constraintEnd_toEndOf="parent"
-                                vlc:layout_constraintStart_toStartOf="parent"
-                                vlc:layout_constraintTop_toTopOf="parent" />
+                                android:textColor="@color/orange500" />
 
                         <org.videolan.liveplotgraph.PlotView
                                 android:id="@+id/plotView"
                                 android:layout_width="250dp"
                                 android:layout_height="140dp"
                                 android:layout_marginTop="16dp"
-                                vlc:layout_constraintStart_toStartOf="parent"
-                                vlc:layout_constraintTop_toBottomOf="@+id/video_stats_title"
                                 vlc:lpg_color="@color/white" />
 
                         <org.videolan.liveplotgraph.LegendView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
-                                vlc:layout_constraintStart_toStartOf="@+id/plotView"
-                                vlc:layout_constraintTop_toBottomOf="@+id/plotView"
                                 vlc:lpg_plot_view="@+id/plotView" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    </LinearLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
