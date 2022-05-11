@@ -200,27 +200,21 @@
                     vlc:layout_constraintLeft_toLeftOf="parent"
                     vlc:layout_constraintTop_toTopOf="parent" />
 
-            <FrameLayout
-                    android:id="@+id/player_overlay_length_container"
-                    android:layout_width="wrap_content"
+            <TextView
+                    android:id="@+id/player_overlay_length"
+                    style="@style/VLC.Player.TimeText"
+                    android:layout_width="66dp"
                     android:layout_height="wrap_content"
+                    android:gravity="end"
                     android:layout_marginEnd="24dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:nextFocusUp="@+id/ab_repeat_add_marker"
+                    android:onClick="@{(v) -> player.toggleTimeDisplay()}"
+                    tools:text="56:37"
                     vlc:layout_constraintRight_toRightOf="parent"
-                    vlc:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                        android:id="@+id/player_overlay_length"
-                        style="@style/VLC.Player.TimeText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="right"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:nextFocusUp="@+id/ab_repeat_add_marker"
-                        android:onClick="@{(v) -> player.toggleTimeDisplay()}"
-                        tools:text="56:37"
-                        vlc:length="@{progress.length}"
-                        vlc:time="@{progress.time}" />
-            </FrameLayout>
+                    vlc:layout_constraintTop_toTopOf="parent"
+                    vlc:length="@{progress.length}"
+                    vlc:time="@{progress.time}" />
 
 <!--           ⚠️ margin are set in code!!!-->
             <SeekBar
