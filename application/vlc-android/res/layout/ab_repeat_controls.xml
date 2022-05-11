@@ -22,11 +22,13 @@
   ~
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:vlc="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:background="@drawable/rounded_corners_full"
         android:visibility="gone"
         tools:visibility="visible"
@@ -37,10 +39,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            vlc:layout_constraintBottom_toBottomOf="parent"
-            vlc:layout_constraintEnd_toStartOf="@+id/ab_repeat_add_marker"
-            vlc:layout_constraintStart_toStartOf="parent"
-            vlc:layout_constraintTop_toTopOf="parent"
             vlc:srcCompat="@drawable/ic_abrepeat_chips" />
 
     <Button
@@ -49,10 +47,5 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:visibility="gone"
-            vlc:layout_constraintBottom_toBottomOf="parent"
-            vlc:layout_constraintEnd_toEndOf="parent"
-            vlc:layout_constraintStart_toEndOf="@+id/imageView9"
-            vlc:layout_constraintTop_toTopOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+            android:visibility="gone" />
+</LinearLayout>
