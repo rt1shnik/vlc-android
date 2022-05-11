@@ -33,7 +33,7 @@
             tools:theme="@style/Theme.VLC.Player"
             tools:visibility="visible">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <FrameLayout
                 android:id="@+id/stats_container"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -48,12 +48,8 @@
 
             <androidx.core.widget.NestedScrollView
                     android:id="@+id/stats_scrollview"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    vlc:layout_constraintBottom_toBottomOf="parent"
-                    vlc:layout_constraintEnd_toEndOf="parent"
-                    vlc:layout_constraintStart_toStartOf="parent"
-                    vlc:layout_constraintTop_toTopOf="parent">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/stats_scrollview_content"
@@ -71,10 +67,11 @@
                             vlc:layout_constraintStart_toStartOf="parent"
                             vlc:layout_constraintTop_toTopOf="parent" />
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <LinearLayout
                             android:id="@+id/stats_graphs"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:orientation="vertical"
                             android:padding="8dp"
                             vlc:layout_constraintEnd_toEndOf="parent"
                             vlc:layout_constraintStart_toStartOf="parent"
@@ -82,31 +79,24 @@
 
                         <TextView
                                 android:id="@+id/video_stats_title"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/video_information"
-                                android:textColor="@color/orange500"
-                                vlc:layout_constraintEnd_toEndOf="parent"
-                                vlc:layout_constraintStart_toStartOf="parent"
-                                vlc:layout_constraintTop_toTopOf="parent" />
+                                android:textColor="@color/orange500" />
 
                         <org.videolan.liveplotgraph.PlotView
                                 android:id="@+id/plotView"
                                 android:layout_width="250dp"
                                 android:layout_height="140dp"
                                 android:layout_marginTop="16dp"
-                                vlc:layout_constraintStart_toStartOf="parent"
-                                vlc:layout_constraintTop_toBottomOf="@+id/video_stats_title"
                                 vlc:lpg_color="@color/white" />
 
                         <org.videolan.liveplotgraph.LegendView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
-                                vlc:layout_constraintStart_toStartOf="@+id/plotView"
-                                vlc:layout_constraintTop_toBottomOf="@+id/plotView"
                                 vlc:lpg_plot_view="@+id/plotView" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    </LinearLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -114,16 +104,14 @@
 
             <ImageView
                     android:id="@+id/stats_close"
+                    android:layout_gravity="top|end"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    vlc:layout_constraintEnd_toEndOf="parent"
-                    vlc:layout_constraintTop_toTopOf="parent"
                     vlc:srcCompat="@drawable/ic_close_small" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </FrameLayout>
 
 
         <include
@@ -196,49 +184,39 @@
                 vlc:layout_constraintEnd_toEndOf="parent"
                 vlc:layout_constraintStart_toStartOf="parent">
 
-            <FrameLayout
-                    android:id="@+id/player_overlay_time_container"
-                    android:layout_width="wrap_content"
+            <TextView
+                    android:id="@+id/player_overlay_time"
+                    style="@style/VLC.Player.TimeText"
+                    android:layout_width="66dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
+                    android:gravity="start"
+                    android:lines="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:nextFocusUp="@+id/ab_repeat_add_marker"
+                    android:onClick="@{(v) -> player.toggleTimeDisplay()}"
+                    android:text="@{Tools.millisToString(progress.time)}"
+                    tools:text="0:32"
                     vlc:layout_constraintHorizontal_chainStyle="spread_inside"
                     vlc:layout_constraintLeft_toLeftOf="parent"
-                    vlc:layout_constraintTop_toTopOf="parent">
+                    vlc:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                        android:id="@+id/player_overlay_time"
-                        style="@style/VLC.Player.TimeText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:nextFocusUp="@+id/ab_repeat_add_marker"
-                        android:onClick="@{(v) -> player.toggleTimeDisplay()}"
-                        android:text="@{Tools.millisToString(progress.time)}"
-                        android:textAlignment="center"
-                        tools:text="0:32" />
-            </FrameLayout>
-
-            <FrameLayout
-                    android:id="@+id/player_overlay_length_container"
-                    android:layout_width="wrap_content"
+            <TextView
+                    android:id="@+id/player_overlay_length"
+                    style="@style/VLC.Player.TimeText"
+                    android:layout_width="66dp"
                     android:layout_height="wrap_content"
+                    android:gravity="end"
                     android:layout_marginEnd="24dp"
+                    android:lines="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:nextFocusUp="@+id/ab_repeat_add_marker"
+                    android:onClick="@{(v) -> player.toggleTimeDisplay()}"
+                    tools:text="56:37"
                     vlc:layout_constraintRight_toRightOf="parent"
-                    vlc:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                        android:id="@+id/player_overlay_length"
-                        style="@style/VLC.Player.TimeText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="right"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:nextFocusUp="@+id/ab_repeat_add_marker"
-                        android:onClick="@{(v) -> player.toggleTimeDisplay()}"
-                        tools:text="56:37"
-                        vlc:length="@{progress.length}"
-                        vlc:time="@{progress.time}" />
-            </FrameLayout>
+                    vlc:layout_constraintTop_toTopOf="parent"
+                    vlc:length="@{progress.length}"
+                    vlc:time="@{progress.time}" />
 
 <!--           ⚠️ margin are set in code!!!-->
             <SeekBar
@@ -257,7 +235,7 @@
                     android:thumb="@drawable/ic_seekbar_thumb"
                     vlc:layout_constraintEnd_toEndOf="parent"
                     vlc:layout_constraintStart_toStartOf="parent"
-                    vlc:layout_constraintTop_toBottomOf="@+id/player_overlay_time_container"
+                    vlc:layout_constraintTop_toBottomOf="@+id/player_overlay_time"
                     vlc:mediamax="@{(int)progress.length}" />
 
             <androidx.constraintlayout.widget.ConstraintLayout

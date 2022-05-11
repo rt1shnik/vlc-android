@@ -30,10 +30,10 @@ import android.os.Handler
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
@@ -49,13 +49,17 @@ import org.videolan.vlc.R
 import org.videolan.vlc.databinding.PlayerHudBinding
 import org.videolan.vlc.gui.helpers.UiTools.isTablet
 import org.videolan.vlc.util.LocaleUtil
-import org.videolan.vlc.util.getScreenWidth
 import java.lang.Double
+import kotlin.Pair
+import kotlin.String
+import kotlin.Unit
+import kotlin.isInitialized
+import kotlin.let
 
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
 class VideoStatsDelegate(private val player: VideoPlayerActivity, val scrolling: () -> Unit, val idle: () -> Unit) {
-    lateinit var container: ConstraintLayout
+    lateinit var container: ViewGroup
     private var started = false
     private val plotHandler: Handler = Handler()
     private val firstTimecode = System.currentTimeMillis()
