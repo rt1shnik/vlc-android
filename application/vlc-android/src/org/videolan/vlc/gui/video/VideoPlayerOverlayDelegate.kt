@@ -729,7 +729,7 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
         }
     }
 
-    private fun applyMargin(view: View, margin: Int, isEnd: Boolean) = (view.layoutParams as ConstraintLayout.LayoutParams).apply {
+    private fun applyMargin(view: View, margin: Int, isEnd: Boolean) = (view.layoutParams as ViewGroup.MarginLayoutParams).apply {
         if (isEnd) marginEnd = margin else marginStart = margin
         view.layoutParams = this
     }
