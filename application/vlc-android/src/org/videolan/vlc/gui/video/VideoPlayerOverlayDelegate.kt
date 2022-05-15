@@ -38,9 +38,7 @@ import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.annotation.StringRes
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.children
@@ -61,7 +59,6 @@ import org.videolan.resources.AndroidDevices
 import org.videolan.tools.*
 import org.videolan.vlc.PlaybackService
 import org.videolan.vlc.R
-import org.videolan.vlc.RendererDelegate
 import org.videolan.vlc.databinding.PlayerHudBinding
 import org.videolan.vlc.databinding.PlayerHudRightBinding
 import org.videolan.vlc.gui.audio.PlaylistAdapter
@@ -569,8 +566,6 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
                 updateOrientationIcon()
                 overlayBackground = player.findViewById(R.id.player_overlay_background)
                 hudRightBinding.playerOverlayTitle.text = service.currentMediaWrapper?.title
-                manageTitleConstraints()
-                updateTitleConstraints()
                 updateHudMargins()
 
                 initSeekButton()
@@ -687,28 +682,9 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
         }
     }
 
-    private val titleConstraintSetLandscape = ConstraintSet()
-    private val titleConstraintSetPortrait = ConstraintSet()
-    private fun manageTitleConstraints() {
-        titleConstraintSetLandscape.clone(hudRightBinding.hudRightOverlay)
-        titleConstraintSetPortrait.clone(hudRightBinding.hudRightOverlay)
-        titleConstraintSetPortrait.setMargin(hudRightBinding.playerOverlayTitle.id, ConstraintSet.START, 16.dp)
-        titleConstraintSetPortrait.setMargin(hudRightBinding.playerOverlayTitle.id, ConstraintSet.END, 16.dp)
-        titleConstraintSetPortrait.connect(hudRightBinding.playerOverlayTitle.id, ConstraintSet.TOP, hudRightBinding.iconBarrier.id, ConstraintSet.BOTTOM, 0.dp)
-    }
-
-    fun updateTitleConstraints() {
-        if (::hudRightBinding.isInitialized) when (player.resources.configuration.orientation) {
-            Configuration.ORIENTATION_PORTRAIT -> titleConstraintSetPortrait
-            else -> titleConstraintSetLandscape
-        }.applyTo(hudRightBinding.hudRightOverlay)
-    }
-
-
     fun updateHudMargins() {
         //here, we override the default Android overscan
         val overscanHorizontal = 8.dp
-        val overscanVertical = 8.dp
         if (::hudBinding.isInitialized) {
             val largeMargin = player.resources.getDimension(R.dimen.large_margins_center)
             val smallMargin = player.resources.getDimension(R.dimen.small_margins_sides)
@@ -746,9 +722,6 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
                 applyMargin(hudBinding.playerResize, smallMargin.toInt(), true)
             }
         }
-        if (::hudRightBinding.isInitialized) {
-            applyVerticalMargin(hudRightBinding.playerOverlayTitle, overscanVertical)
-        }
     }
 
     private fun applyMargin(view: View, margin: Int, isEnd: Boolean) = (view.layoutParams as ConstraintLayout.LayoutParams).apply {
@@ -756,7 +729,7 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
         view.layoutParams = this
     }
 
-    private fun applyVerticalMargin(view: View, margin: Int) = (view.layoutParams as ConstraintLayout.LayoutParams).apply {
+    private fun applyVerticalMargin(view: View, margin: Int) = (view.layoutParams as ViewGroup.MarginLayoutParams).apply {
         bottomMargin = margin
         view.layoutParams = this
     }

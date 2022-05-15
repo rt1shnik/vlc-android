@@ -699,7 +699,6 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         overlayDelegate.showControls(isShowing)
         statsDelegate.onConfigurationChanged()
         overlayDelegate.updateHudMargins()
-        overlayDelegate.updateTitleConstraints()
     }
 
     override fun onStart() {

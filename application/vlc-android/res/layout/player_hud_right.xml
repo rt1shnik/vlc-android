@@ -8,42 +8,47 @@
     </data>
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/hud_right_overlay"
+    <LinearLayout
+        android:id="@+id/hud_right_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        tools:visibility="visible">
+
+        <FrameLayout
+            android:id="@+id/title_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/transparent"
-            android:visibility="invisible"
-            tools:visibility="visible">
+            android:layout_height="wrap_content">
 
-
-        <ImageView
+            <ImageView
                 android:id="@+id/player_overlay_navmenu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
+                android:layout_gravity="start|center_vertical"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:focusable="true"
                 android:padding="2dp"
                 android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_player_navmenu"
                 tools:visibility="visible" />
 
 
-        <TextView
+            <TextView
                 android:id="@+id/player_overlay_title"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="136dp"
+                android:layout_marginStart="60dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="136dp"
+                android:layout_marginEnd="60dp"
                 android:ellipsize="end"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center"
                 android:maxLines="2"
+                android:layout_gravity="center"
                 android:paddingBottom="4dp"
                 android:shadowColor="@color/blacktransparent"
                 android:shadowDx="0"
@@ -52,37 +57,32 @@
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="22sp"
-                app:layout_constrainedWidth="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 tools:text="Game of Thrones S01-E01" />
 
-        <ImageView
+            <ImageView
                 android:id="@+id/playlist_toggle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="end|center_vertical"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/show_playlist"
+                android:padding="2dp"
                 android:focusable="true"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_player_playlist"
                 tools:visibility="visible" />
+        </FrameLayout>
 
         <HorizontalScrollView
                 android:id="@+id/quick_actions_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:scrollbars="none"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/player_overlay_title">
+                android:scrollbars="none">
 
             <com.google.android.material.chip.ChipGroup
                     android:layout_width="wrap_content"
@@ -137,7 +137,7 @@
                         tools:text="-2000ms" />
             </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
     <!-- Media control buttons -->
 </layout>
