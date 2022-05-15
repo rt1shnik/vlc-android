@@ -1652,12 +1652,6 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
             R.id.ab_repeat_stop -> service?.playlistManager?.clearABRepeat()
             R.id.player_overlay_navmenu -> showNavMenu()
             R.id.player_overlay_length, R.id.player_overlay_time -> toggleTimeDisplay()
-            R.id.video_renderer -> if (supportFragmentManager.findFragmentByTag("renderers") == null)
-                RenderersDialog().show(supportFragmentManager, "renderers")
-            R.id.video_secondary_display -> {
-                clone = displayManager.isSecondary
-                recreate()
-            }
             R.id.playback_speed_quick_action -> {
                 val newFragment = PlaybackSpeedDialog.newInstance()
                 newFragment.onDismissListener = DialogInterface.OnDismissListener { overlayDelegate.dimStatusBar(true) }
@@ -1706,7 +1700,6 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
             overlayDelegate.unlockScreen()
         else
             overlayDelegate.lockScreen()
-        overlayDelegate.updateRendererVisibility()
     }
 
     override fun onStorageAccessGranted() {

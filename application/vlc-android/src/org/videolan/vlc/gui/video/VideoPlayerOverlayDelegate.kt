@@ -568,12 +568,6 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
                 hudBinding.lifecycleOwner = player
                 updateOrientationIcon()
                 overlayBackground = player.findViewById(R.id.player_overlay_background)
-                if (!AndroidDevices.isChromeBook
-                        && player.settings.getBoolean("enable_casting", true)) {
-                    PlaybackService.renderer.observe(player) { rendererItem -> hudRightBinding.videoRenderer.setImageDrawable(AppCompatResources.getDrawable(player, if (rendererItem == null) R.drawable.ic_player_renderer else R.drawable.ic_player_renderer_on)) }
-                    RendererDelegate.renderers.observe(player) { rendererItems -> updateRendererVisibility() }
-                }
-
                 hudRightBinding.playerOverlayTitle.text = service.currentMediaWrapper?.title
                 manageTitleConstraints()
                 updateTitleConstraints()
@@ -627,7 +621,6 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
         }
         if (::hudRightBinding.isInitialized){
             hudRightBinding.playerOverlayNavmenu.setOnClickListener(if (enabled) player else null)
-            UiTools.setViewOnClickListener(hudRightBinding.videoRenderer, if (enabled) player else null)
             hudRightBinding.playbackSpeedQuickAction.setOnLongClickListener {
                 player.service?.setRate(1F, true)
                 showControls(true)
@@ -692,10 +685,6 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
             }
             hudBinding.orientationToggle.setImageDrawable(ContextCompat.getDrawable(player, drawable))
         }
-    }
-
-    fun updateRendererVisibility() {
-        if (::hudRightBinding.isInitialized) hudRightBinding.videoRenderer.visibility = if (player.isLocked || RendererDelegate.renderers.value.isNullOrEmpty()) View.GONE else View.VISIBLE
     }
 
     private val titleConstraintSetLandscape = ConstraintSet()
@@ -842,11 +831,6 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
             hudBinding.orientationToggle.visibility = if (AndroidDevices.isChromeBook) View.INVISIBLE else if (show && player.isVideo) View.VISIBLE else View.INVISIBLE
         }
         if (::hudRightBinding.isInitialized) {
-            val secondary = player.displayManager.isSecondary
-            if (secondary) hudRightBinding.videoSecondaryDisplay.setImageResource(R.drawable.ic_player_screenshare_stop)
-            hudRightBinding.videoSecondaryDisplay.visibility = if (!show) View.GONE else if (UiTools.hasSecondaryDisplay(player.applicationContext)) View.VISIBLE else View.GONE
-            hudRightBinding.videoSecondaryDisplay.contentDescription = player.resources.getString(if (secondary) R.string.video_remote_disable else R.string.video_remote_enable)
-
             hudRightBinding.playlistToggle.visibility = if (show && player.service?.hasPlaylist() == true) View.VISIBLE else View.GONE
             hudRightBinding.sleepQuickAction.visibility = if (show && PlaybackService.playerSleepTime.value != null) View.VISIBLE else View.GONE
             hudRightBinding.playbackSpeedQuickAction.visibility = if (show && player.service?.rate != 1.0F) View.VISIBLE else View.GONE
