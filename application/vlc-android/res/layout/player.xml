@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/player_root"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:keepScreenOn="true">
 
     <!--
@@ -155,11 +155,9 @@
 
         <View
             android:id="@+id/view"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="56dp"
             android:background="@color/playerbackground"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
@@ -215,8 +213,6 @@
             android:nextFocusUp="@+id/playlist_search_edittext"
             android:paddingTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
