@@ -517,7 +517,10 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
             val vscRight = player.findViewById<ViewStub>(R.id.player_hud_right_stub)
             vscRight?.let {
                 it.setVisible()
-                hudRightBinding = DataBindingUtil.bind(player.findViewById(R.id.hud_right_overlay)) ?: return
+                if (!::hudRightBinding.isInitialized) {
+                    hudRightBinding =
+                        DataBindingUtil.bind(player.findViewById(R.id.hud_right_overlay)) ?: return
+                }
                 if (!player.isBenchmark && player.enableCloneMode && !player.settings.contains("enable_clone_mode")) {
                     UiTools.snackerConfirm(player, player.getString(R.string.video_save_clone_mode)) { player.settings.putSingle("enable_clone_mode", true) }
                 }
@@ -527,7 +530,10 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
             if (vsc != null) {
                 seekButtons = player.settings.getBoolean(ENABLE_SEEK_BUTTONS, false)
                 vsc.setVisible()
-                hudBinding = DataBindingUtil.bind(player.findViewById(R.id.progress_overlay)) ?: return
+                if (!::hudBinding.isInitialized) {
+                    hudBinding =
+                        DataBindingUtil.bind(player.findViewById(R.id.progress_overlay)) ?: return
+                }
                 hudBinding.player = player
                 hudBinding.progress = service.playlistManager.player.progress
                 abRepeatAddMarker = hudBinding.abRepeatContainer.findViewById(R.id.ab_repeat_add_marker)
