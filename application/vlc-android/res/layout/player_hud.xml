@@ -42,8 +42,8 @@
                 android:background="@drawable/rounded_corners"
                 android:visibility="gone"
                 vlc:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
-                vlc:layout_constraintEnd_toEndOf="@+id/constraintLayout2"
-                vlc:layout_constraintStart_toStartOf="@+id/constraintLayout2"
+                vlc:layout_constraintEnd_toEndOf="parent"
+                vlc:layout_constraintStart_toStartOf="parent"
                 vlc:layout_constraintTop_toTopOf="parent">
 
             <androidx.core.widget.NestedScrollView
@@ -139,8 +139,6 @@
                 tools:visibility="visible"
                 vlc:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
                 vlc:layout_constraintStart_toStartOf="parent"
-                vlc:layout_constraintTop_toBottomOf="@+id/player_overlay_title"
-                vlc:layout_constraintVertical_chainStyle="packed"
                 vlc:srcCompat="@drawable/ic_abrepeat_reset_marker_circle" />
 
         <ImageView
@@ -157,19 +155,14 @@
                 tools:visibility="visible"
                 vlc:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
                 vlc:layout_constraintStart_toEndOf="@+id/ab_repeat_reset"
-                vlc:layout_constraintTop_toBottomOf="@+id/player_overlay_title"
                 vlc:srcCompat="@drawable/ic_abrepeat_reset_circle" />
 
         <ViewStub
                 android:id="@+id/bookmarks_stub"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout="@layout/bookmarks"
-                android:fitsSystemWindows="true"
-                vlc:layout_constraintBottom_toBottomOf="parent"
-                vlc:layout_constraintEnd_toEndOf="parent"
-                vlc:layout_constraintStart_toStartOf="parent"
-                vlc:layout_constraintTop_toTopOf="parent" />
+                android:fitsSystemWindows="true" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout2"
@@ -197,7 +190,6 @@
                     android:onClick="@{(v) -> player.toggleTimeDisplay()}"
                     android:text="@{Tools.millisToString(progress.time)}"
                     tools:text="0:32"
-                    vlc:layout_constraintHorizontal_chainStyle="spread_inside"
                     vlc:layout_constraintLeft_toLeftOf="parent"
                     vlc:layout_constraintTop_toTopOf="parent" />
 
