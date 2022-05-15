@@ -689,7 +689,6 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
             val largeMargin = player.resources.getDimension(R.dimen.large_margins_center)
             val smallMargin = player.resources.getDimension(R.dimen.small_margins_sides)
 
-
             applyMargin(hudBinding.playerOverlayTracks, smallMargin.toInt(), false)
             applyMargin(hudBinding.playerOverlayAdvFunction, smallMargin.toInt(), true)
 
@@ -697,27 +696,27 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
             hudBinding.bookmarkMarkerContainer.setPadding(overscanHorizontal, 0, overscanHorizontal, 0)
 
             if (player.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                hudBinding.playerSpaceLeft.setGone()
-                hudBinding.playerSpaceRight.setGone()
                 applyMargin(hudBinding.playerOverlaySeekbar, 0, true)
                 applyMargin(hudBinding.playerOverlaySeekbar, 0, false)
+                applyMargin(hudBinding.bookmarkMarkerContainer, 0, true)
+                applyMargin(hudBinding.bookmarkMarkerContainer, 0, false)
 
                 applyMargin(hudBinding.playlistPrevious, 0, true)
-                applyMargin(hudBinding.playerOverlayRewind, 0, true)
+                applyMargin(hudBinding.playerOverlayRewindContainer, 0, true)
                 applyMargin(hudBinding.playlistNext, 0, false)
-                applyMargin(hudBinding.playerOverlayForward, 0, false)
+                applyMargin(hudBinding.playerOverlayForwardContainer, 0, false)
                 applyMargin(hudBinding.orientationToggle, 0, false)
                 applyMargin(hudBinding.playerResize, 0, true)
             } else {
-                hudBinding.playerSpaceLeft.setVisible()
-                hudBinding.playerSpaceRight.setVisible()
                 applyMargin(hudBinding.playerOverlaySeekbar, 20.dp, true)
                 applyMargin(hudBinding.playerOverlaySeekbar, 20.dp, false)
+                applyMargin(hudBinding.bookmarkMarkerContainer, 20.dp, true)
+                applyMargin(hudBinding.bookmarkMarkerContainer, 20.dp, false)
 
                 applyMargin(hudBinding.playlistPrevious, largeMargin.toInt(), true)
-                applyMargin(hudBinding.playerOverlayRewind, largeMargin.toInt(), true)
+                applyMargin(hudBinding.playerOverlayRewindContainer, largeMargin.toInt(), true)
                 applyMargin(hudBinding.playlistNext, largeMargin.toInt(), false)
-                applyMargin(hudBinding.playerOverlayForward, largeMargin.toInt(), false)
+                applyMargin(hudBinding.playerOverlayForwardContainer, largeMargin.toInt(), false)
                 applyMargin(hudBinding.orientationToggle, smallMargin.toInt(), false)
                 applyMargin(hudBinding.playerResize, smallMargin.toInt(), true)
             }
