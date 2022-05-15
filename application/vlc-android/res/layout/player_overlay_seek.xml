@@ -9,8 +9,8 @@
 
     <androidx.constraintlayout.widget.Guideline
             android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:id="@+id/guideline11"
             app:layout_constraintGuide_percent="0.5" />
 
@@ -24,61 +24,42 @@
     <org.videolan.vlc.gui.view.HalfCircleView
             android:id="@+id/leftContainerBackground"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_marginEnd="8dp"
             app:is_left="true"
             android:alpha="0"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/guideline4"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     <org.videolan.vlc.gui.view.HalfCircleView
             android:id="@+id/rightContainerBackground"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_marginStart="8dp"
             app:is_left="false"
             android:alpha="0"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline6"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="@+id/guideline6" />
 
     <com.google.android.material.circularreveal.CircularRevealFrameLayout
             android:id="@+id/leftContainer"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_marginEnd="8dp"
             android:visibility="invisible"
             android:background="@color/ripple_white"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/guideline4"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.circularreveal.CircularRevealFrameLayout
             android:id="@+id/rightContainer"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_marginStart="8dp"
             android:visibility="invisible"
             android:background="@color/ripple_white"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline6"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    <!--<androidx.constraintlayout.widget.ConstraintLayout-->
-    <!--android:id="@+id/constraintLayout3"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="0dp"-->
-    <!--android:layout_marginEnd="8dp"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintEnd_toStartOf="@+id/guideline4"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toTopOf="parent">-->
-
+            app:layout_constraintStart_toStartOf="@+id/guideline6" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -131,9 +112,6 @@
                 android:layout_marginBottom="8dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    <!--</androidx.constraintlayout.widget.ConstraintLayout>-->
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -189,7 +167,7 @@
 
     <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline4"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="0dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -198,15 +176,15 @@
 
     <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.6666666666" />
 
     <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.5" />
 
