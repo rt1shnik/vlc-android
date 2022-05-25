@@ -50,6 +50,7 @@ import org.videolan.vlc.R
 import org.videolan.vlc.databinding.PlayerOverlayTracksBinding
 import org.videolan.vlc.gui.dialogs.adapters.TrackAdapter
 import org.videolan.vlc.gui.helpers.getBitmapFromDrawable
+import org.videolan.vlc.gui.video.VideoPlayerActivity
 
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
@@ -108,9 +109,38 @@ class VideoTracksDialog : VLCBottomSheetDialogFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         binding = PlayerOverlayTracksBinding.inflate(layoutInflater, container, false)
+        val start = System.currentTimeMillis()
+        binding.root.addOnLayoutChangeListener(OnLayoutListener(start))
         return binding.root
+    }
+
+    internal inner class OnLayoutListener(private val start: Long) : View.OnLayoutChangeListener {
+        override fun onLayoutChange(
+            v: View,
+            left: Int,
+            top: Int,
+            right: Int,
+            bottom: Int,
+            oldLeft: Int,
+            oldTop: Int,
+            oldRight: Int,
+            oldBottom: Int
+        ) {
+            if (v.visibility == View.VISIBLE) {
+                val end = System.currentTimeMillis()
+                val animTime = end - start
+                println("VideoTracks UI appearing time: $animTime")
+                val activity = requireActivity() as VideoPlayerActivity
+                println("from click to VideoTracks UI appearing: ${end - activity.audioClickTime}")
+                v.removeOnLayoutChangeListener(this)
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
