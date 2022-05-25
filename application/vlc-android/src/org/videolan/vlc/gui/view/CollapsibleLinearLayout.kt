@@ -27,6 +27,7 @@ package org.videolan.vlc.gui.view
 import android.animation.ValueAnimator
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.view.animation.AccelerateInterpolator
 import android.widget.LinearLayout
@@ -71,15 +72,10 @@ class CollapsibleLinearLayout : LinearLayout {
 
     private fun initialize() {
         if (layoutParams is ConstraintLayout.LayoutParams) throw IllegalStateException("The parent should not be a ConstraintLayout to prevent height issues (when set to 0)")
-        viewTreeObserver.addOnGlobalLayoutListener(
-                object : OnGlobalLayoutListener {
-                    override fun onGlobalLayout() {
-                        maxHeight = height
-                        viewTreeObserver.removeOnGlobalLayoutListener(this)
-                        layoutParams.height = 0
-                        requestLayout()
-                    }
-                })
+        post {
+            measure(MeasureSpec.makeMeasureSpec((parent as View).width, MeasureSpec.EXACTLY), 0)
+            maxHeight = measuredHeight
+        }
     }
 
     fun toggle() {
