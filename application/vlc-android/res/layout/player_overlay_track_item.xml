@@ -31,73 +31,59 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+            android:orientation="vertical"
             android:id="@+id/track_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        <TextView
-                android:id="@+id/empty_view"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_marginTop="24dp"
-                android:gravity="center_vertical"
-                android:text="@string/no_track"
-                android:textAlignment="center"
-                android:textColor="@color/white_transparent_50"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/options_container"
-                tools:visibility="visible" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <TextView
-                android:id="@+id/track_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:text="@string/subtitles"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toStartOf="@id/track_more"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
+            <ImageView
                 android:id="@+id/track_more"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:focusable="true"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="end|center_vertical"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:layout_constraintBottom_toBottomOf="@id/track_title"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/track_title"
+                android:focusable="true"
+                android:padding="8dp"
                 app:srcCompat="@drawable/ic_collapse_arrow" />
 
-        <FrameLayout
+            <TextView
+                android:id="@+id/track_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:id="@+id/options_container"
-                app:layout_constraintTop_toBottomOf="@+id/track_title">
-
-            <org.videolan.vlc.gui.view.CollapsibleLinearLayout
-                    android:id="@+id/options"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:orientation="vertical" />
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="56dp"
+                android:text="@string/subtitles"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
         </FrameLayout>
 
+        <org.videolan.vlc.gui.view.CollapsibleLinearLayout
+            android:id="@+id/options"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/no_track"
+            android:textAlignment="center"
+            android:textColor="@color/white_transparent_50"
+            android:visibility="gone" />
+
         <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/track_list"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/options_container" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:id="@+id/track_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
 </layout>
