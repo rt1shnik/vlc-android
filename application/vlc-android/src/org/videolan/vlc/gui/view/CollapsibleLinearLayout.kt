@@ -72,13 +72,13 @@ class CollapsibleLinearLayout : LinearLayout {
 
     private fun initialize() {
         if (layoutParams is ConstraintLayout.LayoutParams) throw IllegalStateException("The parent should not be a ConstraintLayout to prevent height issues (when set to 0)")
-        post {
-            measure(MeasureSpec.makeMeasureSpec((parent as View).width, MeasureSpec.EXACTLY), 0)
-            maxHeight = measuredHeight
-        }
     }
 
     fun toggle() {
+        if (maxHeight == -1) {
+            measure(MeasureSpec.makeMeasureSpec((parent as View).width, MeasureSpec.EXACTLY), 0)
+            maxHeight = measuredHeight
+        }
         val fromHeight = if (!isCollapsed) maxHeight else 0
         val toHeight = if (!isCollapsed) 0 else maxHeight
         isCollapsed = !isCollapsed

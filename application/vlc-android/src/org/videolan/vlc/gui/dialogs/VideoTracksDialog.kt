@@ -33,6 +33,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import androidx.core.view.isEmpty
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
@@ -159,30 +160,36 @@ class VideoTracksDialog : VLCBottomSheetDialogFragment() {
         binding.tracksSeparator2.isEnabled = false
 
 
-
-        generateSeparator(binding.audioTracks.options)
-        generateOptionItem(binding.audioTracks.options, getString(R.string.audio_delay), R.drawable.ic_delay, VideoTrackOption.AUDIO_DELAY)
-        generateSeparator(binding.audioTracks.options, true)
         binding.audioTracks.options.setAnimationUpdateListener {
             binding.audioTracks.trackMore.rotation = if (binding.audioTracks.options.isCollapsed) 180F - (180F * it) else 180F * it
         }
 
-
-        generateSeparator(binding.subtitleTracks.options)
-        generateOptionItem(binding.subtitleTracks.options, getString(R.string.spu_delay), R.drawable.ic_delay, VideoTrackOption.SUB_DELAY)
-        generateOptionItem(binding.subtitleTracks.options, getString(R.string.subtitle_select), R.drawable.ic_subtitles_file, VideoTrackOption.SUB_PICK)
-        generateOptionItem(binding.subtitleTracks.options, getString(R.string.download_subtitles), R.drawable.ic_download, VideoTrackOption.SUB_DOWNLOAD)
-        generateSeparator(binding.subtitleTracks.options, true)
         binding.subtitleTracks.options.setAnimationUpdateListener {
             binding.subtitleTracks.trackMore.rotation = if (binding.subtitleTracks.options.isCollapsed) 180F - (180F * it) else 180F * it
         }
 
         binding.audioTracks.trackMore.setOnClickListener {
+            val options = binding.audioTracks.options
+            if (options.isEmpty()) {
+                generateSeparator(options)
+                generateOptionItem(options, getString(R.string.audio_delay), R.drawable.ic_delay, VideoTrackOption.AUDIO_DELAY)
+                generateSeparator(options, true)
+            }
+
             binding.audioTracks.options.toggle()
             binding.subtitleTracks.options.collapse()
         }
 
         binding.subtitleTracks.trackMore.setOnClickListener {
+            val options = binding.subtitleTracks.options
+            if (options.isEmpty()) {
+                generateSeparator(options)
+                generateOptionItem(options, getString(R.string.spu_delay), R.drawable.ic_delay, VideoTrackOption.SUB_DELAY)
+                generateOptionItem(options, getString(R.string.subtitle_select), R.drawable.ic_subtitles_file, VideoTrackOption.SUB_PICK)
+                generateOptionItem(options, getString(R.string.download_subtitles), R.drawable.ic_download, VideoTrackOption.SUB_DOWNLOAD)
+                generateSeparator(options, true)
+            }
+
             binding.subtitleTracks.options.toggle()
             binding.audioTracks.options.collapse()
         }
