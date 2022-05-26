@@ -1605,7 +1605,10 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         window.attributes = lp
     }
 
+    var audioClickTime = 0L
+
     open fun onAudioSubClick(anchor: View?) {
+        audioClickTime = System.currentTimeMillis()
         overlayDelegate.showTracks()
         overlayDelegate.hideOverlay(false)
     }

@@ -33,8 +33,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import androidx.core.view.isEmpty
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -50,6 +52,7 @@ import org.videolan.vlc.R
 import org.videolan.vlc.databinding.PlayerOverlayTracksBinding
 import org.videolan.vlc.gui.dialogs.adapters.TrackAdapter
 import org.videolan.vlc.gui.helpers.getBitmapFromDrawable
+import org.videolan.vlc.gui.video.VideoPlayerActivity
 
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
@@ -68,21 +71,28 @@ class VideoTracksDialog : VLCBottomSheetDialogFragment() {
     private fun onServiceChanged(service: PlaybackService?) {
         service?.let { playbackService ->
             if (playbackService.videoTracksCount <= 2) {
-                binding.videoTracks.trackContainer.setGone()
+                binding.videoTracks.viewStub.setGone()
                 binding.tracksSeparator3.setGone()
+            } else {
+                playbackService.videoTracks?.let { trackList ->
+                    val trackAdapter = TrackAdapter(trackList as Array<MediaPlayer.TrackDescription>, trackList.firstOrNull { it.id == playbackService.videoTrack })
+                    trackAdapter.setOnTrackSelectedListener { track ->
+                        trackSelectionListener.invoke(track.id, TrackType.VIDEO)
+                    }
+                    binding.videoTracks.viewStub.setVisible()
+                    val titleTextView =  binding.videoTracks.root.findViewById<TextView>(R.id.track_title)
+                    titleTextView.text = getString(R.string.video)
+                    val trackRecyclerView = binding.videoTracks.root.findViewById<RecyclerView>(R.id.track_list)
+                    trackRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
+                    trackRecyclerView.adapter = trackAdapter
+                }
             }
+
             if (playbackService.audioTracksCount <= 0) {
                 binding.audioTracks.trackContainer.setGone()
                 binding.tracksSeparator2.setGone()
             }
 
-            playbackService.videoTracks?.let { trackList ->
-                val trackAdapter = TrackAdapter(trackList as Array<MediaPlayer.TrackDescription>, trackList.firstOrNull { it.id == playbackService.videoTrack })
-                trackAdapter.setOnTrackSelectedListener { track ->
-                    trackSelectionListener.invoke(track.id, TrackType.VIDEO)
-                }
-                binding.videoTracks.trackList.adapter = trackAdapter
-            }
             playbackService.audioTracks?.let { trackList ->
                 val trackAdapter = TrackAdapter(trackList as Array<MediaPlayer.TrackDescription>, trackList.firstOrNull { it.id == playbackService.audioTrack })
                 trackAdapter.setOnTrackSelectedListener { track ->
@@ -108,51 +118,82 @@ class VideoTracksDialog : VLCBottomSheetDialogFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         binding = PlayerOverlayTracksBinding.inflate(layoutInflater, container, false)
+        val start = System.currentTimeMillis()
+        binding.root.addOnLayoutChangeListener(OnLayoutListener(start))
         return binding.root
+    }
+
+    internal inner class OnLayoutListener(private val start: Long) : View.OnLayoutChangeListener {
+        override fun onLayoutChange(
+            v: View,
+            left: Int,
+            top: Int,
+            right: Int,
+            bottom: Int,
+            oldLeft: Int,
+            oldTop: Int,
+            oldRight: Int,
+            oldBottom: Int
+        ) {
+            if (v.visibility == View.VISIBLE) {
+                val end = System.currentTimeMillis()
+                val animTime = end - start
+                println("VideoTracks UI appearing time: $animTime")
+                val activity = requireActivity() as VideoPlayerActivity
+                println("from click to VideoTracks UI appearing: ${end - activity.audioClickTime}")
+                v.removeOnLayoutChangeListener(this)
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.audioTracks.trackTitle.text = getString(R.string.audio)
-        binding.videoTracks.trackTitle.text = getString(R.string.video)
         binding.subtitleTracks.trackTitle.text = getString(R.string.subtitles)
 
         binding.audioTracks.trackList.layoutManager = LinearLayoutManager(requireActivity())
-        binding.videoTracks.trackList.layoutManager = LinearLayoutManager(requireActivity())
         binding.subtitleTracks.trackList.layoutManager = LinearLayoutManager(requireActivity())
-
-        binding.videoTracks.trackMore.setGone()
 
         //prevent focus
         binding.tracksSeparator3.isEnabled = false
         binding.tracksSeparator2.isEnabled = false
 
 
-
-        generateSeparator(binding.audioTracks.options)
-        generateOptionItem(binding.audioTracks.options, getString(R.string.audio_delay), R.drawable.ic_delay, VideoTrackOption.AUDIO_DELAY)
-        generateSeparator(binding.audioTracks.options, true)
         binding.audioTracks.options.setAnimationUpdateListener {
             binding.audioTracks.trackMore.rotation = if (binding.audioTracks.options.isCollapsed) 180F - (180F * it) else 180F * it
         }
 
-
-        generateSeparator(binding.subtitleTracks.options)
-        generateOptionItem(binding.subtitleTracks.options, getString(R.string.spu_delay), R.drawable.ic_delay, VideoTrackOption.SUB_DELAY)
-        generateOptionItem(binding.subtitleTracks.options, getString(R.string.subtitle_select), R.drawable.ic_subtitles_file, VideoTrackOption.SUB_PICK)
-        generateOptionItem(binding.subtitleTracks.options, getString(R.string.download_subtitles), R.drawable.ic_download, VideoTrackOption.SUB_DOWNLOAD)
-        generateSeparator(binding.subtitleTracks.options, true)
         binding.subtitleTracks.options.setAnimationUpdateListener {
             binding.subtitleTracks.trackMore.rotation = if (binding.subtitleTracks.options.isCollapsed) 180F - (180F * it) else 180F * it
         }
 
         binding.audioTracks.trackMore.setOnClickListener {
+            val options = binding.audioTracks.options
+            if (options.isEmpty()) {
+                generateSeparator(options)
+                generateOptionItem(options, getString(R.string.audio_delay), R.drawable.ic_delay, VideoTrackOption.AUDIO_DELAY)
+                generateSeparator(options, true)
+            }
+
             binding.audioTracks.options.toggle()
             binding.subtitleTracks.options.collapse()
         }
 
         binding.subtitleTracks.trackMore.setOnClickListener {
+            val options = binding.subtitleTracks.options
+            if (options.isEmpty()) {
+                generateSeparator(options)
+                generateOptionItem(options, getString(R.string.spu_delay), R.drawable.ic_delay, VideoTrackOption.SUB_DELAY)
+                generateOptionItem(options, getString(R.string.subtitle_select), R.drawable.ic_subtitles_file, VideoTrackOption.SUB_PICK)
+                generateOptionItem(options, getString(R.string.download_subtitles), R.drawable.ic_download, VideoTrackOption.SUB_DOWNLOAD)
+                generateSeparator(options, true)
+            }
+
             binding.subtitleTracks.options.toggle()
             binding.audioTracks.options.collapse()
         }
