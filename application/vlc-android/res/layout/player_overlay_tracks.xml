@@ -92,9 +92,9 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/subtitle_tracks" />
 
-            <include
+            <ViewStub
                     android:id="@+id/video_tracks"
-                    layout="@layout/player_overlay_track_item"
+                    android:layout="@layout/player_overlay_track_item"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_constraintBottom_toBottomOf="parent"

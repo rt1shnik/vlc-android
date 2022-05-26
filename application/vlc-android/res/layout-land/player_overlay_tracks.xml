@@ -70,9 +70,9 @@
                     android:background="@color/white_transparent_10"
                     android:focusable="false" />
 
-            <include
+            <ViewStub
                     android:id="@+id/video_tracks"
-                    layout="@layout/player_overlay_track_item"
+                    android:layout="@layout/player_overlay_track_item"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />

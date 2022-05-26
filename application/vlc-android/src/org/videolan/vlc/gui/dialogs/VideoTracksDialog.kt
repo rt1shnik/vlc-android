@@ -36,6 +36,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isEmpty
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -70,21 +71,28 @@ class VideoTracksDialog : VLCBottomSheetDialogFragment() {
     private fun onServiceChanged(service: PlaybackService?) {
         service?.let { playbackService ->
             if (playbackService.videoTracksCount <= 2) {
-                binding.videoTracks.trackContainer.setGone()
+                binding.videoTracks.viewStub.setGone()
                 binding.tracksSeparator3.setGone()
+            } else {
+                playbackService.videoTracks?.let { trackList ->
+                    val trackAdapter = TrackAdapter(trackList as Array<MediaPlayer.TrackDescription>, trackList.firstOrNull { it.id == playbackService.videoTrack })
+                    trackAdapter.setOnTrackSelectedListener { track ->
+                        trackSelectionListener.invoke(track.id, TrackType.VIDEO)
+                    }
+                    binding.videoTracks.viewStub.setVisible()
+                    val titleTextView =  binding.videoTracks.root.findViewById<TextView>(R.id.track_title)
+                    titleTextView.text = getString(R.string.video)
+                    val trackRecyclerView = binding.videoTracks.root.findViewById<RecyclerView>(R.id.track_list)
+                    trackRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
+                    trackRecyclerView.adapter = trackAdapter
+                }
             }
+
             if (playbackService.audioTracksCount <= 0) {
                 binding.audioTracks.trackContainer.setGone()
                 binding.tracksSeparator2.setGone()
             }
 
-            playbackService.videoTracks?.let { trackList ->
-                val trackAdapter = TrackAdapter(trackList as Array<MediaPlayer.TrackDescription>, trackList.firstOrNull { it.id == playbackService.videoTrack })
-                trackAdapter.setOnTrackSelectedListener { track ->
-                    trackSelectionListener.invoke(track.id, TrackType.VIDEO)
-                }
-                binding.videoTracks.trackList.adapter = trackAdapter
-            }
             playbackService.audioTracks?.let { trackList ->
                 val trackAdapter = TrackAdapter(trackList as Array<MediaPlayer.TrackDescription>, trackList.firstOrNull { it.id == playbackService.audioTrack })
                 trackAdapter.setOnTrackSelectedListener { track ->
@@ -146,14 +154,10 @@ class VideoTracksDialog : VLCBottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.audioTracks.trackTitle.text = getString(R.string.audio)
-        binding.videoTracks.trackTitle.text = getString(R.string.video)
         binding.subtitleTracks.trackTitle.text = getString(R.string.subtitles)
 
         binding.audioTracks.trackList.layoutManager = LinearLayoutManager(requireActivity())
-        binding.videoTracks.trackList.layoutManager = LinearLayoutManager(requireActivity())
         binding.subtitleTracks.trackList.layoutManager = LinearLayoutManager(requireActivity())
-
-        binding.videoTracks.trackMore.setGone()
 
         //prevent focus
         binding.tracksSeparator3.isEnabled = false
