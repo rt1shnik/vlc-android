@@ -42,6 +42,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -879,6 +880,7 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
             hudBinding.playerOverlayLength.isEnabled = false
             hudBinding.playlistNext.isEnabled = false
             hudBinding.playlistPrevious.isEnabled = false
+            hudBinding.buttonsLayout.isVisible = false
             hudBinding.swipeToUnlock.setVisible()
         }
         hideOverlay(true)
@@ -898,6 +900,8 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
             hudBinding.playerOverlayLength.isEnabled = true
             hudBinding.playlistNext.isEnabled = true
             hudBinding.playlistPrevious.isEnabled = true
+            hudBinding.buttonsLayout.isVisible = true
+            hudBinding.swipeToUnlock.isVisible = false
         }
         updateOrientationIcon()
         player.isShowing = false

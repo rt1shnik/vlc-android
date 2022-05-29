@@ -290,6 +290,7 @@
             </FrameLayout>
 
             <FrameLayout
+                android:id="@+id/buttons_layout"
                 android:clickable="true"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
