@@ -1609,7 +1609,6 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
     open fun onAudioSubClick(anchor: View?) {
         audioClickTime = System.currentTimeMillis()
         overlayDelegate.showTracks()
-        overlayDelegate.hideOverlay(false)
     }
 
     override fun onPopupMenu(view: View, position: Int, item: MediaWrapper?) {
