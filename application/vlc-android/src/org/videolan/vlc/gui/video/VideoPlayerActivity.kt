@@ -1209,7 +1209,6 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
             }
         }
         optionsDelegate?.show()
-        overlayDelegate.hideOverlay(false)
     }
 
     open fun createOptionsDelegate(service: PlaybackService): PlayerOptionsDelegate {
