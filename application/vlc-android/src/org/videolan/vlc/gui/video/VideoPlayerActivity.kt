@@ -1722,7 +1722,6 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
             overlayDelegate.showOverlayTimeout(OVERLAY_INFINITE)
             pause()
         } else {
-            handler.sendEmptyMessageDelayed(FADE_OUT, 300L)
             play()
         }
     }
