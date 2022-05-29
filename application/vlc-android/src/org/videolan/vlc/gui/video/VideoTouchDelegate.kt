@@ -260,6 +260,7 @@ class VideoTouchDelegate(private val player: VideoPlayerActivity,
                             handler.postDelayed(showHideUIRunnable, doubleTapTimeout)
                         } else {
                             showHideUIRunnable.run()
+                            player.doPlayPause()
                         }
                     }
                 }
