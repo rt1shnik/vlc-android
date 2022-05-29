@@ -883,7 +883,6 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
             hudBinding.buttonsLayout.isVisible = false
             hudBinding.swipeToUnlock.setVisible()
         }
-        hideOverlay(true)
         player.lockBackButton = true
         player.isLocked = true
     }
