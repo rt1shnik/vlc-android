@@ -1209,7 +1209,6 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
             }
         }
         optionsDelegate?.show()
-        overlayDelegate.hideOverlay(false)
     }
 
     open fun createOptionsDelegate(service: PlaybackService): PlayerOptionsDelegate {
@@ -1610,7 +1609,6 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
     open fun onAudioSubClick(anchor: View?) {
         audioClickTime = System.currentTimeMillis()
         overlayDelegate.showTracks()
-        overlayDelegate.hideOverlay(false)
     }
 
     override fun onPopupMenu(view: View, position: Int, item: MediaWrapper?) {
@@ -1722,7 +1720,6 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
             overlayDelegate.showOverlayTimeout(OVERLAY_INFINITE)
             pause()
         } else {
-            handler.sendEmptyMessageDelayed(FADE_OUT, 300L)
             play()
         }
     }
