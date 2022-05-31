@@ -69,3 +69,11 @@ libvlc.pc.backup
 libvlcpp.pc
 lib/
 /buildsystem/automation/certificates/
+
+libvlc/assets/lua/playlist/
+
+libvlc/assets/lua/meta/art/
+
+libvlc/assets/lua/modules/
+
+libvlc/assets/lua/meta/reader/
