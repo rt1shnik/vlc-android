@@ -144,8 +144,8 @@ task generateSources(type: Jar) {
 }
 
 dependencies {
-    devApi project(':libvlc')
-    devApi project(':medialibrary')
+    devApi project(':application:libvlc')
+    devApi project(':application:medialibrary')
     debugApi "org.videolan.android:libvlc-all:$rootProject.ext.libvlcVersion"
     debugApi "org.videolan.android:medialibrary-all:$rootProject.ext.medialibraryVersion"
     releaseApi "org.videolan.android:libvlc-all:$rootProject.ext.libvlcVersion"

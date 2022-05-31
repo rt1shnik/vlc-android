@@ -21,7 +21,6 @@
  *  ***************************************************************************
  */
 apply plugin: 'com.android.library'
-apply plugin: "com.vanniktech.maven.publish"
 
 def abi = System.getenv('GRADLE_ABI')?.toLowerCase()
 ext {
@@ -89,9 +88,9 @@ clean {
 }
 
 dependencies {
-    releaseImplementation project(':libvlc')
+    releaseImplementation project(':application:libvlc')
     debugImplementation "org.videolan.android:libvlc-all:$rootProject.ext.libvlcVersion"
-    devImplementation project(':libvlc')
+    devImplementation project(':application:libvlc')
     api "androidx.legacy:legacy-support-v4:$rootProject.ext.androidxLegacyVersion"
     api "androidx.core:core:$rootProject.ext.androidxCoreVersion"
     api "androidx.fragment:fragment:$rootProject.ext.androidxFragmentVersion"
@@ -99,9 +98,3 @@ dependencies {
     testImplementation "org.robolectric:robolectric:4.3.1"
 
 }
-
-mavenPublish {
-    releaseSigningEnabled = false
-}
-
-apply from: '../buildsystem/publish.gradle'
