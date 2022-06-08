@@ -256,7 +256,7 @@ open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.Even
                 saveCurrentMedia()
                 saveMediaList()
             }
-            if (getCurrentMedia()?.isPodcast == true) saveMediaMeta()
+            saveMediaMeta()
         }
     }
 
@@ -288,11 +288,11 @@ open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.Even
         if (stopAfter != -1) Settings.getInstance(AppContextProvider.appContext).putSingle(AUDIO_STOP_AFTER, stopAfter)
         stopAfter = -1
         videoBackground = false
-        val job = getCurrentMedia()?.let {
+        getCurrentMedia()?.let {
             savePosition(video = video)
-            val audio = isAudioList() // check before dispatching in saveMediaMeta()
-            launch(start = CoroutineStart.UNDISPATCHED) {
-                saveMediaMeta().join()
+            val time = player.mediaplayer.time
+            if (player.mediaplayer.isPlaying || time != 0L) {
+                saveMediaMeta()
             }
         }
         service.setSleepTimer(null)
@@ -307,7 +307,6 @@ open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.Even
         //Close video player if started
         LocalBroadcastManager.getInstance(ctx).sendBroadcast(Intent(EXIT_PLAYER))
         if (systemExit) launch(start = CoroutineStart.UNDISPATCHED) {
-            job?.join()
             cancel()
             player.cancel()
         }
@@ -510,10 +509,10 @@ open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.Even
         service.executeUpdate(true)
     }
 
-    fun saveMediaMeta() = launch(start = CoroutineStart.UNDISPATCHED) {
+    fun saveMediaMeta() {
         val titleIdx = player.getTitleIdx()
-        val currentMedia = getCurrentMedia() ?: return@launch
-        if (currentMedia.uri.scheme == "fd") return@launch
+        val currentMedia = getCurrentMedia() ?: return
+        if (currentMedia.uri.scheme == "fd") return
         //Save progress
         val time = player.mediaplayer.time
         val length = player.getLength()
