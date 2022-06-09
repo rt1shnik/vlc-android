@@ -126,6 +126,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
     lateinit var displayManager: DisplayManager
     var rootView: View? = null
     var videoUri: Uri? = null
+    var savedMediaList: ArrayList<MediaWrapper>? = null
     private var askResume = true
 
     var playlistModel: PlaylistModel? = null
@@ -478,6 +479,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         UiTools.setRotationAnimation(this)
         if (savedInstanceState != null) {
             savedTime = savedInstanceState.getLong(KEY_TIME)
+            savedMediaList = savedInstanceState.getParcelableArrayList(KEY_MEDIA_LIST)
             val list = savedInstanceState.getBoolean(KEY_LIST, false)
             if (list) {
                 intent.removeExtra(PLAY_EXTRA_ITEM_LOCATION)
@@ -646,6 +648,10 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         if (videoUri != null && "content" != videoUri?.scheme) {
             outState.putLong(KEY_TIME, savedTime)
             if (playlistModel == null) outState.putParcelable(KEY_URI, videoUri)
+        }
+        val mediaList = service?.playlistManager?.getMediaList()
+        if (mediaList != null) {
+            outState.putParcelableArrayList(KEY_MEDIA_LIST, ArrayList(mediaList))
         }
         videoUri = null
         outState.putBoolean(KEY_LIST, overlayDelegate.hasPlaylist)
@@ -2154,6 +2160,10 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
     open fun onServiceChanged(service: PlaybackService?) {
         if (service != null) {
             this.service = service
+            if (savedMediaList != null) {
+                service.append(savedMediaList!!)
+                savedMediaList = null
+            }
             //We may not have the permission to access files
             if (!switchingView)
                 handler.sendEmptyMessage(START_PLAYBACK)
@@ -2202,6 +2212,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         internal const val DEFAULT_FOV = 80f
         private const val KEY_TIME = "saved_time"
         private const val KEY_LIST = "saved_list"
+        private const val KEY_MEDIA_LIST = "media_list"
         private const val KEY_URI = "saved_uri"
         const val OVERLAY_INFINITE = -1
         const val FADE_OUT = 1
