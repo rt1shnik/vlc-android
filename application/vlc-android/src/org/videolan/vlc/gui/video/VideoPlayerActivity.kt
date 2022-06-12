@@ -126,7 +126,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
     lateinit var displayManager: DisplayManager
     var rootView: View? = null
     var videoUri: Uri? = null
-    var savedMediaList: ArrayList<MediaWrapper>? = null
+    val savedMediaList: ArrayList<MediaWrapper> = ArrayList()
     private var askResume = true
 
     var playlistModel: PlaylistModel? = null
@@ -479,7 +479,10 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         UiTools.setRotationAnimation(this)
         if (savedInstanceState != null) {
             savedTime = savedInstanceState.getLong(KEY_TIME)
-            savedMediaList = savedInstanceState.getParcelableArrayList(KEY_MEDIA_LIST)
+            val mediaList = savedInstanceState.getParcelableArrayList<MediaWrapper>(KEY_MEDIA_LIST)
+            mediaList?.let {
+                savedMediaList.addAll(mediaList)
+            }
             val list = savedInstanceState.getBoolean(KEY_LIST, false)
             if (list) {
                 intent.removeExtra(PLAY_EXTRA_ITEM_LOCATION)
@@ -650,9 +653,10 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
             if (playlistModel == null) outState.putParcelable(KEY_URI, videoUri)
         }
         val mediaList = service?.playlistManager?.getMediaList()
-        if (mediaList != null) {
-            outState.putParcelableArrayList(KEY_MEDIA_LIST, ArrayList(mediaList))
+        mediaList?.let {
+            outState.putParcelableArrayList(KEY_MEDIA_LIST, ArrayList(it))
         }
+
         videoUri = null
         outState.putBoolean(KEY_LIST, overlayDelegate.hasPlaylist)
     }
@@ -2160,9 +2164,9 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
     open fun onServiceChanged(service: PlaybackService?) {
         if (service != null) {
             this.service = service
-            if (savedMediaList != null) {
-                service.append(savedMediaList!!)
-                savedMediaList = null
+            if (savedMediaList.isNotEmpty() && service.currentMediaWrapper == null) {
+                service.append(savedMediaList)
+                savedMediaList.clear()
             }
             //We may not have the permission to access files
             if (!switchingView)
