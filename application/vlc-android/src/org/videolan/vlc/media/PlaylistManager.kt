@@ -1,5 +1,6 @@
 package org.videolan.vlc.media
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.support.v4.media.session.PlaybackStateCompat
@@ -423,7 +424,7 @@ open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.Even
             service.onNewPlayback()
         } else { //Start VideoPlayer for first video, it will trigger playIndex when ready.
             if (player.isPlaying()) player.stop()
-            VideoPlayerActivity.startOpened(ctx, mw.uri, currentIndex)
+            startPlayer(ctx, mw.uri, currentIndex)
         }
     }
 
@@ -450,14 +451,14 @@ open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.Even
                     VideoPlayerActivity.getIntent(PLAY_FROM_SERVICE,
                             media, false, currentIndex))
         } else if (!player.switchToVideo) { //Start the video player
-            startPlayer(media.uri)
+            startPlayer(uri = media.uri)
             if (!hasRenderer) player.switchToVideo = true
         }
         return true
     }
 
-    protected open fun startPlayer(uri: Uri) {
-        VideoPlayerActivity.startOpened(AppContextProvider.appContext, uri, currentIndex)
+    protected open fun startPlayer(context: Context = AppContextProvider.appContext, uri: Uri, openedPosition: Int = currentIndex) {
+        VideoPlayerActivity.startOpened(AppContextProvider.appContext, uri, openedPosition)
     }
 
     fun setVideoTrackEnabled(enabled: Boolean) {

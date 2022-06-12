@@ -111,12 +111,18 @@ import org.videolan.vlc.util.FileUtils.getUri
 import org.videolan.vlc.viewmodels.BookmarkModel
 import org.videolan.vlc.viewmodels.PlaylistModel
 import java.lang.Runnable
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
+
+interface ServiceLauncher {
+    fun startPlaybackService()
+}
 
 @Suppress("DEPRECATION")
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
-open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, PlaylistAdapter.IPlayer, OnClickListener, OnLongClickListener, StoragePermissionsDelegate.CustomActionController, TextWatcher, IDialogManager, KeycodeListener {
+open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackService.Callback, PlaylistAdapter.IPlayer, OnClickListener, OnLongClickListener, StoragePermissionsDelegate.CustomActionController, TextWatcher, IDialogManager, KeycodeListener {
 
     var hasPhysicalNotch: Boolean = false
     private var subtitlesExtraPath: String? = null
@@ -728,7 +734,7 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
         overlayDelegate.overlayInfo.setInvisible()
     }
 
-    open fun startPlaybackService() {
+    override fun startPlaybackService() {
         PlaybackService.start(this)
     }
 

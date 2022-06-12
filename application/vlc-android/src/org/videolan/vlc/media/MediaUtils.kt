@@ -35,6 +35,8 @@ import org.videolan.vlc.R
 import org.videolan.vlc.gui.AudioPlayerContainerActivity
 import org.videolan.vlc.gui.DialogActivity
 import org.videolan.vlc.gui.dialogs.SubtitleDownloaderDialogFragment
+import org.videolan.vlc.gui.video.ServiceLauncher
+import org.videolan.vlc.gui.video.VideoPlayerActivity
 import org.videolan.vlc.providers.medialibrary.FoldersProvider
 import org.videolan.vlc.providers.medialibrary.MedialibraryProvider
 import org.videolan.vlc.providers.medialibrary.VideoGroupsProvider
@@ -448,7 +450,11 @@ object MediaUtils {
             AppScope.launch {
                 onServiceReady(PlaybackService.serviceFlow.filterNotNull().first())
             }
-            PlaybackService.start(context)
+            if (context is ServiceLauncher) {
+                context.startPlaybackService()
+            } else {
+                PlaybackService.start(context)
+            }
         }
 
         abstract fun onServiceReady(service: PlaybackService)
@@ -465,7 +471,11 @@ object MediaUtils {
                     val service = PlaybackService.instance
                     if (service != null) channel.trySend(Task(service, task))
                     else {
-                        PlaybackService.start(context)
+                        if (context is ServiceLauncher) {
+                            context.startPlaybackService()
+                        } else {
+                            PlaybackService.start(context)
+                        }
                         PlaybackService.serviceFlow.filterNotNull().first().let {
                             channel.trySend(Task(it, task))
                         }
