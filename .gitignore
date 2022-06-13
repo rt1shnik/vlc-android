@@ -79,3 +79,7 @@ libvlc/assets/lua/modules/
 libvlc/assets/lua/meta/reader/
 
 libvlc/assets/hrtfs/dodeca_and_7channel_3DSL_HRTF.sofa
+
+medialibrary/prefix/arm-linux-androideabi/include/
+
+medialibrary/prefix/arm-linux-androideabi/share/man/man1/sqlite3.1

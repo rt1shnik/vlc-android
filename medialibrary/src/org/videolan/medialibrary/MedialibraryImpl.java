@@ -32,7 +32,6 @@ import androidx.annotation.WorkerThread;
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.util.VLCUtil;
 import org.videolan.medialibrary.interfaces.Medialibrary;
-import org.videolan.medialibrary.interfaces.media.Artist;
 import org.videolan.medialibrary.interfaces.media.Folder;
 import org.videolan.medialibrary.interfaces.media.Genre;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
@@ -275,10 +274,6 @@ public class MedialibraryImpl extends Medialibrary {
         return mIsInitiated && mediaId > 0 && nativeRegroup(mediaId);
     }
 
-    public Artist getArtist(long artistId) {
-        return mIsInitiated ? nativeGetArtist(artistId) : null;
-    }
-
     @WorkerThread
     public Genre[] getGenres(boolean includeMissing) {
         return getGenres(Medialibrary.SORT_DEFAULT, false, includeMissing);
@@ -500,14 +495,6 @@ public class MedialibraryImpl extends Medialibrary {
         return mIsInitiated ? nativeGetSearchVideoCount(query) : 0;
     }
 
-    public Artist[] searchArtist(String query) {
-        return mIsInitiated && !TextUtils.isEmpty(query) ? nativeSearchArtist(query) : null;
-    }
-
-    public Artist[] searchArtist(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset) {
-        return mIsInitiated && !TextUtils.isEmpty(query) ? nativeSearchPagedArtist(query, sort, desc, includeMissing, nbItems, offset) : new Artist[0];
-    }
-
     public Genre[] searchGenre(String query) {
         return mIsInitiated && !TextUtils.isEmpty(query) ? nativeSearchGenre(query) : null;
     }
@@ -589,7 +576,6 @@ public class MedialibraryImpl extends Medialibrary {
     private native boolean nativeRegroupAll();
 
     private native boolean nativeRegroup(long mediaId);
-    private native Artist nativeGetArtist(long artistId);
     private native Genre[] nativeGetGenres(int sort, boolean desc, boolean includeMissing);
     private native Genre[] nativeGetPagedGenres(int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     private native int nativeGetGenresCount();
@@ -619,10 +605,6 @@ public class MedialibraryImpl extends Medialibrary {
     private native int nativeGetSearchAudioCount(String query);
     private native MediaWrapper[] nativeSearchPagedVideo(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     private native int nativeGetSearchVideoCount(String query);
-    private native Artist[] nativeSearchArtist(String query);
-    private native Artist[] nativeSearchPagedArtist(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    private native int nativeGetArtistsSearchCount(String query);
-    private native int nativeGetAlbumSearchCount(String query);
     private native Genre[] nativeSearchGenre(String query);
     private native Genre[] nativeSearchPagedGenre(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     private native int nativeGetGenreSearchCount(String query);

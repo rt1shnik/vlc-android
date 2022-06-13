@@ -37,7 +37,6 @@ import androidx.lifecycle.MutableLiveData;
 import org.videolan.medialibrary.MLServiceLocator;
 import org.videolan.medialibrary.SingleEvent;
 import org.videolan.medialibrary.Tools;
-import org.videolan.medialibrary.interfaces.media.Artist;
 import org.videolan.medialibrary.interfaces.media.Folder;
 import org.videolan.medialibrary.interfaces.media.Genre;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
@@ -695,8 +694,6 @@ abstract public class Medialibrary {
     abstract public int getAudioCount(String query);
     abstract public MediaWrapper[] searchVideo(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     abstract public int getVideoCount(String query);
-    abstract public Artist[] searchArtist(String query);
-    abstract public Artist[] searchArtist(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     abstract public Genre[] searchGenre(String query);
     abstract public Genre[] searchGenre(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     abstract public Playlist[] searchPlaylist(String query, boolean includeMissing);

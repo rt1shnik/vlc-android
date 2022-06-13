@@ -11,7 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import org.videolan.medialibrary.MLServiceLocator;
-import org.videolan.medialibrary.interfaces.media.Artist;
 import org.videolan.medialibrary.interfaces.media.Folder;
 import org.videolan.medialibrary.interfaces.media.Genre;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
@@ -25,13 +24,11 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.videolan.medialibrary.interfaces.Medialibrary.SORT_ALPHA;
-import static org.videolan.medialibrary.interfaces.Medialibrary.SORT_ARTIST;
 import static org.videolan.medialibrary.interfaces.Medialibrary.SORT_DEFAULT;
 import static org.videolan.medialibrary.interfaces.Medialibrary.SORT_DURATION;
 import static org.videolan.medialibrary.interfaces.Medialibrary.SORT_FILENAME;
 import static org.videolan.medialibrary.interfaces.Medialibrary.SORT_INSERTIONDATE;
 import static org.videolan.medialibrary.interfaces.Medialibrary.SORT_LASTMODIFICATIONDATE;
-import static org.videolan.medialibrary.interfaces.Medialibrary.SORT_RELEASEDATE;
 
 public class StubDataSource {
 
@@ -46,7 +43,6 @@ public class StubDataSource {
     ArrayList<MediaWrapper> mAudioMediaWrappers = new ArrayList<>();
     ArrayList<MediaWrapper> mStreamMediaWrappers = new ArrayList<>();
     ArrayList<MediaWrapper> mHistory = new ArrayList<>();
-    ArrayList<Artist> mArtists = new ArrayList<>();
     ArrayList<Genre> mGenres = new ArrayList<>();
     ArrayList<Playlist> mPlaylists = new ArrayList<>();
     ArrayList<String> mBannedFolders = new ArrayList<>();
@@ -77,7 +73,6 @@ public class StubDataSource {
         mStreamMediaWrappers.clear();
         mHistory.clear();
         mPlaylists.clear();
-        mArtists.clear();
         mGenres.clear();
         mBannedFolders.clear();
         mDevices.clear();
@@ -129,27 +124,6 @@ public class StubDataSource {
         return list.subList(secureOffset, secureEnd);
     }
 
-    int compareArtistStr(String a1, String a2) {
-        if ((a1.equals(Artist.SpecialRes.UNKNOWN_ARTIST) ||
-                a1.equals(Artist.SpecialRes.VARIOUS_ARTISTS)) &&
-                (a2.equals(Artist.SpecialRes.UNKNOWN_ARTIST) ||
-                        a2.equals(Artist.SpecialRes.VARIOUS_ARTISTS))) {
-            return 0;
-        } else if (a1.equals(Artist.SpecialRes.UNKNOWN_ARTIST) ||
-                a1.equals(Artist.SpecialRes.VARIOUS_ARTISTS)) {
-            return -1;
-        } else if (a2.equals(Artist.SpecialRes.UNKNOWN_ARTIST) ||
-                a2.equals(Artist.SpecialRes.VARIOUS_ARTISTS)) {
-            return 1;
-        } else {
-            return a1.compareTo(a2);
-        }
-    }
-
-    int compareArtist(Artist a1, Artist a2) {
-        return compareArtistStr(a1.getTitle(), a2.getTitle());
-    }
-
     class MediaComparator implements Comparator<MediaWrapper> {
         private int sort;
 
@@ -171,27 +145,6 @@ public class StubDataSource {
                     return Long.valueOf(o1.getTime()).compareTo(o2.getTime());
                 case SORT_LASTMODIFICATIONDATE:
                     return Long.valueOf(o1.getLastModified()).compareTo(o2.getLastModified());
-                case SORT_ARTIST:
-                    return compareArtistStr(o1.getArtist(), o2.getArtist());
-                default:
-                    return 0;
-            }
-        }
-    }
-
-    class ArtistComparator implements Comparator<Artist> {
-        private int sort;
-
-        ArtistComparator(int sort) {
-            this.sort = sort;
-        }
-
-        @Override
-        public int compare(Artist o1, Artist o2) {
-            switch (sort) {
-                case SORT_DEFAULT:
-                case SORT_ARTIST:
-                    return compareArtist(o1, o2);
                 default:
                     return 0;
             }
@@ -263,14 +216,6 @@ public class StubDataSource {
         if (desc)
             Collections.reverse(array);
         return array.toArray(new MediaWrapper[0]);
-    }
-
-    Artist[] sortArtist(List<Artist> arrayList, int sort, boolean desc) {
-        List<Artist> array = new ArrayList<>(arrayList);
-        Collections.sort(array, new ArtistComparator(sort));
-        if (desc)
-            Collections.reverse(array);
-        return array.toArray(new Artist[0]);
     }
 
     Genre[] sortGenre(List<Genre> arrayList, int sort, boolean desc) {
@@ -355,16 +300,6 @@ public class StubDataSource {
         }
     }
 
-    private void addArtistSecure(Artist newArtist) {
-        if (newArtist.getTitle().isEmpty())
-            return;
-        for (Artist artist : mArtists) {
-            if (artist.getTitle().equals(newArtist.getTitle()))
-                return;
-        }
-        mArtists.add(newArtist);
-    }
-
     private void addGenreSecure(Genre newGenre) {
         if (newGenre.getTitle().isEmpty())
             return;
@@ -373,24 +308,6 @@ public class StubDataSource {
                 return;
         }
         mGenres.add(newGenre);
-    }
-
-    private Artist getArtistFromName(String name) {
-        if (name.isEmpty())
-            return null;
-        for (Artist artist : mArtists) {
-            if (artist.getTitle().equals(name))
-                return artist;
-        }
-        return null;
-    }
-
-    private String getArtistName(String albumArtist, String artist) {
-        if ((albumArtist == null || artist == null) || albumArtist.isEmpty() && artist.isEmpty())
-            return Artist.SpecialRes.UNKNOWN_ARTIST;
-        if (!albumArtist.isEmpty())
-            return albumArtist;
-        return artist;
     }
 
     private void addAudio(MediaWrapper media, String shortBio, int releaseYear, int trackTotal, String mrl) {

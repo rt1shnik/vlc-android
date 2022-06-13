@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import org.videolan.medialibrary.MLServiceLocator;
 import org.videolan.medialibrary.Tools;
 import org.videolan.medialibrary.interfaces.Medialibrary;
-import org.videolan.medialibrary.interfaces.media.Artist;
 import org.videolan.medialibrary.interfaces.media.Folder;
 import org.videolan.medialibrary.interfaces.media.Genre;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
@@ -192,30 +191,6 @@ public class StubMedialibrary extends Medialibrary {
     @Override
     public boolean regroup(long mediaId) {
         return false;
-    }
-
-    private boolean checkForArtist(ArrayList<Artist> list, Artist newArtist) {
-        for (Artist artist : list ) {
-            if (artist.getTitle().equals(newArtist.getTitle())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public int getArtistsCount(String query) {
-        int count = 0;
-        for (Artist artist : dt.mArtists) {
-            if (Tools.hasSubString(artist.getTitle(), query)) count++;
-        }
-        return count;
-    }
-
-    public Artist getArtist(long artistId) {
-        for (Artist artist : dt.mArtists) {
-            if (artist.getId() == artistId) return artist;
-        }
-        return null;
     }
 
     public Genre[] getGenres(boolean includeMissing) {
@@ -538,19 +513,6 @@ public class StubMedialibrary extends Medialibrary {
             if (Tools.hasSubString(media.getTitle(), query)) count++;
         }
         return count;
-    }
-
-    public Artist[] searchArtist(String query) {
-        ArrayList<Artist> results = new ArrayList<>();
-        for (Artist artist : dt.mArtists) {
-            if (Tools.hasSubString(artist.getTitle(), query)) results.add(artist);
-        }
-        return results.toArray(new Artist[0]);
-    }
-
-    public Artist[] searchArtist(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset) {
-        ArrayList<Artist> results = new ArrayList<>(Arrays.asList(searchArtist(query)));
-        return dt.sortArtist(dt.secureSublist(results, offset, offset + nbItems), sort, desc);
     }
 
     public Genre[] searchGenre(String query) {

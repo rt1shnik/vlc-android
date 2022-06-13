@@ -443,7 +443,6 @@ suspend fun fillActionMode(context: Context, mode: ActionMode, multiSelectHelper
         selection.forEach { mediaItem ->
             when (mediaItem) {
                 is MediaWrapper -> realCount += 1
-                is Artist -> realCount += mediaItem.tracksCount
                 is VideoGroup -> realCount += mediaItem.mediaCount()
                 is Folder -> realCount += mediaItem.mediaCount(Folder.TYPE_FOLDER_VIDEO)
             }
@@ -452,7 +451,6 @@ suspend fun fillActionMode(context: Context, mode: ActionMode, multiSelectHelper
         selection.forEach { mediaItem ->
             when (mediaItem) {
                 is MediaWrapper -> length += mediaItem.length
-                is Artist -> mediaItem.getAll().forEach { length += it.length }
                 is VideoGroup -> mediaItem.getAll().forEach { length += it.length }
                 is Folder -> mediaItem.getAll().forEach { length += it.length }
             }
