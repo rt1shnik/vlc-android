@@ -85,7 +85,6 @@ abstract public class Medialibrary {
     protected final List<OnMedialibraryReadyListener> onMedialibraryReadyListeners = new ArrayList<>();
     protected final List<OnDeviceChangeListener> onDeviceChangeListeners = new ArrayList<>();
     protected volatile boolean isMedialibraryStarted = false;
-    protected final List<DevicesDiscoveryCb> devicesDiscoveryCbList = new ArrayList<>();
     protected final List<EntryPointsEventsCb> entryPointsEventsCbList = new ArrayList<>();
     private MedialibraryExceptionHandler mExceptionHandler;
     protected static Context sContext;
@@ -302,66 +301,6 @@ abstract public class Medialibrary {
         }
     }
 
-    public void onDiscoveryStarted() {
-        synchronized (devicesDiscoveryCbList) {
-            if (!devicesDiscoveryCbList.isEmpty())
-                for (DevicesDiscoveryCb cb : devicesDiscoveryCbList)
-                    cb.onDiscoveryStarted();
-        }
-        synchronized (entryPointsEventsCbList) {
-            if (!entryPointsEventsCbList.isEmpty())
-                for (EntryPointsEventsCb cb : entryPointsEventsCbList)
-                    cb.onDiscoveryStarted();
-        }
-    }
-
-    public void onDiscoveryProgress(String entryPoint) {
-        synchronized (devicesDiscoveryCbList) {
-            if (!devicesDiscoveryCbList.isEmpty())
-                for (DevicesDiscoveryCb cb : devicesDiscoveryCbList)
-                    cb.onDiscoveryProgress(entryPoint);
-        }
-        synchronized (entryPointsEventsCbList) {
-            if (!entryPointsEventsCbList.isEmpty())
-                for (EntryPointsEventsCb cb : entryPointsEventsCbList)
-                    cb.onDiscoveryProgress(entryPoint);
-        }
-    }
-
-    public void onDiscoveryCompleted() {
-        synchronized (devicesDiscoveryCbList) {
-            if (!devicesDiscoveryCbList.isEmpty())
-                for (DevicesDiscoveryCb cb : devicesDiscoveryCbList)
-                    cb.onDiscoveryCompleted();
-        }
-        synchronized (entryPointsEventsCbList) {
-            if (!entryPointsEventsCbList.isEmpty())
-                for (EntryPointsEventsCb cb : entryPointsEventsCbList)
-                    cb.onDiscoveryCompleted();
-        }
-    }
-
-    public void onDiscoveryFailed(String entryPoint) {
-        synchronized (devicesDiscoveryCbList) {
-            if (!devicesDiscoveryCbList.isEmpty())
-                for (DevicesDiscoveryCb cb : devicesDiscoveryCbList)
-                    cb.onDiscoveryFailed(entryPoint);
-        }
-        synchronized (entryPointsEventsCbList) {
-            if (!entryPointsEventsCbList.isEmpty())
-                for (EntryPointsEventsCb cb : entryPointsEventsCbList)
-                    cb.onDiscoveryFailed(entryPoint);
-        }
-    }
-
-    public void onParsingStatsUpdated(int done, int scheduled) {
-        synchronized (devicesDiscoveryCbList) {
-            if (!devicesDiscoveryCbList.isEmpty())
-                for (DevicesDiscoveryCb cb : devicesDiscoveryCbList)
-                    cb.onParsingStatsUpdated(done, scheduled);
-        }
-    }
-
     @SuppressWarnings("unused")
     public void onBackgroundTasksIdleChanged(boolean isIdle) {
         mIsWorking = !isIdle;
@@ -375,24 +314,6 @@ abstract public class Medialibrary {
     @SuppressWarnings("unused")
     public void onUnhandledException(String context, String errMsg, boolean clearSuggested) {
         if (mExceptionHandler != null) mExceptionHandler.onUnhandledException(context, errMsg, clearSuggested);
-    }
-
-    @SuppressWarnings("unused")
-    public void onReloadStarted(String entryPoint) {
-        synchronized (devicesDiscoveryCbList) {
-            if (!devicesDiscoveryCbList.isEmpty())
-                for (DevicesDiscoveryCb cb : devicesDiscoveryCbList)
-                    cb.onReloadStarted(entryPoint);
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onReloadCompleted(String entryPoint) {
-        synchronized (devicesDiscoveryCbList) {
-            if (!devicesDiscoveryCbList.isEmpty())
-                for (DevicesDiscoveryCb cb : devicesDiscoveryCbList)
-                    cb.onReloadCompleted(entryPoint);
-        }
     }
 
     @SuppressWarnings("unused")
@@ -489,19 +410,6 @@ abstract public class Medialibrary {
     public void removeMediaGroupCb(MediaGroupCb mediaGroupCb) {
         synchronized (mMediaGroupCbs) {
             this.mMediaGroupCbs.remove(mediaGroupCb);
-        }
-    }
-
-    public void addDeviceDiscoveryCb(DevicesDiscoveryCb cb) {
-        synchronized (devicesDiscoveryCbList) {
-            if (!devicesDiscoveryCbList.contains(cb))
-                devicesDiscoveryCbList.add(cb);
-        }
-    }
-
-    public void removeDeviceDiscoveryCb(DevicesDiscoveryCb cb) {
-        synchronized (devicesDiscoveryCbList) {
-            devicesDiscoveryCbList.remove(cb);
         }
     }
 
