@@ -7,24 +7,12 @@ import org.videolan.libvlc.MediaPlayer
 import org.videolan.libvlc.interfaces.IMedia
 import org.videolan.medialibrary.interfaces.Medialibrary.*
 import org.videolan.medialibrary.interfaces.media.MediaWrapper
-import org.videolan.medialibrary.media.DummyItem
 import org.videolan.medialibrary.media.MediaLibraryItem
 import org.videolan.resources.util.*
 import org.videolan.vlc.PlaybackService
 import kotlin.math.floor
 
 object ModelsHelper {
-
-    suspend fun generateSections(sort: Int, items: List<MediaLibraryItem>) = withContext(Dispatchers.IO) {
-        val array = splitList(sort, items)
-        val datalist = mutableListOf<MediaLibraryItem>()
-        for ((key, list) in array) {
-            datalist.add(DummyItem(key))
-            datalist.addAll(list)
-        }
-        datalist
-    }
-
     internal suspend fun splitList(sort: Int, items: Collection<MediaLibraryItem>) = withContext(Dispatchers.IO) {
         val array = mutableMapOf<String, MutableList<MediaLibraryItem>>()
         when (sort) {
