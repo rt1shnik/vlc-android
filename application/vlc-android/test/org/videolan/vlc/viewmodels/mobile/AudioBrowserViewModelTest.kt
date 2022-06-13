@@ -7,7 +7,6 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.junit.Assert.*
 import org.junit.Test
 import org.videolan.medialibrary.interfaces.media.MediaWrapper
-import org.videolan.medialibrary.stubs.StubDataSource
 import org.videolan.resources.MEDIALIBRARY_PAGE_SIZE
 import org.videolan.tools.KEY_ARTISTS_SHOW_ALL
 import org.videolan.tools.Settings

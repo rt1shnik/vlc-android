@@ -7,7 +7,6 @@ import org.junit.Assert.*
 import org.junit.Test
 import org.videolan.medialibrary.interfaces.media.MediaWrapper
 import org.videolan.medialibrary.interfaces.media.Playlist
-import org.videolan.medialibrary.stubs.StubDataSource
 import org.videolan.vlc.BaseTest
 import org.videolan.resources.MEDIALIBRARY_PAGE_SIZE
 

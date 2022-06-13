@@ -1631,16 +1631,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
 
     override fun onSearch(query: String, extras: Bundle?, result: Result<List<MediaBrowserCompat.MediaItem>>) {
         result.detach()
-        lifecycleScope.launch(start = CoroutineStart.UNDISPATCHED) {
-            awaitMedialibraryStarted()
-            lifecycleScope.launch(Dispatchers.IO) {
-                try {
-                    result.sendResult(MediaSessionBrowser.search(applicationContext, query))
-                } catch (e: RuntimeException) {
-                    Log.e(TAG, "Failed to search for $query", e)
-                }
-            }
-        }
     }
 
     /**

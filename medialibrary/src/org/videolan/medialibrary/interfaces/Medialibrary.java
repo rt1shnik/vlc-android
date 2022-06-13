@@ -38,11 +38,9 @@ import org.videolan.medialibrary.MLServiceLocator;
 import org.videolan.medialibrary.SingleEvent;
 import org.videolan.medialibrary.Tools;
 import org.videolan.medialibrary.interfaces.media.Folder;
-import org.videolan.medialibrary.interfaces.media.Genre;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
 import org.videolan.medialibrary.interfaces.media.Playlist;
 import org.videolan.medialibrary.interfaces.media.VideoGroup;
-import org.videolan.medialibrary.media.SearchAggregate;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -651,12 +649,6 @@ abstract public class Medialibrary {
     abstract public boolean regroupAll();
 
     abstract public boolean regroup(long mediaId);
-    abstract public Genre[] getGenres(boolean includeMissing);
-    abstract public Genre[] getGenres(int sort, boolean desc, boolean includeMissing);
-    abstract public Genre[] getPagedGenres(int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    abstract public int getGenresCount();
-    abstract public int getGenresCount(String query);
-    abstract public Genre getGenre(long genreId);
     abstract public Playlist[] getPlaylists(int sort, boolean desc, boolean includeMissing);
     abstract public Playlist[] getPlaylists();
     abstract public Playlist[] getPagedPlaylists(int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
@@ -686,7 +678,6 @@ abstract public class Medialibrary {
     abstract public int getFoldersCount(int type);
     abstract public int setLastTime(long mediaId, long time);
     abstract public boolean setLastPosition(long mediaId, float position);
-    abstract public SearchAggregate search(String query, boolean includeMissing);
     abstract public MediaWrapper[] searchMedia(String query);
     abstract public MediaWrapper[] searchMedia(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     abstract public int getMediaCount(String query);
@@ -694,8 +685,6 @@ abstract public class Medialibrary {
     abstract public int getAudioCount(String query);
     abstract public MediaWrapper[] searchVideo(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     abstract public int getVideoCount(String query);
-    abstract public Genre[] searchGenre(String query);
-    abstract public Genre[] searchGenre(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     abstract public Playlist[] searchPlaylist(String query, boolean includeMissing);
     abstract public Playlist[] searchPlaylist(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     abstract public Folder[] searchFolders(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);

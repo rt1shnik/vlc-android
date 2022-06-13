@@ -22,19 +22,15 @@
 
 package org.videolan.vlc.gui.preferences
 
-import android.content.Intent
 import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.InputType
 import android.util.Log
 import androidx.core.content.edit
-import androidx.lifecycle.lifecycleScope
 import androidx.preference.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.launch
 import org.videolan.libvlc.util.AndroidUtil
 import org.videolan.libvlc.util.HWDecoderUtil
 import org.videolan.resources.AndroidDevices
@@ -45,9 +41,6 @@ import org.videolan.tools.RESUME_PLAYBACK
 import org.videolan.tools.Settings
 import org.videolan.vlc.BuildConfig
 import org.videolan.vlc.R
-import org.videolan.vlc.gui.helpers.UiTools
-import org.videolan.vlc.media.MediaUtils
-import org.videolan.vlc.providers.PickerType
 import org.videolan.vlc.util.LocaleUtil
 import java.text.DecimalFormat
 

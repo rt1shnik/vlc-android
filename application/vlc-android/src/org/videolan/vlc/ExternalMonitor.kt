@@ -76,7 +76,6 @@ object ExternalMonitor : BroadcastReceiver(), LifecycleObserver, CoroutineScope 
                     addDevice(action.uuid, action.path, true)
                     isNewForMl
                 }
-                if (isNew) notifyNewStorage(action)
             }
             is MediaUnmounted -> {
                 delay(100L)
@@ -135,20 +134,6 @@ object ExternalMonitor : BroadcastReceiver(), LifecycleObserver, CoroutineScope 
         ctx.registerReceiver(this, storageFilter)
         ctx.registerReceiver(this, otgFilter)
         registered = true
-        checkNewStorages(ctx)
-    }
-
-    @ExperimentalCoroutinesApi
-    @ObsoleteCoroutinesApi
-    private fun checkNewStorages(ctx: Context) {
-        if (Medialibrary.getInstance().isStarted) {
-            val scanOpt = if (Settings.showTvUi) ML_SCAN_ON
-            else Settings.getInstance(ctx).getInt(KEY_MEDIALIBRARY_SCAN, -1)
-            if (scanOpt == ML_SCAN_ON)
-                AppScope.launch { ctx.launchForeground(Intent(ACTION_CHECK_STORAGES, null, ctx, MediaParsingService::class.java)) }
-        }
-        val usbManager = ctx.getSystemService<UsbManager>() ?: return
-        devices.add(ArrayList(usbManager.deviceList.values))
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
@@ -160,32 +145,6 @@ object ExternalMonitor : BroadcastReceiver(), LifecycleObserver, CoroutineScope 
         registered = false
         devices.clear()
     }
-
-    @Synchronized
-    private fun notifyNewStorage(mediaMounted: MediaMounted) {
-        val activity = storageObserver?.get() ?: return
-        UiTools.newStorageDetected(activity, mediaMounted.path)
-        storageChannel.trySend(mediaMounted)
-    }
-
-    @Synchronized
-    fun subscribeStorageCb(observer: Activity) {
-        storageObserver = WeakReference(observer)
-    }
-
-    @Synchronized
-    fun unsubscribeStorageCb(observer: Activity) {
-        if (storageObserver?.get() === observer) {
-            storageObserver?.clear()
-            storageObserver = null
-        }
-    }
-}
-
-fun containsDevice(devices: Array<String>, device: String): Boolean {
-    if (devices.isNullOrEmpty()) return false
-    for (dev in devices) if (device.startsWith(dev.removeFileProtocole())) return true
-    return false
 }
 
 sealed class DeviceAction

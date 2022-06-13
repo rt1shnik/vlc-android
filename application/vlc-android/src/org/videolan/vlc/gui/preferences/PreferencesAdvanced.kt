@@ -50,7 +50,6 @@ import org.videolan.tools.BitmapCache
 import org.videolan.tools.Settings
 import org.videolan.tools.putSingle
 import org.videolan.vlc.BuildConfig
-import org.videolan.vlc.MediaParsingService
 import org.videolan.vlc.R
 import org.videolan.vlc.gui.DebugLogActivity
 import org.videolan.vlc.gui.dialogs.ConfirmDeleteDialog
@@ -125,7 +124,6 @@ class PreferencesAdvanced : BasePreferenceFragment(), SharedPreferences.OnShared
                 dialog.setListener {
                     lifecycleScope.launch {
                         val medialibrary = Medialibrary.getInstance()
-                        requireActivity().stopService(Intent(requireActivity(), MediaParsingService::class.java))
                         withContext((Dispatchers.IO)) {
                             medialibrary.clearDatabase(false)
                             //delete thumbnails

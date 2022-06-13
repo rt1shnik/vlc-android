@@ -63,7 +63,6 @@ import org.videolan.medialibrary.media.MediaLibraryItem
 import org.videolan.resources.*
 import org.videolan.resources.util.launchForeground
 import org.videolan.tools.*
-import org.videolan.vlc.MediaParsingService
 import org.videolan.vlc.R
 import org.videolan.vlc.gui.*
 import org.videolan.vlc.gui.dialogs.*
@@ -183,37 +182,6 @@ object UiTools {
         videoTracksDialog.trackSelectionListener = trackSelectionListener
     }
     fun Context.isTablet() = resources.getBoolean(R.bool.is_tablet)
-
-    fun newStorageDetected(activity: Activity?, path: String?) {
-        if (activity == null) return
-        val uuid = FileUtils.getFileNameFromPath(path)
-        val deviceName = FileUtils.getStorageTag(uuid)
-        val message = String.format(activity.getString(R.string.ml_external_storage_msg), deviceName
-                ?: uuid)
-        val si = Intent(ACTION_DISCOVER_DEVICE, null, activity, MediaParsingService::class.java)
-                .putExtra(EXTRA_PATH, path)
-        if (activity is AppCompatActivity) {
-            val builder = AlertDialog.Builder(activity)
-                    .setTitle(R.string.ml_external_storage_title)
-                    .setCancelable(false)
-                    .setMessage(message)
-                    .setPositiveButton(R.string.ml_external_storage_accept) { _, _ ->
-                        activity.launchForeground(si)
-                    }
-                    .setNegativeButton(R.string.ml_external_storage_decline) { dialog, _ -> dialog.dismiss() }
-            builder.show()
-        } else {
-            val builder = android.app.AlertDialog.Builder(activity)
-                    .setTitle(R.string.ml_external_storage_title)
-                    .setCancelable(false)
-                    .setMessage(message)
-                    .setPositiveButton(R.string.ml_external_storage_accept) { _, _ ->
-                        activity.launchForeground(si)
-                    }
-                    .setNegativeButton(R.string.ml_external_storage_decline) { dialog, _ -> dialog.dismiss() }
-            builder.show()
-        }
-    }
 
     @TargetApi(Build.VERSION_CODES.N)
     fun setOnDragListener(activity: Activity) {

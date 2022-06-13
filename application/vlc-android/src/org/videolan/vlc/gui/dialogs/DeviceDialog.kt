@@ -66,7 +66,6 @@ class DeviceDialog : DialogFragment() {
 
         override fun scan(v: View) {
             context?.let {
-                MedialibraryUtils.addDevice(path, it.applicationContext)
                 it.startActivity(Intent(it, StartActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             }
             dismiss()

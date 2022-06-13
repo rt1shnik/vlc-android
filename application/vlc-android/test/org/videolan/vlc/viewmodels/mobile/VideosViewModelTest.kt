@@ -6,7 +6,6 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.junit.Assert.*
 import org.junit.Test
 import org.videolan.medialibrary.interfaces.media.Folder
-import org.videolan.medialibrary.stubs.StubDataSource
 import org.videolan.vlc.BaseTest
 import org.videolan.resources.MEDIALIBRARY_PAGE_SIZE
 

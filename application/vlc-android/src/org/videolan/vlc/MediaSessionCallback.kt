@@ -182,15 +182,6 @@ internal class MediaSessionCallback(private val playbackService: PlaybackService
                                 loadMedia(tracks.toList(), pageOffset + position)
                             }
                         }
-                        MediaSessionBrowser.ID_SEARCH -> {
-                            val query = mediaIdUri.getQueryParameter("query") ?: ""
-                            val tracks = context.getFromMl {
-                                search(query, false)?.tracks?.toList() ?: emptyList()
-                            }
-                            if (tracks.isNotEmpty() && isActive) {
-                                loadMedia(tracks, position)
-                            }
-                        }
                         else -> {
                             val id = ContentUris.parseId(mediaIdUri)
                             when (mediaIdUri.retrieveParent().toString()) {
