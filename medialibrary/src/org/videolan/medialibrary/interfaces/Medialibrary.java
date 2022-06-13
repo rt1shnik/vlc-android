@@ -29,7 +29,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import org.videolan.medialibrary.MLServiceLocator;
-import org.videolan.medialibrary.SingleEvent;
 import org.videolan.medialibrary.Tools;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
 
@@ -90,7 +89,6 @@ abstract public class Medialibrary {
     protected final List<EntryPointsEventsCb> entryPointsEventsCbList = new ArrayList<>();
     private MedialibraryExceptionHandler mExceptionHandler;
     protected static Context sContext;
-    public static LiveData<MediaWrapper> lastThumb = new SingleEvent<>();
 
     protected static final Medialibrary instance = MLServiceLocator.getAbstractMedialibrary();
 
@@ -432,12 +430,6 @@ abstract public class Medialibrary {
                 for (EntryPointsEventsCb cb : entryPointsEventsCbList)
                     cb.onEntryPointRemoved(entryPoint, success);
         }
-    }
-
-    //    public static LiveData<MediaWrapper> lastThumb = new SingleEvent<>();
-    @SuppressWarnings({"unused", "unchecked"})
-    public void onMediaThumbnailReady(MediaWrapper media, boolean success) {
-        if (success) ((MutableLiveData)lastThumb).postValue(media);
     }
 
     public void addMediaCb(MediaCb mediaUpdatedCb) {
