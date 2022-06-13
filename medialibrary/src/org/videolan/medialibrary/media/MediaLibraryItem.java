@@ -13,10 +13,8 @@ public abstract class MediaLibraryItem implements Parcelable {
     public static final int TYPE_PLAYLIST    = 1 << 4;
     public static final int TYPE_MEDIA       = 1 << 5;
     public static final int TYPE_DUMMY       = 1 << 6;
-    public static final int TYPE_STORAGE     = 1 << 7;
     public static final int TYPE_HISTORY     = 1 << 9;
     public static final int TYPE_FOLDER      = 1 << 10;
-    public static final int TYPE_VIDEO_GROUP = 1 << 11;
     public static final int TYPE_BOOKMARK    = 1 << 12;
 
     public static final int FLAG_NONE = 0;
@@ -127,8 +125,6 @@ public abstract class MediaLibraryItem implements Parcelable {
         if (mId != 0) return mId == other.getId();
         if (getItemType() == TYPE_MEDIA)
             return TextUtils.equals(((MediaWrapper)this).getLocation(), ((MediaWrapper)other).getLocation());
-        if (getItemType() == TYPE_STORAGE)
-            return TextUtils.equals(((Storage)this).getName(), ((Storage)other).getName());
         return false;
     }
 }
