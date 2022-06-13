@@ -35,7 +35,6 @@ import org.videolan.medialibrary.interfaces.Medialibrary;
 import org.videolan.medialibrary.interfaces.media.Folder;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
 import org.videolan.medialibrary.interfaces.media.Playlist;
-import org.videolan.medialibrary.interfaces.media.VideoGroup;
 
 import java.io.File;
 
@@ -234,12 +233,6 @@ public class MedialibraryImpl extends Medialibrary {
 
     @Override
     @WorkerThread
-    public VideoGroup[] getVideoGroups(int sort, boolean desc, boolean includeMissing, int nbItems, int offset) {
-        return mIsInitiated ? nativeGetVideoGroups(sort, desc, includeMissing, nbItems, offset) : new VideoGroup[0];
-    }
-
-    @Override
-    @WorkerThread
     public int getVideoGroupsCount(@Nullable String query) {
         return mIsInitiated ? nativeGetVideoGroupsCount(query) : 0;
     }
@@ -248,18 +241,6 @@ public class MedialibraryImpl extends Medialibrary {
     @WorkerThread
     public void setVideoGroupsPrefixLength(int lenght) {
         if (mIsInitiated) nativeSetVideoGroupsPrefixLength(lenght);
-    }
-
-    @Override
-    @WorkerThread
-    public VideoGroup createVideoGroup(String name) {
-        return mIsInitiated && !TextUtils.isEmpty(name) ? nativeCreateGroupByName(name) : null;
-    }
-
-    @Override
-    @WorkerThread
-    public VideoGroup createVideoGroup(long[] ids) {
-        return mIsInitiated && (ids.length != 0) ? nativeCreateGroup(ids) : null;
     }
 
     @Override
@@ -479,11 +460,6 @@ public class MedialibraryImpl extends Medialibrary {
         return mIsInitiated ? nativeGetSearchFoldersCount(query) : 0;
     }
 
-    @Override
-    public VideoGroup[] searchVideoGroups(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset) {
-        return mIsInitiated && !TextUtils.isEmpty(query) ? nativeSearchPagedGroups(query, sort, desc, includeMissing, nbItems, offset) : new VideoGroup[0];
-    }
-
     // Native methods
     private native void nativeConstruct(String dbPath, String thumbsPath);
     private native int nativeInit(String dbPath);
@@ -523,13 +499,8 @@ public class MedialibraryImpl extends Medialibrary {
     private native MediaWrapper[] nativeGetRecentAudio();
     private native int nativeGetVideoCount();
     private native int nativeGetAudioCount();
-    private native VideoGroup[] nativeGetVideoGroups(int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     private native int nativeGetVideoGroupsCount(String query);
     private native void nativeSetVideoGroupsPrefixLength(int length);
-
-    private native VideoGroup nativeCreateGroupByName(String name);
-
-    private native VideoGroup nativeCreateGroup(long[] ids);
 
     private native boolean nativeRegroupAll();
 
@@ -564,6 +535,4 @@ public class MedialibraryImpl extends Medialibrary {
     private native int nativeGetPlaylistSearchCount(String query);
     private native Folder[] nativeSearchPagedFolders(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     private native int nativeGetSearchFoldersCount(String query);
-    private native VideoGroup[] nativeSearchPagedGroups(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    private native void nativeRequestThumbnail(long mediaId);
 }

@@ -436,36 +436,8 @@ fun Folder.getAll(type: Int = Folder.TYPE_FOLDER_VIDEO, sort: Int = Medialibrary
     return all
 }
 
-@WorkerThread
-fun VideoGroup.getAll(sort: Int = Medialibrary.SORT_DEFAULT, desc: Boolean = false,  includeMissing:Boolean = true): List<MediaWrapper> {
-    var index = 0
-    val count = mediaCount()
-    val all = mutableListOf<MediaWrapper>()
-    while (index < count) {
-        val pageCount = min(MEDIALIBRARY_PAGE_SIZE, count - index)
-        val list = media(sort, desc, includeMissing, pageCount, index)
-        all.addAll(list)
-        index += pageCount
-    }
-    return all
-}
-
-fun List<MediaLibraryItem>.getAll(sort: Int = Medialibrary.SORT_DEFAULT, desc: Boolean = false) = flatMap {
-    when (it) {
-        is VideoGroup -> it.getAll(sort, desc)
-        is MediaWrapper -> listOf(it)
-        else -> listOf()
-    }
-}
-
 fun List<Folder>.getAll(type: Int = Folder.TYPE_FOLDER_VIDEO, sort: Int = Medialibrary.SORT_DEFAULT, desc: Boolean = false) = flatMap {
     it.getAll(type, sort, desc)
-}
-
-private fun Array<MediaLibraryItem>.toList() = flatMap {
-    if (it is VideoGroup) {
-        it.media(Medialibrary.SORT_DEFAULT, false, true, it.mediaCount(), 0).toList()
-    } else listOf(it as MediaWrapper)
 }
 
 fun MediaContentResolver.canHandle(id: String) : Boolean {

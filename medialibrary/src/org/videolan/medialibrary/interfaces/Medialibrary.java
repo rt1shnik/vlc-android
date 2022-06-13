@@ -40,7 +40,6 @@ import org.videolan.medialibrary.Tools;
 import org.videolan.medialibrary.interfaces.media.Folder;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
 import org.videolan.medialibrary.interfaces.media.Playlist;
-import org.videolan.medialibrary.interfaces.media.VideoGroup;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -638,13 +637,8 @@ abstract public class Medialibrary {
     abstract public MediaWrapper[] getRecentAudio();
     abstract public int getVideoCount();
     abstract public int getAudioCount();
-    abstract public VideoGroup[] getVideoGroups(int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     abstract public int getVideoGroupsCount(@Nullable String query);
     abstract public void setVideoGroupsPrefixLength(int lenght);
-
-    abstract public VideoGroup createVideoGroup(String name);
-
-    abstract public VideoGroup createVideoGroup(long[] ids);
 
     abstract public boolean regroupAll();
 
@@ -689,5 +683,4 @@ abstract public class Medialibrary {
     abstract public Playlist[] searchPlaylist(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     abstract public Folder[] searchFolders(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     abstract public int getFoldersCount(String query);
-    abstract public VideoGroup[] searchVideoGroups(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
 }

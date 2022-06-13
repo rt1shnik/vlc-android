@@ -10,12 +10,10 @@ import org.videolan.medialibrary.interfaces.media.Bookmark;
 import org.videolan.medialibrary.interfaces.media.Folder;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
 import org.videolan.medialibrary.interfaces.media.Playlist;
-import org.videolan.medialibrary.interfaces.media.VideoGroup;
 import org.videolan.medialibrary.media.BookmarkImpl;
 import org.videolan.medialibrary.media.FolderImpl;
 import org.videolan.medialibrary.media.MediaWrapperImpl;
 import org.videolan.medialibrary.media.PlaylistImpl;
-import org.videolan.medialibrary.media.VideoGroupImpl;
 
 public class MLServiceLocator {
 
@@ -88,10 +86,6 @@ public class MLServiceLocator {
 
     public static Bookmark getAbstractBookmark(Parcel in) {
         return new BookmarkImpl(in);
-    }
-
-    public static VideoGroup getAbstractVideoGroup(Parcel in) {
-        return new VideoGroupImpl(in);
     }
 
     public static Playlist getAbstractPlaylist(Parcel in) {
