@@ -11,15 +11,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.withContext
-import org.videolan.medialibrary.interfaces.Medialibrary
 import org.videolan.medialibrary.interfaces.Medialibrary.MEDIALIB_FOLDER_NAME
-import org.videolan.medialibrary.interfaces.media.Folder
 import org.videolan.medialibrary.interfaces.media.MediaWrapper
 import org.videolan.medialibrary.media.MediaLibraryItem
 import org.videolan.resources.AppContextProvider
 import org.videolan.tools.BitmapCache
 import org.videolan.tools.CloseableUtils
-import org.videolan.tools.sanitizePath
 import org.videolan.vlc.BuildConfig
 import org.videolan.vlc.gui.helpers.AudioUtil.readCoverBitmap
 import org.videolan.vlc.gui.helpers.BitmapUtil
@@ -39,12 +36,6 @@ object ThumbnailsProvider {
     private var cacheDir: String? = null
     private const val MAX_IMAGES = 4
     private val lock = Any()
-
-    @WorkerThread
-    fun getFolderThumbnail(folder: Folder, width: Int): Bitmap? {
-        val media = folder.media(Folder.TYPE_FOLDER_VIDEO, Medialibrary.SORT_DEFAULT, true, true,4, 0).filterNotNull()
-        return getComposedImage("folder:${folder.mMrl.sanitizePath()}", media, width)
-    }
 
     @WorkerThread
     fun getMediaThumbnail(item: MediaWrapper, width: Int): Bitmap? {
@@ -199,7 +190,6 @@ object ThumbnailsProvider {
     suspend fun obtainBitmap(item: MediaLibraryItem, width: Int) = withContext(Dispatchers.IO) {
         when (item) {
             is MediaWrapper -> getMediaThumbnail(item, width)
-            is Folder -> getFolderThumbnail(item, width)
             else -> readCoverBitmap(Uri.decode(item.artworkMrl), width)
         }
     }

@@ -7,11 +7,9 @@ import android.os.Parcel;
 import org.videolan.libvlc.interfaces.IMedia;
 import org.videolan.medialibrary.interfaces.Medialibrary;
 import org.videolan.medialibrary.interfaces.media.Bookmark;
-import org.videolan.medialibrary.interfaces.media.Folder;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
 import org.videolan.medialibrary.interfaces.media.Playlist;
 import org.videolan.medialibrary.media.BookmarkImpl;
-import org.videolan.medialibrary.media.FolderImpl;
 import org.videolan.medialibrary.media.MediaWrapperImpl;
 import org.videolan.medialibrary.media.PlaylistImpl;
 
@@ -78,10 +76,6 @@ public class MLServiceLocator {
 
     public static MediaWrapper getAbstractMediaWrapper(Parcel in) {
         return new MediaWrapperImpl(in);
-    }
-
-    public static Folder getAbstractFolder(Parcel in) {
-        return new FolderImpl(in);
     }
 
     public static Bookmark getAbstractBookmark(Parcel in) {

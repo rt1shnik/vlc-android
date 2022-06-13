@@ -414,35 +414,6 @@ object MediaUtils {
             }
         }
     }
-
-    suspend fun useAsSoundFont(context: Context, uri:Uri) {
-        withContext(Dispatchers.IO) {
-            FileUtils.copyFile(File(uri.path), VLCOptions.getSoundFontFile(context))
-        }
-    }
-}
-
-@WorkerThread
-fun Folder.getAll(type: Int = Folder.TYPE_FOLDER_VIDEO, sort: Int = Medialibrary.SORT_DEFAULT, desc: Boolean = false, includeMissing:Boolean = true): List<MediaWrapper> {
-    var index = 0
-    val count = mediaCount(type)
-    val all = mutableListOf<MediaWrapper>()
-    while (index < count) {
-        val pageCount = min(MEDIALIBRARY_PAGE_SIZE, count - index)
-        val list = media(type, sort, desc, includeMissing, pageCount, index)
-        all.addAll(list)
-        index += pageCount
-    }
-    return all
-}
-
-fun List<Folder>.getAll(type: Int = Folder.TYPE_FOLDER_VIDEO, sort: Int = Medialibrary.SORT_DEFAULT, desc: Boolean = false) = flatMap {
-    it.getAll(type, sort, desc)
-}
-
-fun MediaContentResolver.canHandle(id: String) : Boolean {
-    for (i in 0 until size()) if (id.startsWith(keyAt(i))) return true
-    return false
 }
 
 suspend fun MediaContentResolver.getList(context: Context, id: String) : ResumableList {

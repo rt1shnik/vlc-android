@@ -39,7 +39,6 @@ import org.videolan.medialibrary.MLServiceLocator
 import org.videolan.resources.*
 import org.videolan.resources.util.getFromMl
 import org.videolan.resources.util.launchForeground
-import org.videolan.resources.util.startMedialibrary
 import org.videolan.tools.*
 import org.videolan.vlc.gui.BetaWelcomeActivity
 import org.videolan.vlc.gui.helpers.hf.StoragePermissionsDelegate.Companion.getStoragePermission
@@ -192,7 +191,6 @@ class StartActivity : FragmentActivity() {
                     if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P && !awaitAppIsForegroung()) {
                         return@launch
                     }
-                    this@StartActivity.startMedialibrary(firstRun, upgrade, true, removeDevices)
                 }
             }.start()
             val mainIntent = Intent(Intent.ACTION_VIEW)

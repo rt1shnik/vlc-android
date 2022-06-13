@@ -32,7 +32,6 @@ import androidx.annotation.WorkerThread;
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.util.VLCUtil;
 import org.videolan.medialibrary.interfaces.Medialibrary;
-import org.videolan.medialibrary.interfaces.media.Folder;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
 import org.videolan.medialibrary.interfaces.media.Playlist;
 
@@ -371,17 +370,6 @@ public class MedialibraryImpl extends Medialibrary {
         return mIsInitiated && !TextUtils.isEmpty(vlcMrl) ? nativeAddStream(vlcMrl, vlcTitle) : null;
     }
 
-    @NonNull
-    @WorkerThread
-    public Folder[] getFolders(int type, int sort, boolean desc, boolean includeMissing, int nbItems, int offset) {
-        return mIsInitiated ? nativeGetFolders(type, sort, desc, includeMissing, nbItems, offset) : new Folder[0];
-    }
-
-    @WorkerThread
-    public int getFoldersCount(int type) {
-        return mIsInitiated ? nativeGetFoldersCount(type) : 0;
-    }
-
     public int setLastTime(long mediaId, long lastTime) {
         if (!mIsInitiated || mediaId < 1) {
             return ML_SET_TIME_ERROR;
@@ -450,16 +438,6 @@ public class MedialibraryImpl extends Medialibrary {
         return mIsInitiated && !TextUtils.isEmpty(query) ? nativeSearchPagedPlaylist(query, sort, desc, includeMissing, nbItems, offset) : null;
     }
 
-    @Override
-    public Folder[] searchFolders(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset) {
-        return mIsInitiated && !TextUtils.isEmpty(query) ? nativeSearchPagedFolders(query, sort, desc, includeMissing, nbItems, offset) : new Folder[0];
-    }
-
-    @Override
-    public int getFoldersCount(String query) {
-        return mIsInitiated ? nativeGetSearchFoldersCount(query) : 0;
-    }
-
     // Native methods
     private native void nativeConstruct(String dbPath, String thumbsPath);
     private native int nativeInit(String dbPath);
@@ -510,8 +488,6 @@ public class MedialibraryImpl extends Medialibrary {
     private native int nativeGetPlaylistsCount();
     private native Playlist nativeGetPlaylist(long playlistId, boolean includeMissing);
     private native Playlist nativePlaylistCreate(String name, boolean includeMissing);
-    private native Folder[] nativeGetFolders(int type, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    private native int nativeGetFoldersCount(int type);
     private native void nativePauseBackgroundOperations();
     private native void nativeResumeBackgroundOperations();
     private native void nativeReload();
@@ -533,6 +509,5 @@ public class MedialibraryImpl extends Medialibrary {
     private native Playlist[] nativeSearchPlaylist(String query, boolean includeMissing);
     private native Playlist[] nativeSearchPagedPlaylist(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     private native int nativeGetPlaylistSearchCount(String query);
-    private native Folder[] nativeSearchPagedFolders(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     private native int nativeGetSearchFoldersCount(String query);
 }

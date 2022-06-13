@@ -28,7 +28,6 @@ import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.media.MediaRouter
 import android.os.Build
@@ -42,7 +41,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.view.ActionMode
 import androidx.cardview.widget.CardView
@@ -61,14 +59,11 @@ import org.videolan.medialibrary.Tools
 import org.videolan.medialibrary.interfaces.media.*
 import org.videolan.medialibrary.media.MediaLibraryItem
 import org.videolan.resources.*
-import org.videolan.resources.util.launchForeground
 import org.videolan.tools.*
 import org.videolan.vlc.R
 import org.videolan.vlc.gui.*
 import org.videolan.vlc.gui.dialogs.*
 import org.videolan.vlc.media.MediaUtils
-import org.videolan.vlc.media.getAll
-import org.videolan.vlc.util.FileUtils
 
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
@@ -411,14 +406,12 @@ suspend fun fillActionMode(context: Context, mode: ActionMode, multiSelectHelper
         selection.forEach { mediaItem ->
             when (mediaItem) {
                 is MediaWrapper -> realCount += 1
-                is Folder -> realCount += mediaItem.mediaCount(Folder.TYPE_FOLDER_VIDEO)
             }
         }
 
         selection.forEach { mediaItem ->
             when (mediaItem) {
                 is MediaWrapper -> length += mediaItem.length
-                is Folder -> mediaItem.getAll().forEach { length += it.length }
             }
         }
     }

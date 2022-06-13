@@ -45,7 +45,6 @@ import org.videolan.resources.AndroidDevices
 import org.videolan.resources.EXTRA_FIRST_RUN
 import org.videolan.resources.EXTRA_UPGRADE
 import org.videolan.resources.util.isExternalStorageManager
-import org.videolan.resources.util.startMedialibrary
 import org.videolan.tools.INITIAL_PERMISSION_ASKED
 import org.videolan.tools.Settings
 import org.videolan.tools.isCallable
@@ -194,7 +193,6 @@ class StoragePermissionsDelegate : BaseHeadlessFragment() {
 
         private fun getAction(activity: FragmentActivity, firstRun: Boolean, upgrade: Boolean) = Runnable {
             if (activity is CustomActionController) activity.onStorageAccessGranted()
-            else activity.startMedialibrary(firstRun, upgrade, true)
         }
 
         suspend fun FragmentActivity.getWritePermission(uri: Uri) = if (uri.path?.startsWith(AndroidDevices.EXTERNAL_PUBLIC_DIRECTORY) == true) {

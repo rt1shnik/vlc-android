@@ -511,7 +511,6 @@
             android:name=".PlaybackService"
             android:exported="true">
         </service>
-        <service android:name=".MediaParsingService"/>
 
         <receiver
             android:name=".widget.VLCAppWidgetProviderWhite"

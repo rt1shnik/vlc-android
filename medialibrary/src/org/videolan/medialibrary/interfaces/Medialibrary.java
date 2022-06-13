@@ -37,7 +37,6 @@ import androidx.lifecycle.MutableLiveData;
 import org.videolan.medialibrary.MLServiceLocator;
 import org.videolan.medialibrary.SingleEvent;
 import org.videolan.medialibrary.Tools;
-import org.videolan.medialibrary.interfaces.media.Folder;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
 import org.videolan.medialibrary.interfaces.media.Playlist;
 
@@ -668,8 +667,6 @@ abstract public class Medialibrary {
     abstract public boolean removeExternalMedia(long id);
     abstract public boolean flushUserProvidedThumbnails();
     abstract public MediaWrapper addStream(String mrl, String title);
-    abstract public Folder[] getFolders(int type, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    abstract public int getFoldersCount(int type);
     abstract public int setLastTime(long mediaId, long time);
     abstract public boolean setLastPosition(long mediaId, float position);
     abstract public MediaWrapper[] searchMedia(String query);
@@ -681,6 +678,4 @@ abstract public class Medialibrary {
     abstract public int getVideoCount(String query);
     abstract public Playlist[] searchPlaylist(String query, boolean includeMissing);
     abstract public Playlist[] searchPlaylist(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    abstract public Folder[] searchFolders(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    abstract public int getFoldersCount(String query);
 }

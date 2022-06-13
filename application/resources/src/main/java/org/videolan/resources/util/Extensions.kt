@@ -38,7 +38,6 @@ suspend inline fun <reified T> Context.getFromMl(crossinline block: Medialibrary
             }
             continuation.invokeOnCancellation { ml.removeOnMedialibraryReadyListener(listener) }
             ml.addOnMedialibraryReadyListener(listener)
-            startMedialibrary(false, false, scan)
         }
     }
 }
@@ -68,21 +67,6 @@ suspend inline fun waitForML() = withContext(Dispatchers.IO) {
             ml.addOnMedialibraryReadyListener(listener)
         }
     }
-}
-
-fun Context.startMedialibrary(firstRun: Boolean = false, upgrade: Boolean = false, parse: Boolean = true, removeDevices:Boolean = false, coroutineContextProvider: CoroutineContextProvider = CoroutineContextProvider()) = AppScope.launch {
-    if (Medialibrary.getInstance().isStarted) return@launch
-    val prefs = withContext(coroutineContextProvider.IO) { Settings.getInstance(this@startMedialibrary) }
-    val scanOpt = if (Settings.showTvUi) ML_SCAN_ON else prefs.getInt(KEY_MEDIALIBRARY_SCAN, -1)
-    if (parse && scanOpt == -1) {
-        if (dbExists(coroutineContextProvider)) prefs.putSingle(KEY_MEDIALIBRARY_SCAN, ML_SCAN_ON)
-    }
-    val intent = Intent(ACTION_INIT).setClassName(applicationContext, MEDIAPARSING_SERVICE)
-    launchForeground(intent
-            .putExtra(EXTRA_FIRST_RUN, firstRun)
-            .putExtra(EXTRA_UPGRADE, upgrade)
-            .putExtra(EXTRA_REMOVE_DEVICE, removeDevices)
-            .putExtra(EXTRA_PARSE, parse && scanOpt != ML_SCAN_OFF && canReadStorage(this@startMedialibrary)))
 }
 
 suspend fun Context.dbExists(coroutineContextProvider: CoroutineContextProvider = CoroutineContextProvider()) = withContext(coroutineContextProvider.IO) {
