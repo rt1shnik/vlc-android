@@ -6,9 +6,7 @@ import kotlinx.coroutines.withContext
 import org.videolan.libvlc.MediaPlayer
 import org.videolan.libvlc.interfaces.IMedia
 import org.videolan.medialibrary.interfaces.Medialibrary.*
-import org.videolan.medialibrary.interfaces.media.Album
 import org.videolan.medialibrary.interfaces.media.MediaWrapper
-import org.videolan.medialibrary.interfaces.media.VideoGroup
 import org.videolan.medialibrary.media.DummyItem
 import org.videolan.medialibrary.media.MediaLibraryItem
 import org.videolan.resources.util.*
@@ -81,18 +79,6 @@ object ModelsHelper {
                     array[currentArtist]?.add(item)
                 }
             }
-            SORT_ALBUM -> {
-                var currentAlbum: String? = null
-                for (item in items) {
-                    if (item.itemType == MediaLibraryItem.TYPE_DUMMY) continue
-                    val album = (item as MediaWrapper).album ?: ""
-                    if (currentAlbum === null || currentAlbum != album) {
-                        currentAlbum = album
-                        if (array[currentAlbum].isNullOrEmpty()) array[currentAlbum] = mutableListOf()
-                    }
-                    array[currentAlbum]?.add(item)
-                }
-            }
         }
         if (sort == SORT_DEFAULT || sort == SORT_FILENAME || sort == SORT_ALPHA)
             array.toSortedMap()
@@ -151,22 +137,6 @@ object ModelsHelper {
                 }
             } else null
         }
-        SORT_ARTIST -> {
-            val artist = (item as? MediaWrapper)?.artist ?: (item as? Album)?.albumArtist ?: ""
-            if (aboveItem == null) artist
-            else {
-                val previous = (aboveItem as? MediaWrapper)?.artist ?: (aboveItem as? Album)?.albumArtist ?: ""
-                artist.takeIf { it != previous }
-            }
-        }
-        SORT_ALBUM -> {
-            val album = (item as MediaWrapper).album ?: ""
-            if (aboveItem == null) album
-            else {
-                val previous = (aboveItem as MediaWrapper).album ?: ""
-                album.takeIf { it != previous }
-            }
-        }
         SORT_FILENAME -> {
             val title = FileUtils.getFileNameFromPath((item as? MediaWrapper)?.uri.toString())
             val aboveTitle = FileUtils.getFileNameFromPath((aboveItem as? MediaWrapper)?.uri.toString())
@@ -204,10 +174,6 @@ object EmptyPBSCallback : PlaybackService.Callback {
     override fun onMediaPlayerEvent(event: MediaPlayer.Event) {}
 }
 
-interface RefreshModel {
-    fun refresh()
-}
-
 interface SortModule {
     fun sort(sort: Int)
     fun canSortByName() = true
@@ -232,7 +198,6 @@ interface SortModule {
         SORT_RELEASEDATE -> canSortByReleaseDate()
         SORT_FILESIZE -> canSortByFileSize()
         SORT_ARTIST -> canSortByArtist()
-        SORT_ALBUM -> canSortByAlbum()
         SORT_PLAYCOUNT -> canSortByPlayCount()
         TrackId -> canSortByTrackId()
         NbMedia -> canSortByMediaNumber()

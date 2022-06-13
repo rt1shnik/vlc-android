@@ -118,11 +118,6 @@ class VideoTouchDelegate(private val player: VideoPlayerActivity,
 
         // coef is the gradient's move to determine a neutral zone
         when {
-            player.isPlaylistVisible -> {
-                touchAction = TOUCH_IGNORE
-                player.overlayDelegate.togglePlaylist()
-                return true
-            }
             else -> {
                 if (!player.isLocked) {
                     scaleGestureDetector.onTouchEvent(event)

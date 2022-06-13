@@ -38,9 +38,6 @@ abstract public class Artist extends MediaLibraryItem {
         }
     }
 
-    abstract public Album[] getAlbums(int sort, boolean desc, boolean includeMissing);
-    abstract public Album[] getPagedAlbums(int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    abstract public Album[] searchAlbums(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     abstract public int searchAlbumsCount(String query);
     abstract public MediaWrapper[] searchTracks(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     abstract public int searchTracksCount(String query);
@@ -68,10 +65,6 @@ abstract public class Artist extends MediaLibraryItem {
         this.artworkMrl = artworkMrl;
     }
 
-    public Album[] getAlbums() {
-        return getAlbums(Medialibrary.SORT_ALPHA, false, true);
-    }
-
     @Override
     public int getTracksCount() {
         return tracksCount;
@@ -87,7 +80,7 @@ abstract public class Artist extends MediaLibraryItem {
 
     @Override
     public MediaWrapper[] getTracks() {
-        return getTracks(Medialibrary.SORT_ALBUM, false, true);
+        return getTracks(Medialibrary.SORT_ARTIST, false, true);
     }
 
     @Override
@@ -104,19 +97,6 @@ abstract public class Artist extends MediaLibraryItem {
         parcel.writeInt(tracksCount);
         parcel.writeInt(albumsCount);
     }
-
-    public static Parcelable.Creator<Artist> CREATOR
-            = new Parcelable.Creator<Artist>() {
-        @Override
-        public Artist createFromParcel(Parcel in) {
-            return MLServiceLocator.getAbstractArtist(in);
-        }
-
-        @Override
-        public Artist[] newArray(int size) {
-            return new Artist[size];
-        }
-    };
 
     public Artist(Parcel in) {
         super(in);

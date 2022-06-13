@@ -36,9 +36,8 @@ import org.videolan.tools.Settings
 import org.videolan.vlc.util.ModelsHelper
 import org.videolan.vlc.util.Permissions
 import org.videolan.vlc.util.SortModule
-import org.videolan.vlc.viewmodels.SortableModel
 
-abstract class MedialibraryProvider<T : MediaLibraryItem>(val context: Context, val model: SortableModel) : HeaderProvider(),
+abstract class MedialibraryProvider<T : MediaLibraryItem>(val context: Context) : HeaderProvider(),
         SortModule
 {
     private val settings = Settings.getInstance(context)

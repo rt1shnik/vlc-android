@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import org.videolan.medialibrary.MLServiceLocator;
 import org.videolan.medialibrary.Tools;
 import org.videolan.medialibrary.interfaces.Medialibrary;
-import org.videolan.medialibrary.interfaces.media.Album;
 import org.videolan.medialibrary.interfaces.media.Artist;
 import org.videolan.medialibrary.interfaces.media.Folder;
 import org.videolan.medialibrary.interfaces.media.Genre;
@@ -195,42 +194,6 @@ public class StubMedialibrary extends Medialibrary {
         return false;
     }
 
-    public Album[] getAlbums(boolean includeMissing) {
-        return getAlbums(SORT_DEFAULT, false, includeMissing);
-    }
-
-    public Album[] getAlbums(int sort, boolean desc, boolean includeMissing) {
-        return dt.sortAlbum(dt.mAlbums, sort, desc);
-    }
-
-    public Album[] getPagedAlbums(int sort, boolean desc, boolean includeMissing, int nbItems, int offset) {
-        return dt.sortAlbum(dt.secureSublist(dt.mAlbums, offset, offset + nbItems), sort, desc);
-    }
-
-    public int getAlbumsCount() {
-        return dt.mAlbums.size();
-    }
-
-    public int getAlbumsCount(String query) {
-        int count = 0;
-        for (Album album : dt.mAlbums) {
-            if (Tools.hasSubString(album.getTitle(), query)) count++;
-        }
-        return count;
-    }
-
-    public Album getAlbum(long albumId) {
-        for (Album album : dt.mAlbums) {
-            if (album.getId() == albumId) return album;
-        }
-        return null;
-    }
-
-    @Override
-    public Artist[] getArtists(boolean all, boolean includeMissing) {
-        return getArtists(all, SORT_DEFAULT, false, true);
-    }
-
     private boolean checkForArtist(ArrayList<Artist> list, Artist newArtist) {
         for (Artist artist : list ) {
             if (artist.getTitle().equals(newArtist.getTitle())) {
@@ -238,38 +201,6 @@ public class StubMedialibrary extends Medialibrary {
             }
         }
         return false;
-    }
-
-    private Artist[] getAlbumArtists() {
-        ArrayList<Artist> results = new ArrayList<>();
-        for (Album album : dt.mAlbums) {
-            Artist artist = album.retrieveAlbumArtist();
-            if (!checkForArtist(results, artist)) {
-                results.add(artist);
-            }
-        }
-        return results.toArray(new Artist[0]);
-    }
-
-    public Artist[] getArtists(boolean all, int sort, boolean desc, boolean includeMissing) {
-        ArrayList<Artist> results;
-        if (all) results = dt.mArtists;
-        else results = new ArrayList<>(Arrays.asList(getAlbumArtists()));
-        return dt.sortArtist(results, sort, desc);
-    }
-
-    public Artist[] getPagedArtists(boolean all, int sort, boolean desc, boolean includeMissing, int nbItems, int offset) {
-        ArrayList<Artist> results;
-        if (all) results = dt.mArtists;
-        else results = new ArrayList<>(Arrays.asList(getAlbumArtists()));
-        return dt.sortArtist(dt.secureSublist(results, offset, offset + nbItems), sort, desc);
-    }
-
-    public int getArtistsCount(boolean all) {
-        int count;
-        if (all) count = dt.mArtists.size();
-        else count = getAlbumArtists().length;
-        return count;
     }
 
     public int getArtistsCount(String query) {
@@ -523,11 +454,9 @@ public class StubMedialibrary extends Medialibrary {
         public SearchAggregate search(String query, boolean includeMissing) {
         MediaWrapper[] videos = searchVideo(query);
         MediaWrapper[] tracks = searchAudio(query);
-        Album[] albums = searchAlbum(query);
-        Artist[] artists = searchArtist(query);
         Genre[] genres = searchGenre(query);
         Playlist[] playlists = searchPlaylist(query, true);
-        return new SearchAggregate(albums, artists, genres, videos, tracks, playlists);
+        return new SearchAggregate(genres, videos, tracks, playlists);
     }
 
     public MediaWrapper[] searchMedia(String query) {
@@ -622,19 +551,6 @@ public class StubMedialibrary extends Medialibrary {
     public Artist[] searchArtist(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset) {
         ArrayList<Artist> results = new ArrayList<>(Arrays.asList(searchArtist(query)));
         return dt.sortArtist(dt.secureSublist(results, offset, offset + nbItems), sort, desc);
-    }
-
-    public Album[] searchAlbum(String query) {
-        ArrayList<Album> results = new ArrayList<>();
-        for (Album album : dt.mAlbums) {
-            if (Tools.hasSubString(album.getTitle(), query)) results.add(album);
-        }
-        return results.toArray(new Album[0]);
-    }
-
-    public Album[] searchAlbum(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset) {
-        ArrayList<Album> results = new ArrayList<>(Arrays.asList(searchAlbum(query)));
-        return dt.sortAlbum(dt.secureSublist(results, offset, offset + nbItems), sort, desc);
     }
 
     public Genre[] searchGenre(String query) {

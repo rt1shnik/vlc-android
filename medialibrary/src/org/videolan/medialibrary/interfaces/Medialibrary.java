@@ -37,7 +37,6 @@ import androidx.lifecycle.MutableLiveData;
 import org.videolan.medialibrary.MLServiceLocator;
 import org.videolan.medialibrary.SingleEvent;
 import org.videolan.medialibrary.Tools;
-import org.videolan.medialibrary.interfaces.media.Album;
 import org.videolan.medialibrary.interfaces.media.Artist;
 import org.videolan.medialibrary.interfaces.media.Folder;
 import org.videolan.medialibrary.interfaces.media.Genre;
@@ -63,7 +62,6 @@ abstract public class Medialibrary {
     public final static int SORT_FILESIZE = 6;
     public final static int SORT_ARTIST = 7;
     public final static int SORT_PLAYCOUNT = 8;
-    public final static int SORT_ALBUM = 9;
     public final static int SORT_FILENAME = 10;
     public final static int TrackNumber = 11;
     public final static int TrackId = 12;
@@ -102,8 +100,6 @@ abstract public class Medialibrary {
     protected volatile boolean mIsWorking = false;
     protected static MutableLiveData<Boolean> sRunning = new MutableLiveData<>();
 
-    protected final List<ArtistsCb> mArtistsCbs = new ArrayList<>();
-    protected final List<AlbumsCb> mAlbumsCbs = new ArrayList<>();
     protected final List<MediaCb> mMediaCbs = new ArrayList<>();
     protected final List<GenresCb> mGenreCbs = new ArrayList<>();
     protected final List<PlaylistsCb> mPlaylistCbs = new ArrayList<>();
@@ -208,18 +204,6 @@ abstract public class Medialibrary {
         void onMediaConvertedToExternal(long[] id);
     }
 
-    public interface ArtistsCb {
-        void onArtistsAdded();
-        void onArtistsModified();
-        void onArtistsDeleted();
-    }
-
-    public interface AlbumsCb {
-        void onAlbumsAdded();
-        void onAlbumsModified();
-        void onAlbumsDeleted();
-    }
-
     public interface GenresCb {
         void onGenresAdded();
         void onGenresModified();
@@ -310,48 +294,6 @@ abstract public class Medialibrary {
     public void onMediaConvertedToExternal(long[] ids) {
         synchronized (mMediaCbs) {
             for (MediaCb cb : mMediaCbs) cb.onMediaConvertedToExternal(ids);
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onArtistsAdded() {
-        synchronized (mArtistsCbs) {
-            for (ArtistsCb cb : mArtistsCbs) cb.onArtistsAdded();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onArtistsModified() {
-        synchronized (mArtistsCbs) {
-            for (ArtistsCb cb : mArtistsCbs) cb.onArtistsModified();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onArtistsDeleted() {
-        synchronized (mArtistsCbs) {
-            for (ArtistsCb cb : mArtistsCbs) cb.onArtistsDeleted();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onAlbumsAdded() {
-        synchronized (mAlbumsCbs) {
-            for (AlbumsCb cb : mAlbumsCbs) cb.onAlbumsAdded();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onAlbumsModified() {
-        synchronized (mAlbumsCbs) {
-            for (AlbumsCb cb : mAlbumsCbs) cb.onAlbumsModified();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onAlbumsDeleted() {
-        synchronized (mAlbumsCbs) {
-            for (AlbumsCb cb : mAlbumsCbs) cb.onAlbumsDeleted();
         }
     }
 
@@ -573,30 +515,6 @@ abstract public class Medialibrary {
         }
     }
 
-    public void addArtistsCb(ArtistsCb artistsAddedCb) {
-        synchronized (mArtistsCbs) {
-            mArtistsCbs.add(artistsAddedCb);
-        }
-    }
-
-    public void removeArtistsCb(ArtistsCb artistsAddedCb) {
-        synchronized (mArtistsCbs) {
-            mArtistsCbs.remove(artistsAddedCb);
-        }
-    }
-
-    public void addAlbumsCb(AlbumsCb AlbumsAddedCb) {
-        synchronized (mAlbumsCbs) {
-            mAlbumsCbs.add(AlbumsAddedCb);
-        }
-    }
-
-    public void removeAlbumsCb(AlbumsCb AlbumsAddedCb) {
-        synchronized (mAlbumsCbs) {
-            mAlbumsCbs.remove(AlbumsAddedCb);
-        }
-    }
-
     public void addGenreCb(GenresCb GenreCb) {
         synchronized (mGenreCbs) {
             this.mGenreCbs.add(GenreCb);
@@ -734,18 +652,6 @@ abstract public class Medialibrary {
     abstract public boolean regroupAll();
 
     abstract public boolean regroup(long mediaId);
-    abstract public Album[] getAlbums(boolean includeMissing);
-    abstract public Album[] getAlbums(int sort, boolean desc, boolean includeMissing);
-    abstract public Album[] getPagedAlbums(int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    abstract public int getAlbumsCount();
-    abstract public int getAlbumsCount(String query);
-    abstract public Album getAlbum(long albumId);
-    abstract public Artist[] getArtists(boolean all, boolean includeMissing);
-    abstract public Artist[] getArtists(boolean all, int sort, boolean desc, boolean includeMissing);
-    abstract public Artist[] getPagedArtists(boolean all, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    abstract public int getArtistsCount(boolean all);
-    abstract public int getArtistsCount(String query);
-    abstract public Artist getArtist(long artistId);
     abstract public Genre[] getGenres(boolean includeMissing);
     abstract public Genre[] getGenres(int sort, boolean desc, boolean includeMissing);
     abstract public Genre[] getPagedGenres(int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
@@ -791,8 +697,6 @@ abstract public class Medialibrary {
     abstract public int getVideoCount(String query);
     abstract public Artist[] searchArtist(String query);
     abstract public Artist[] searchArtist(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    abstract public Album[] searchAlbum(String query);
-    abstract public Album[] searchAlbum(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     abstract public Genre[] searchGenre(String query);
     abstract public Genre[] searchGenre(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     abstract public Playlist[] searchPlaylist(String query, boolean includeMissing);

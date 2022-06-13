@@ -101,7 +101,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
     internal lateinit var settings: SharedPreferences
     private val binder = LocalBinder()
     internal lateinit var medialibrary: Medialibrary
-    private lateinit var artworkMap: MutableMap<String, Uri>
 
     private val callbacks = mutableListOf<Callback>()
     private val subtitleMessage = ArrayDeque<String>(1)
@@ -109,7 +108,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
     private var detectHeadset = true
     private lateinit var wakeLock: PowerManager.WakeLock
     private val audioFocusHelper by lazy { VLCAudioFocusHelper(this) }
-    private lateinit var browserCallback: MediaBrowserCallback
     var sleepTimerJob: Job? = null
 
     // Playback management
@@ -592,15 +590,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
         Util.checkCpuCompatibility(this)
 
         medialibrary = Medialibrary.getInstance()
-        artworkMap = HashMap<String,Uri>()
-
-        browserCallback = MediaBrowserCallback(this)
-        browserCallback.registerMediaCallback { if (lastParentId.isNotEmpty()) notifyChildrenChanged(lastParentId) }
-        browserCallback.registerHistoryCallback {
-            when (lastParentId) {
-                MediaSessionBrowser.ID_HOME, MediaSessionBrowser.ID_HISTORY -> notifyChildrenChanged(lastParentId)
-            }
-        }
 
         detectHeadset = settings.getBoolean("enable_headset_detection", true)
 
@@ -706,7 +695,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
         dispatcher.onServicePreSuperOnDestroy()
         super.onDestroy()
         handler.removeCallbacksAndMessages(null)
-        browserCallback.removeCallbacks()
         if (this::mediaSession.isInitialized) mediaSession.release()
         //Call it once mediaSession is null, to not publish playback state
         stop(systemExit = true)
@@ -738,7 +726,7 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
         else {
             val pi = if (::playlistManager.isInitialized) sessionPendingIntent else null
             NotificationHelper.createPlaybackNotification(ctx, false,
-                    ctx.resources.getString(R.string.loading), "", "", null, false, true,
+                    ctx.resources.getString(R.string.loading), "", null, false, true,
                     true, speed, isPodcastMode, false, enabledActions, null, pi)
         }
         startForeground(3, notification)
@@ -867,7 +855,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
                 try {
                     val title = if (metaData == null) mw.title else metaData.getString(MediaMetadataCompat.METADATA_KEY_TITLE)
                     val artist = if (metaData == null) mw.artist else metaData.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST)
-                    val album = if (metaData == null) mw.album else metaData.getString(MediaMetadataCompat.METADATA_KEY_ALBUM)
                     var cover = if (coverOnLockscreen && metaData != null)
                         metaData.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART) else null
                     if (coverOnLockscreen && cover == null)
@@ -876,7 +863,7 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
                         cover = ctx.getBitmapFromDrawable(R.drawable.ic_no_media)
 
                     notification = NotificationHelper.createPlaybackNotification(ctx,
-                            canSwitchToVideo(), title, artist, album, cover, playing, isPausable,
+                            canSwitchToVideo(), title, artist, cover, playing, isPausable,
                             isSeekable, speed, isPodcastMode, seekInCompactView, enabledActions,
                             sessionToken, sessionPendingIntent)
                     if (isPlayingPopup) return@launch
@@ -1009,22 +996,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
                 bob.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, MediaUtils.getMediaAlbum(ctx, media))
             }
             if (Permissions.canReadStorage(this@PlaybackService) && coverOnLockscreen) {
-                val albumArtUri = when {
-                    isSchemeHttpOrHttps(media.artworkMrl) -> {
-                        //ArtworkProvider will cache remote images
-                        ArtworkProvider.buildUri(Uri.Builder()
-                                .appendPath(ArtworkProvider.REMOTE)
-                                .appendQueryParameter(ArtworkProvider.PATH, media.artworkMrl)
-                                .build())
-                    }
-                    else -> {
-                        //The media id may be 0 on resume
-                        val mw = getFromMl { findMedia(media) }
-                        val mediaId = MediaSessionBrowser.generateMediaId(mw)
-                        artworkMap[mediaId] ?: ArtworkProvider.buildMediaUri(mw)
-                    }
-                }
-                bob.putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, albumArtUri.toString())
                 if (!carMode) {
                     val cover = AudioUtil.readCoverBitmap(Uri.decode(media.artworkMrl), 512)
                     if (cover?.config != null)
@@ -1235,7 +1206,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
             sendBroadcast(Intent("com.android.music.metachanged")
                     .putExtra("track", media.title)
                     .putExtra("artist", media.artist)
-                    .putExtra("album", media.album)
                     .putExtra("duration", media.length)
                     .putExtra("playing", isPlaying)
                     .putExtra("package", "org.videolan.vlc"))
@@ -1311,23 +1281,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
 
     private fun updateMediaQueue() = lifecycleScope.launch(start = CoroutineStart.UNDISPATCHED) {
         if (!this@PlaybackService::mediaSession.isInitialized) initMediaSession()
-        artworkMap = HashMap<String, Uri>().also {
-            val artworkToUriCache = HashMap<String, Uri>()
-            for (media in playlistManager.getMediaList()) {
-                try {
-                    val artworkMrl = media.artworkMrl
-                    if (!artworkMrl.isNullOrEmpty() && isPathValid(artworkMrl)) {
-                        val artworkUri = artworkToUriCache.getOrPut(artworkMrl) { ArtworkProvider.buildMediaUri(media) }
-                        val key = MediaSessionBrowser.generateMediaId(media)
-                        it[key] = artworkUri
-                    }
-                } catch (e: java.lang.NullPointerException) {
-                    Log.e("PlaybackService", "Caught NullPointerException", e)
-                    VLCCrashHandler.saveLog(e, "NullPointerException in PlaybackService updateMediaQueue")
-                }
-            }
-            artworkToUriCache.clear()
-        }
         updateMediaQueueSlidingWindow(true)
     }
 
@@ -1367,22 +1320,10 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
                 for ((position, media) in mediaList.subList(fromIndex, toIndex).withIndex()) {
                     val title: String = media.nowPlaying ?: media.title
                     val mediaId = MediaSessionBrowser.generateMediaId(media)
-                    val iconUri = when {
-                        isSchemeHttpOrHttps(media.artworkMrl) -> {
-                            //ArtworkProvider will cache remote images
-                            ArtworkProvider.buildUri(Uri.Builder()
-                                    .appendPath(ArtworkProvider.REMOTE)
-                                    .appendQueryParameter(ArtworkProvider.PATH, media.artworkMrl)
-                                    .build())
-                        }
-                        ThumbnailsProvider.isMediaVideo(media) -> ArtworkProvider.buildMediaUri(media)
-                        else -> artworkMap[mediaId] ?: MediaSessionBrowser.DEFAULT_TRACK_ICON
-                    }
                     val mediaDesc = MediaDescriptionCompat.Builder()
                             .setTitle(title)
                             .setSubtitle(MediaUtils.getMediaArtist(ctx, media))
                             .setDescription(MediaUtils.getMediaAlbum(ctx, media))
-                            .setIconUri(iconUri)
                             .setMediaUri(media.uri)
                             .setMediaId(mediaId)
                             .build()

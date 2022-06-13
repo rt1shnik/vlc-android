@@ -38,8 +38,6 @@ interface ICallBackHandler {
     fun CoroutineScope.registerCallBacks(refresh: () -> Unit)
     fun releaseCallbacks()
     fun watchMedia()
-    fun watchArtists()
-    fun watchAlbums()
     fun watchGenres()
     fun watchPlaylists()
     fun watchHistory()
@@ -52,8 +50,6 @@ class CallBackDelegate : ICallBackHandler,
         Medialibrary.OnMedialibraryReadyListener,
         Medialibrary.OnDeviceChangeListener,
         Medialibrary.MediaCb,
-        Medialibrary.ArtistsCb,
-        Medialibrary.AlbumsCb,
         Medialibrary.GenresCb,
         Medialibrary.PlaylistsCb,
         Medialibrary.HistoryCb,
@@ -133,16 +129,6 @@ class CallBackDelegate : ICallBackHandler,
         mediaCb = true
     }
 
-    override fun watchArtists() {
-        medialibrary.addArtistsCb(this)
-        artistsCb = true
-    }
-
-    override fun watchAlbums() {
-        medialibrary.addAlbumsCb(this)
-        albumsCb = true
-    }
-
     override fun watchGenres() {
         medialibrary.addGenreCb(this)
         genresCb = true
@@ -167,8 +153,6 @@ class CallBackDelegate : ICallBackHandler,
         medialibrary.removeOnMedialibraryReadyListener(this)
         medialibrary.removeOnDeviceChangeListener(this)
         if (mediaCb) medialibrary.removeMediaCb(this)
-        if (artistsCb) medialibrary.removeArtistsCb(this)
-        if (albumsCb) medialibrary.removeAlbumsCb(this)
         if (genresCb) medialibrary.removeGenreCb(this)
         if (playlistsCb) medialibrary.removePlaylistCb(this)
         if (historyCb) medialibrary.removeHistoryCb(this)
@@ -195,18 +179,6 @@ class CallBackDelegate : ICallBackHandler,
         refreshActor.trySend(Unit)
         deleteActor.trySend(MediaConvertedExternalAction(ids))
     }
-
-    override fun onArtistsAdded() { refreshActor.trySend(Unit) }
-
-    override fun onArtistsModified() { refreshActor.trySend(Unit) }
-
-    override fun onArtistsDeleted() { refreshActor.trySend(Unit) }
-
-    override fun onAlbumsAdded() { refreshActor.trySend(Unit) }
-
-    override fun onAlbumsModified() { refreshActor.trySend(Unit) }
-
-    override fun onAlbumsDeleted() { refreshActor.trySend(Unit) }
 
     override fun onGenresAdded() { refreshActor.trySend(Unit) }
 

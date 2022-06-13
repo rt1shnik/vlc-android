@@ -35,7 +35,6 @@ import org.videolan.medialibrary.interfaces.Medialibrary
 import org.videolan.resources.AndroidDevices
 import org.videolan.resources.util.getFromMl
 import org.videolan.tools.*
-import org.videolan.vlc.gui.onboarding.ONBOARDING_DONE_KEY
 import java.io.File
 import java.io.IOException
 
@@ -101,10 +100,9 @@ object VersionMigration {
             }
         }
         val settings = Settings.getInstance(context)
-        val onboarding = !settings.getBoolean(ONBOARDING_DONE_KEY, false)
         val tv = AndroidDevices.isAndroidTv || !AndroidDevices.isChromeBook && !AndroidDevices.hasTsp ||
                 settings.getBoolean("tv_ui", false)
-        if (!tv && !onboarding) context.getFromMl { flushUserProvidedThumbnails() }
+        if (!tv) context.getFromMl { flushUserProvidedThumbnails() }
     }
 
     /**

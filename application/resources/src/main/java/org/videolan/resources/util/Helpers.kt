@@ -9,7 +9,6 @@ import android.os.Environment
 import android.view.View
 import androidx.core.content.ContextCompat
 import org.videolan.libvlc.util.AndroidUtil
-import org.videolan.medialibrary.interfaces.media.Album
 import org.videolan.medialibrary.interfaces.media.MediaWrapper
 import org.videolan.medialibrary.interfaces.media.Playlist
 import org.videolan.medialibrary.interfaces.media.VideoGroup
@@ -42,24 +41,20 @@ fun getTimeCategoryString(context: Context, cat: Int) = when (cat) {
 }
 
 fun MediaLibraryItem.isSpecialItem() = itemType == MediaLibraryItem.TYPE_ARTIST
-        && (id == 1L || id == 2L) || itemType == MediaLibraryItem.TYPE_ALBUM
-        && title == Album.SpecialRes.UNKNOWN_ALBUM
+        && (id == 1L || id == 2L)
 
 fun MediaLibraryItem.getLength() = when {
-    itemType == MediaLibraryItem.TYPE_ALBUM -> (this as Album).duration
     itemType == MediaLibraryItem.TYPE_MEDIA -> (this as MediaWrapper).length
     itemType == MediaLibraryItem.TYPE_VIDEO_GROUP -> (this as VideoGroup).duration()
     else -> 0L
 }
 
 fun MediaLibraryItem.getYear() = when (itemType) {
-    MediaLibraryItem.TYPE_ALBUM -> if ((this as Album).releaseYear <= 0) "-" else releaseYear.toString()
     MediaLibraryItem.TYPE_MEDIA -> if ((this as MediaWrapper).releaseYear <= 0) "-" else releaseYear.toString()
     else -> "-"
 }
 
 fun MediaLibraryItem.getTracksCount() = when (itemType) {
-    MediaLibraryItem.TYPE_ALBUM -> (this as Album).tracksCount
     MediaLibraryItem.TYPE_PLAYLIST -> (this as Playlist).tracksCount
     else -> 0
 }

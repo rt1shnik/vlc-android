@@ -6,34 +6,22 @@ import android.os.Parcel;
 import android.util.SparseArray;
 
 import org.videolan.medialibrary.Tools;
-import org.videolan.medialibrary.interfaces.media.Album;
-import org.videolan.medialibrary.interfaces.media.Artist;
 import org.videolan.libvlc.interfaces.IMedia;
 import org.videolan.medialibrary.interfaces.media.Bookmark;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
 
 public class StubMediaWrapper extends MediaWrapper {
     public StubMediaWrapper(long id, String mrl, long time, float position, long length, int type, String title,
-                        String filename, String artist, String genre, String album, String albumArtist,
+                        String filename, String artist, String genre,
                         int width, int height, String artworkURL, int audio, int spu, int trackNumber,
                         int discNumber, long lastModified, long seen, boolean isThumbnailGenerated, int releaseDate, boolean isPresent) {
         super(id, mrl, time, position, length, type, title, filename, artist,
-                genre, album, albumArtist, width, height, artworkURL,
+                genre, width, height, artworkURL,
                 audio, spu, trackNumber, discNumber, lastModified,
                 seen, isThumbnailGenerated, releaseDate, isPresent);
         final StringBuilder sb = new StringBuilder();
         if (type == TYPE_AUDIO) {
-            boolean hasArtistMeta = !artist.equals(Artist.SpecialRes.VARIOUS_ARTISTS) &&
-                    !artist.equals(Artist.SpecialRes.UNKNOWN_ARTIST) && !artist.isEmpty();
-            boolean hasAlbumMeta = !album.equals(Album.SpecialRes.UNKNOWN_ALBUM) &&
-                    !artist.isEmpty();
-            if (hasArtistMeta) {
-                sb.append(artist);
-                if (hasAlbumMeta)
-                    sb.append(" - ");
-            }
-            if (hasAlbumMeta)
-                sb.append(album);
+
         } else if (type == TYPE_VIDEO) {
             Tools.setMediaDescription(this);
         }
@@ -45,10 +33,10 @@ public class StubMediaWrapper extends MediaWrapper {
     }
 
     public StubMediaWrapper(Uri uri, long time, float position, long length, int type,
-                        Bitmap picture, String title, String artist, String genre, String album, String albumArtist,
+                        Bitmap picture, String title, String artist, String genre,
                         int width, int height, String artworkURL, int audio, int spu, int trackNumber, int discNumber, long lastModified, long seen) {
         super(uri, time, position, length, type, picture, title, artist,
-                genre, album, albumArtist, width, height, artworkURL,
+                genre, width, height, artworkURL,
                 audio, spu, trackNumber, discNumber, lastModified, seen);
     }
 

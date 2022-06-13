@@ -77,3 +77,5 @@ libvlc/assets/lua/meta/art/
 libvlc/assets/lua/modules/
 
 libvlc/assets/lua/meta/reader/
+
+libvlc/assets/hrtfs/dodeca_and_7channel_3DSL_HRTF.sofa

@@ -43,8 +43,6 @@ import org.videolan.resources.util.startMedialibrary
 import org.videolan.tools.*
 import org.videolan.vlc.gui.BetaWelcomeActivity
 import org.videolan.vlc.gui.helpers.hf.StoragePermissionsDelegate.Companion.getStoragePermission
-import org.videolan.vlc.gui.onboarding.ONBOARDING_DONE_KEY
-import org.videolan.vlc.gui.onboarding.startOnboarding
 import org.videolan.vlc.gui.video.VideoPlayerActivity
 import org.videolan.vlc.media.MediaUtils
 import org.videolan.vlc.util.FileUtils
@@ -155,8 +153,6 @@ class StartActivity : FragmentActivity() {
                 lifecycleScope.launch {
                     getFromMl {
                         val album = when(type) {
-                         "album" ->   getAlbum(id.toLong())
-                         "artist" ->   getArtist(id.toLong())
                          "genre" ->   getGenre(id.toLong())
                          "playlist" ->   getPlaylist(id.toLong(), false)
                          else ->   getMedia(id.toLong())
@@ -187,10 +183,9 @@ class StartActivity : FragmentActivity() {
 
     private fun startApplication(tv: Boolean, firstRun: Boolean, upgrade: Boolean, target: Int, removeDevices:Boolean = false) {
         val settings = Settings.getInstance(this@StartActivity)
-        val onboarding = !tv && !settings.getBoolean(ONBOARDING_DONE_KEY, false)
         // Start Medialibrary from background to workaround Dispatchers.Main causing ANR
         // cf https://github.com/Kotlin/kotlinx.coroutines/issues/878
-        if (!onboarding || !firstRun) {
+        if (!firstRun) {
             Thread {
                 AppScope.launch {
                     // workaround for a Android 9 bug
@@ -199,7 +194,6 @@ class StartActivity : FragmentActivity() {
                         return@launch
                     }
                     this@StartActivity.startMedialibrary(firstRun, upgrade, true, removeDevices)
-                    if (onboarding) settings.putSingle(ONBOARDING_DONE_KEY, true)
                 }
             }.start()
             val mainIntent = Intent(Intent.ACTION_VIEW)
@@ -209,8 +203,6 @@ class StartActivity : FragmentActivity() {
             if (tv && intent.hasExtra(EXTRA_PATH)) mainIntent.putExtra(EXTRA_PATH, intent.getStringExtra(EXTRA_PATH))
             if (target != 0) mainIntent.putExtra(EXTRA_TARGET, target)
             startActivity(mainIntent)
-        } else {
-            startOnboarding()
         }
     }
 

@@ -184,7 +184,6 @@ object ThumbnailsProvider {
 
             for (i in 0..3) {
                 if (images.size < i + 1) {
-                    images.add(UiTools.getDefaultAudioDrawable(AppContextProvider.appContext).bitmap)
                     /* Place the first image on the diagonal */
                     if (images.size == 3) {
                         images.add(images[0])

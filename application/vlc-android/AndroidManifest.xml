@@ -449,37 +449,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".gui.MainActivity"
-            android:icon="@drawable/icon"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:theme="@style/Theme.VLC"
-            android:windowSoftInputMode="adjustPan">
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
-        </activity>
-        <activity
             android:name=".gui.onboarding.OnboardingActivity"
             android:theme="@style/Theme.VLC.Onboarding"/>
-        <activity
-            android:name=".gui.SecondaryActivity"
-            android:theme="@style/Theme.VLC"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity
-            android:name=".gui.PlaylistActivity"
-            android:theme="@style/Theme.VLC.NoStatus"/>
-        <activity
-            android:name=".gui.InfoActivity"
-            android:theme="@style/Theme.VLC.NoStatus"/>
         <activity
             android:name=".gui.LibrariesActivity"
             android:theme="@style/Theme.VLC"/>
         <activity
             android:name=".gui.AuthorsActivity"
-            android:theme="@style/Theme.VLC"/>
-        <activity
-            android:name=".gui.SearchActivity"
             android:theme="@style/Theme.VLC"/>
         <activity
             android:name=".gui.SendCrashActivity"
@@ -603,10 +579,6 @@
         <provider
             android:name=".FileProvider"
             android:authorities="${applicationId}.thumbprovider"
-            android:exported="true"/>
-        <provider
-            android:name=".ArtworkProvider"
-            android:authorities="${applicationId}.artwork"
             android:exported="true"/>
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -39,20 +39,20 @@ public class MediaWrapperImpl extends MediaWrapper {
     public final static String TAG = "VLC/MediaWrapperImpl";
 
     public MediaWrapperImpl(long id, String mrl, long time, float position, long length, int type, String title,
-                            String filename, String artist, String genre, String album, String albumArtist,
+                            String filename, String artist, String genre,
                             int width, int height, String artworkURL, int audio, int spu, int trackNumber,
                             int discNumber, long lastModified, long seen, boolean isThumbnailGenerated, int releaseDate, boolean isPresent) {
         super(id, mrl, time, position, length, type, title, filename, artist,
-                genre, album, albumArtist, width, height, artworkURL,
+                genre, width, height, artworkURL,
                 audio, spu, trackNumber, discNumber, lastModified,
                 seen, isThumbnailGenerated, releaseDate, isPresent);
     }
 
     public MediaWrapperImpl(Uri uri, long time, float position, long length, int type,
-                            Bitmap picture, String title, String artist, String genre, String album, String albumArtist,
+                            Bitmap picture, String title, String artist, String genre,
                             int width, int height, String artworkURL, int audio, int spu, int trackNumber, int discNumber, long lastModified, long seen) {
         super(uri, time, position, length, type, picture, title, artist,
-                genre, album, albumArtist, width, height, artworkURL,
+                genre, width, height, artworkURL,
                 audio, spu, trackNumber, discNumber, lastModified, seen);
     }
 
@@ -77,10 +77,6 @@ public class MediaWrapperImpl extends MediaWrapper {
         mArtist = artist;
     }
 
-    public String getReferenceArtist() {
-        return mAlbumArtist == null ? mArtist : mAlbumArtist;
-    }
-
     public String getArtist() {
         return mArtist;
     }
@@ -100,18 +96,6 @@ public class MediaWrapperImpl extends MediaWrapper {
 
     public String getCopyright() {
         return mCopyright;
-    }
-
-    public String getAlbum() {
-        return mAlbum;
-    }
-
-    public String getAlbumArtist() {
-        return mAlbumArtist;
-    }
-
-    public Boolean isAlbumUnknown() {
-        return mAlbum == null;
     }
 
     public int getTrackNumber() {

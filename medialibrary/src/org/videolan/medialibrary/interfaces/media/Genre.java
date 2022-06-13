@@ -19,14 +19,8 @@ public abstract class Genre extends MediaLibraryItem {
     }
     public Genre(Parcel in) { super(in); }
 
-    abstract public Album[] getAlbums(int sort, boolean desc, boolean includeMissing);
-    abstract public Album[] getPagedAlbums(int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    abstract public Artist[] getArtists(int sort, boolean desc, boolean includeMissing);
     abstract public MediaWrapper[] getTracks(boolean withThumbnail, int sort, boolean desc, boolean includeMissing);
     abstract public MediaWrapper[] getPagedTracks(boolean withThumbnail, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    abstract public int getAlbumsCount();
-    abstract public Album[] searchAlbums(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    abstract public int searchAlbumsCount(String query);
     abstract public MediaWrapper[] searchTracks(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     abstract public int searchTracksCount(String query);
 
@@ -38,14 +32,8 @@ public abstract class Genre extends MediaLibraryItem {
         return getTracks(false, sort, desc, includeMissing);
     }
 
-    public Album[] getAlbums() {
-        return getAlbums(Medialibrary.SORT_DEFAULT, false, true);
-    }
-    public Artist[] getArtists() {
-        return getArtists(Medialibrary.SORT_DEFAULT, false, true);
-    }
     public MediaWrapper[] getTracks() {
-        return getTracks(false, Medialibrary.SORT_ALBUM, false, true);
+        return getTracks(false, Medialibrary.SORT_ARTIST, false, true);
     }
     @Override
     public int getItemType() {
