@@ -129,12 +129,7 @@ public abstract class MediaWrapper extends MediaLibraryItem implements Parcelabl
     public abstract String getMetaString(int metaDataType);
     public abstract boolean setLongMeta(int metaDataType, long metaDataValue);
     public abstract boolean setStringMeta(int metaDataType, String metaDataValue);
-    public abstract void setThumbnail(String mrl);
     public abstract boolean setPlayCount(long playCount);
-    public abstract void removeThumbnail();
-    public abstract void requestThumbnail(int width, float position);
-    public abstract void requestBanner(int width, float position);
-    public abstract boolean removeFromHistory();
     public abstract Bookmark[] getBookmarks();
     public abstract Bookmark addBookmark(long time);
     public abstract boolean removeBookmark(long time);

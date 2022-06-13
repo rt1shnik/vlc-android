@@ -77,11 +77,6 @@ abstract public class Medialibrary {
     protected volatile boolean mIsWorking = false;
     protected static MutableLiveData<Boolean> sRunning = new MutableLiveData<>();
 
-    protected final List<MediaCb> mMediaCbs = new ArrayList<>();
-    protected final List<GenresCb> mGenreCbs = new ArrayList<>();
-    protected final List<PlaylistsCb> mPlaylistCbs = new ArrayList<>();
-    protected final List<HistoryCb> mHistoryCbs = new ArrayList<>();
-    protected final List<MediaGroupCb> mMediaGroupCbs = new ArrayList<>();
     protected final List<OnMedialibraryReadyListener> onMedialibraryReadyListeners = new ArrayList<>();
     protected final List<OnDeviceChangeListener> onDeviceChangeListeners = new ArrayList<>();
     protected volatile boolean isMedialibraryStarted = false;
@@ -97,13 +92,6 @@ abstract public class Medialibrary {
 
     public static LiveData<Boolean> getState() {
         return sRunning;
-    }
-
-    public enum ThumbnailSizeType {
-        /// A small sized thumbnail. Considered to be the default value before model 17
-        Thumbnail,
-        /// A banner type thumbnail. The exact size is application dependent.
-        Banner
     }
 
     public boolean isStarted() {
@@ -131,35 +119,6 @@ abstract public class Medialibrary {
         return mIsInitiated;
     }
 
-    public interface MediaCb {
-        void onMediaAdded();
-        void onMediaModified();
-        void onMediaDeleted(long[] id);
-        void onMediaConvertedToExternal(long[] id);
-    }
-
-    public interface GenresCb {
-        void onGenresAdded();
-        void onGenresModified();
-        void onGenresDeleted();
-    }
-
-    public interface PlaylistsCb {
-        void onPlaylistsAdded();
-        void onPlaylistsModified();
-        void onPlaylistsDeleted();
-    }
-
-    public interface HistoryCb {
-        void onHistoryModified();
-    }
-
-    public interface MediaGroupCb {
-        void onMediaGroupsAdded();
-        void onMediaGroupsModified();
-        void onMediaGroupsDeleted();
-    }
-
     public interface OnMedialibraryReadyListener {
         void onMedialibraryReady();
         void onMedialibraryIdle();
@@ -172,15 +131,6 @@ abstract public class Medialibrary {
     public interface MedialibraryExceptionHandler {
         void onUnhandledException(String context, String errMsg, boolean clearSuggested);
     }
-
-    public MedialibraryExceptionHandler getExceptionHandler() {
-        return mExceptionHandler;
-    }
-
-    public void setExceptionHandler(MedialibraryExceptionHandler mExceptionHandler) {
-        this.mExceptionHandler = mExceptionHandler;
-    }
-
 
     // If media is not in ML, find it with its path
     public MediaWrapper findMedia(MediaWrapper mw) {
@@ -201,104 +151,6 @@ abstract public class Medialibrary {
             }
         }
         return mw;
-    }
-
-    @SuppressWarnings("unused")
-    public void onMediaAdded(MediaWrapper[] mediaList) {
-        synchronized (mMediaCbs) {
-            for (MediaCb cb : mMediaCbs) cb.onMediaAdded();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onMediaUpdated() {
-        synchronized (mMediaCbs) {
-            for (MediaCb cb : mMediaCbs) cb.onMediaModified();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onMediaDeleted(long[] ids) {
-        synchronized (mMediaCbs) {
-            for (MediaCb cb : mMediaCbs) cb.onMediaDeleted(ids);
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onMediaConvertedToExternal(long[] ids) {
-        synchronized (mMediaCbs) {
-            for (MediaCb cb : mMediaCbs) cb.onMediaConvertedToExternal(ids);
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onGenresAdded() {
-        synchronized (mGenreCbs) {
-            for (GenresCb cb : mGenreCbs) cb.onGenresAdded();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onGenresModified() {
-        synchronized (mGenreCbs) {
-            for (GenresCb cb : mGenreCbs) cb.onGenresModified();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onGenresDeleted() {
-        synchronized (mGenreCbs) {
-            for (GenresCb cb : mGenreCbs) cb.onGenresDeleted();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onPlaylistsAdded() {
-        synchronized (mPlaylistCbs) {
-            for (PlaylistsCb cb : mPlaylistCbs) cb.onPlaylistsAdded();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onPlaylistsModified() {
-        synchronized (mPlaylistCbs) {
-            for (PlaylistsCb cb : mPlaylistCbs) cb.onPlaylistsModified();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onPlaylistsDeleted() {
-        synchronized (mPlaylistCbs) {
-            for (PlaylistsCb cb : mPlaylistCbs) cb.onPlaylistsDeleted();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onHistoryChanged(int type) {
-        synchronized (mHistoryCbs) {
-            for (HistoryCb cb : mHistoryCbs) cb.onHistoryModified();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onMediaGroupAdded() {
-        synchronized (mMediaGroupCbs) {
-            for (MediaGroupCb cb : mMediaGroupCbs) cb.onMediaGroupsAdded();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onMediaGroupModified() {
-        synchronized (mMediaGroupCbs) {
-            for (MediaGroupCb cb : mMediaGroupCbs) cb.onMediaGroupsModified();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onMediaGroupDeleted() {
-        synchronized (mMediaGroupCbs) {
-            for (MediaGroupCb cb : mMediaGroupCbs) cb.onMediaGroupsDeleted();
-        }
     }
 
     @SuppressWarnings("unused")
@@ -353,66 +205,6 @@ abstract public class Medialibrary {
         }
     }
 
-    public void addMediaCb(MediaCb mediaUpdatedCb) {
-        synchronized (mMediaCbs) {
-            mMediaCbs.add(mediaUpdatedCb);
-        }
-    }
-
-    public void removeMediaCb(MediaCb mediaUpdatedCb) {
-        synchronized (mMediaCbs) {
-            mMediaCbs.remove(mediaUpdatedCb);
-        }
-    }
-
-    public void addGenreCb(GenresCb GenreCb) {
-        synchronized (mGenreCbs) {
-            this.mGenreCbs.add(GenreCb);
-        }
-    }
-
-    public void removeGenreCb(GenresCb GenreCb) {
-        synchronized (mGenreCbs) {
-            this.mGenreCbs.remove(GenreCb);
-        }
-    }
-
-    public void addPlaylistCb(PlaylistsCb playlistCb) {
-        synchronized (mPlaylistCbs) {
-            this.mPlaylistCbs.add(playlistCb);
-        }
-    }
-
-    public void removePlaylistCb(PlaylistsCb playlistCb) {
-        synchronized (mPlaylistCbs) {
-            this.mPlaylistCbs.remove(playlistCb);
-        }
-    }
-
-    public void addHistoryCb(HistoryCb historyCb) {
-        synchronized (mHistoryCbs) {
-            this.mHistoryCbs.add(historyCb);
-        }
-    }
-
-    public void removeHistoryCb(HistoryCb historyCb) {
-        synchronized (mHistoryCbs) {
-            this.mHistoryCbs.remove(historyCb);
-        }
-    }
-
-    public void addMediaGroupCb(MediaGroupCb mediaGroupCb) {
-        synchronized (mMediaGroupCbs) {
-            this.mMediaGroupCbs.add(mediaGroupCb);
-        }
-    }
-
-    public void removeMediaGroupCb(MediaGroupCb mediaGroupCb) {
-        synchronized (mMediaGroupCbs) {
-            this.mMediaGroupCbs.remove(mediaGroupCb);
-        }
-    }
-
     public void addOnMedialibraryReadyListener(OnMedialibraryReadyListener cb) {
         synchronized (onMedialibraryReadyListeners) {
             if (!onMedialibraryReadyListeners.contains(cb))
@@ -423,32 +215,6 @@ abstract public class Medialibrary {
     public void removeOnMedialibraryReadyListener(OnMedialibraryReadyListener cb) {
         synchronized (onMedialibraryReadyListeners) {
             onMedialibraryReadyListeners.remove(cb);
-        }
-    }
-
-    public void addEntryPointsEventsCb(EntryPointsEventsCb cb) {
-        synchronized (entryPointsEventsCbList) {
-            if (!entryPointsEventsCbList.contains(cb))
-                entryPointsEventsCbList.add(cb);
-        }
-    }
-
-    public void removeEntryPointsEventsCb(EntryPointsEventsCb cb) {
-        synchronized (entryPointsEventsCbList) {
-            entryPointsEventsCbList.remove(cb);
-        }
-    }
-
-    public void addOnDeviceChangeListener(OnDeviceChangeListener listener) {
-        synchronized (onDeviceChangeListeners) {
-            if (!onDeviceChangeListeners.contains(listener))
-                onDeviceChangeListeners.add(listener);
-        }
-    }
-
-    public void removeOnDeviceChangeListener(OnDeviceChangeListener listener) {
-        synchronized (onDeviceChangeListeners) {
-            onDeviceChangeListeners.remove(listener);
         }
     }
 
