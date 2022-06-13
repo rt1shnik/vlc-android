@@ -103,47 +103,6 @@ class PreferencesAdvanced : BasePreferenceFragment(), SharedPreferences.OnShared
                 startActivity(intent)
                 return true
             }
-            "clear_history" -> {
-                AlertDialog.Builder(requireContext())
-                        .setTitle(R.string.clear_playback_history)
-                        .setMessage(R.string.validation)
-                        .setIcon(R.drawable.ic_warning)
-                        .setPositiveButton(R.string.yes) { _, _ ->
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                Medialibrary.getInstance().clearHistory()
-                                Settings.getInstance(requireActivity()).edit().remove(KEY_AUDIO_LAST_PLAYLIST).remove(KEY_MEDIA_LAST_PLAYLIST).apply()
-                            }
-                        }
-
-                        .setNegativeButton(R.string.cancel, null).show()
-                return true
-            }
-            "clear_media_db" -> {
-                val dialog = ConfirmDeleteDialog.newInstance(title = getString(R.string.clear_media_db), description = getString(R.string.clear_media_db_message), buttonText = getString(R.string.clear))
-                dialog.show(requireActivity().supportFragmentManager, RenameDialog::class.simpleName)
-                dialog.setListener {
-                    lifecycleScope.launch {
-                        val medialibrary = Medialibrary.getInstance()
-                        withContext((Dispatchers.IO)) {
-                            medialibrary.clearDatabase(false)
-                            //delete thumbnails
-                            try {
-                                requireActivity().getExternalFilesDir(null)?. let {
-                                    val files = File(it.absolutePath + Medialibrary.MEDIALIB_FOLDER_NAME).listFiles()
-                                    files?.forEach { file ->
-                                        if (file.isFile) FileUtils.deleteFile(file)
-                                    }
-                                }
-                                BitmapCache.clear()
-                            } catch (e: IOException) {
-                                Log.e(this::class.java.simpleName, e.message, e)
-                            }
-                        }
-                        medialibrary.discover(AndroidDevices.EXTERNAL_PUBLIC_DIRECTORY)
-                    }
-                }
-                return true
-            }
             "clear_app_data" -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     val dialog = ConfirmDeleteDialog.newInstance(title = getString(R.string.clear_app_data), description = getString(R.string.clear_app_data_message), buttonText = getString(R.string.clear))

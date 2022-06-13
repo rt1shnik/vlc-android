@@ -741,8 +741,6 @@ open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.Even
                             type = MediaWrapper.TYPE_STREAM
                             entryUrl = mrl
                             medialibrary.getMedia(mrl)?.run { if (id > 0) medialibrary.removeExternalMedia(id) }
-                        } else if (uri.scheme != "fd") {
-                            medialibrary.addToHistory(mrl, title)
                         }
                     }
                 }
@@ -1034,13 +1032,7 @@ open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.Even
                 if (internalMedia != null && internalMedia.id != 0L) {
                     id = internalMedia.id
                 } else {
-                    internalMedia = if (mw.type == MediaWrapper.TYPE_STREAM || isSchemeStreaming(mw.uri.scheme)) {
-                        medialibrary.addStream(entryUrl ?: mw.uri.toString(), mw.title).also {
-                            entryUrl = null
-                        }
-                    } else {
-                        medialibrary.addMedia(mw.uri.toString(), mw.length)
-                    }
+                    internalMedia = medialibrary.addMedia(mw.uri.toString(), mw.length)
                     if (internalMedia != null) {
                         id = internalMedia.id
                         getCurrentMedia()?.let { currentMedia -> if (internalMedia.title != currentMedia.title) internalMedia.rename(currentMedia.title) }

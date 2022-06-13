@@ -82,8 +82,6 @@ public class MedialibraryImpl extends Medialibrary {
         int initCode = nativeInit(dbDirectory + VLC_MEDIA_DB_NAME);
         if (initCode == ML_INIT_DB_CORRUPTED) {
             Log.e(TAG, "Medialib database is corrupted. Clearing it and try to restore playlists");
-            if (!nativeClearDatabase(true)) return ML_INIT_DB_UNRECOVERABLE;
-
         }
 
         mIsInitiated = initCode != ML_INIT_FAILED;
@@ -97,44 +95,6 @@ public class MedialibraryImpl extends Medialibrary {
         synchronized (onMedialibraryReadyListeners) {
             for (OnMedialibraryReadyListener listener : onMedialibraryReadyListeners) listener.onMedialibraryReady();
         }
-        nativeSetMediaAddedCbFlag(FLAG_MEDIA_ADDED_AUDIO_EMPTY|FLAG_MEDIA_ADDED_VIDEO_EMPTY);
-        nativeSetMediaUpdatedCbFlag(FLAG_MEDIA_UPDATED_AUDIO_EMPTY|FLAG_MEDIA_UPDATED_VIDEO_EMPTY);
-    }
-
-    public void banFolder(@NonNull String path) {
-        if (mIsInitiated && new File(path).exists())
-            nativeBanFolder(Tools.encodeVLCMrl(path));
-    }
-
-    public void unbanFolder(@NonNull String path) {
-        if (mIsInitiated && new File(path).exists())
-            nativeUnbanFolder(Tools.encodeVLCMrl(path));
-    }
-
-    public String[] bannedFolders() {
-        return mIsInitiated ? nativeBannedFolders() : new String[0];
-    }
-
-    public String[] getDevices() {
-        return mIsInitiated ? nativeDevices() : new String[0];
-    }
-
-    public boolean isDeviceKnown(@NonNull String uuid, @NonNull String path, boolean removable) {
-        return mIsInitiated && nativeIsDeviceKnown(VLCUtil.encodeVLCString(uuid), Tools.encodeVLCMrl(path), removable);
-    }
-
-    public boolean deleteRemovableDevices() {
-        return mIsInitiated && nativeDeleteRemovableDevices();
-    }
-
-    public void addDevice(@NonNull String uuid, @NonNull String path, boolean removable) {
-        nativeAddDevice(VLCUtil.encodeVLCString(uuid), Tools.encodeVLCMrl(path), removable);
-        synchronized (onDeviceChangeListeners) {
-            for (OnDeviceChangeListener listener : onDeviceChangeListeners) listener.onDeviceChange();
-        }
-    }
-    public void discover(@NonNull String path) {
-        if (mIsInitiated) nativeDiscover(Tools.encodeVLCMrl(path));
     }
 
     @Override
@@ -143,112 +103,9 @@ public class MedialibraryImpl extends Medialibrary {
     }
 
     @Override
-    public boolean setDiscoverNetworkEnabled(boolean enabled) {
-        if (mIsInitiated) return nativeSetDiscoverNetworkEnabled(enabled);
-        return false;
-    }
-
-    public void removeFolder(@NonNull String mrl) {
-        if (!mIsInitiated) return;
-        final String[] folders = getFoldersList();
-        for (String folder : folders) {
-            if (!folder.equals(mrl) && !folder.equals(mrl+"/") && folder.contains(mrl)) {
-                removeFolder(folder);
-            }
-        }
-        nativeRemoveEntryPoint(Tools.encodeVLCMrl(mrl));
-    }
-
-    public String[] getFoldersList() {
-        if (!mIsInitiated) return new String[0];
-        return nativeEntryPoints();
-    }
-
-    public boolean removeDevice(String uuid, String path) {
-        if (!mIsInitiated) return false;
-        final boolean removed = !TextUtils.isEmpty(uuid) && !TextUtils.isEmpty(path) && nativeRemoveDevice(VLCUtil.encodeVLCString(uuid), Tools.encodeVLCMrl(path));
-        synchronized (onDeviceChangeListeners) {
-            for (OnDeviceChangeListener listener : onDeviceChangeListeners) listener.onDeviceChange();
-        }
-        return removed;
-    }
-
-    @Override
     protected void finalize() throws Throwable {
         if (mIsInitiated) nativeRelease();
         super.finalize();
-    }
-
-    @WorkerThread
-    public MediaWrapper[] getVideos() {
-        return mIsInitiated ? nativeGetVideos() : new MediaWrapper[0];
-    }
-
-    @WorkerThread
-    public MediaWrapper[] getPagedVideos(int sort, boolean desc, boolean includeMissing, int nbItems, int offset) {
-        return mIsInitiated ? nativeGetSortedPagedVideos(sort, desc, includeMissing, nbItems, offset) : new MediaWrapper[0];
-    }
-
-    @WorkerThread
-    public MediaWrapper[] getVideos(int sort, boolean desc, boolean includeMissing) {
-        return mIsInitiated ? nativeGetSortedVideos(sort, desc, includeMissing) : new MediaWrapper[0];
-    }
-
-    @WorkerThread
-    public MediaWrapper[] getRecentVideos() {
-        return mIsInitiated ? nativeGetRecentVideos() : new MediaWrapper[0];
-    }
-
-    @WorkerThread
-    public MediaWrapper[] getAudio() {
-        return mIsInitiated ? nativeGetAudio() : new MediaWrapper[0];
-    }
-
-    @WorkerThread
-    public MediaWrapper[] getAudio(int sort, boolean desc, boolean includeMissing) {
-        return mIsInitiated ? nativeGetSortedAudio(sort, desc, includeMissing) : new MediaWrapper[0];
-    }
-
-    @WorkerThread
-    public MediaWrapper[] getPagedAudio(int sort, boolean desc, boolean includeMissing, int nbItems, int offset) {
-        return mIsInitiated ? nativeGetSortedPagedAudio(sort, desc, includeMissing, nbItems, offset) : new MediaWrapper[0];
-    }
-
-    @WorkerThread
-    public MediaWrapper[] getRecentAudio() {
-        return mIsInitiated ? nativeGetRecentAudio() : new MediaWrapper[0];
-    }
-
-    @WorkerThread
-    public int getVideoCount() {
-        return mIsInitiated ? nativeGetVideoCount() : 0;
-    }
-
-    @WorkerThread
-    public int getAudioCount() {
-        return mIsInitiated ? nativeGetAudioCount() : 0;
-    }
-
-    @Override
-    @WorkerThread
-    public int getVideoGroupsCount(@Nullable String query) {
-        return mIsInitiated ? nativeGetVideoGroupsCount(query) : 0;
-    }
-
-    @Override
-    @WorkerThread
-    public void setVideoGroupsPrefixLength(int lenght) {
-        if (mIsInitiated) nativeSetVideoGroupsPrefixLength(lenght);
-    }
-
-    @Override
-    public boolean regroupAll() {
-        return mIsInitiated && nativeRegroupAll();
-    }
-
-
-    public boolean regroup(long mediaId) {
-        return mIsInitiated && mediaId > 0 && nativeRegroup(mediaId);
     }
 
     public void pauseBackgroundOperations() {
@@ -274,28 +131,6 @@ public class MedialibraryImpl extends Medialibrary {
 
     public void forceRescan() {
         if (mIsInitiated) nativeForceRescan();
-    }
-
-    @WorkerThread
-    public MediaWrapper[] lastMediaPlayed() {
-        return mIsInitiated ? nativeLastMediaPlayed() : EMPTY_COLLECTION;
-    }
-
-    @WorkerThread
-    public MediaWrapper[] lastStreamsPlayed() {
-        return mIsInitiated ? nativeLastStreamsPlayed() : EMPTY_COLLECTION;
-    }
-
-    public boolean clearHistory() {
-        return mIsInitiated && nativeClearHistory();
-    }
-
-    public void clearDatabase(boolean restorePlaylist) {
-        if (mIsInitiated) nativeClearDatabase(restorePlaylist);
-    }
-
-    public boolean addToHistory(String mrl, String title) {
-        return mIsInitiated && nativeAddToHistory(Tools.encodeVLCMrl(mrl), Tools.encodeVLCMrl(title));
     }
 
     @Nullable
@@ -325,17 +160,6 @@ public class MedialibraryImpl extends Medialibrary {
 
     public boolean removeExternalMedia(long id) {
         return mIsInitiated && nativeRemoveExternalMedia(id);
-    }
-
-    public boolean flushUserProvidedThumbnails() {
-        return mIsInitiated && nativeFlushUserProvidedThumbnails();
-    }
-
-    @Nullable
-    public MediaWrapper addStream(String mrl, String title) {
-        final String vlcMrl = Tools.encodeVLCMrl(mrl);
-        final String vlcTitle = Tools.encodeVLCMrl(title);
-        return mIsInitiated && !TextUtils.isEmpty(vlcMrl) ? nativeAddStream(vlcMrl, vlcTitle) : null;
     }
 
     public int setLastTime(long mediaId, long lastTime) {
@@ -370,79 +194,17 @@ public class MedialibraryImpl extends Medialibrary {
         return mw;
     }
 
-    public MediaWrapper[] searchMedia(String query) {
-        return mIsInitiated && !TextUtils.isEmpty(query) ? nativeSearchMedia(query) : null;
-    }
-
-    public MediaWrapper[] searchMedia(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset) {
-        return mIsInitiated && !TextUtils.isEmpty(query) ? nativeSearchPagedMedia(query, sort, desc, includeMissing, nbItems, offset) : null;
-    }
-
-    public int getMediaCount(String query) {
-        return mIsInitiated ? nativeGetSearchMediaCount(query) : 0;
-    }
-
-    public MediaWrapper[] searchAudio(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset) {
-        return mIsInitiated && !TextUtils.isEmpty(query) ? nativeSearchPagedAudio(query, sort, desc, includeMissing, nbItems, offset) : null;
-    }
-
-    public int getAudioCount(String query) {
-        return mIsInitiated ? nativeGetSearchAudioCount(query) : 0;
-    }
-
-    public MediaWrapper[] searchVideo(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset) {
-        return mIsInitiated && !TextUtils.isEmpty(query) ? nativeSearchPagedVideo(query, sort, desc, includeMissing, nbItems, offset) : null;
-    }
-
-    public int getVideoCount(String query) {
-        return mIsInitiated ? nativeGetSearchVideoCount(query) : 0;
-    }
-
     // Native methods
     private native void nativeConstruct(String dbPath, String thumbsPath);
     private native int nativeInit(String dbPath);
     private native void nativeRelease();
 
-    private native boolean nativeClearDatabase(boolean keepPlaylist);
-    private native void nativeBanFolder(String path);
-    private native void nativeUnbanFolder(String path);
-    private native String[] nativeBannedFolders();
-    private native void nativeAddDevice(String uuid, String path, boolean removable);
-    private native boolean nativeIsDeviceKnown(String uuid, String path, boolean removable);
-    private native boolean nativeDeleteRemovableDevices();
-    private native String[] nativeDevices();
-    private native void nativeDiscover(String path);
     private native void nativeSetLibVLCInstance(long libVLC);
-    private native boolean nativeSetDiscoverNetworkEnabled(boolean enabled);
-    private native void nativeRemoveEntryPoint(String path);
-    private native String[] nativeEntryPoints();
-    private native boolean nativeRemoveDevice(String uuid, String path);
-    private native MediaWrapper[] nativeLastMediaPlayed();
-    private native MediaWrapper[] nativeLastStreamsPlayed();
-    private native  boolean nativeAddToHistory(String mrl, String title);
-    private native  boolean nativeClearHistory();
     private native MediaWrapper nativeGetMedia(long id);
     private native MediaWrapper nativeGetMediaFromMrl(String mrl);
     private native MediaWrapper nativeAddMedia(String mrl, long duration);
     private native boolean nativeRemoveExternalMedia(long id);
-    private native boolean nativeFlushUserProvidedThumbnails();
-    private native MediaWrapper nativeAddStream(String mrl, String title);
-    private native MediaWrapper[] nativeGetVideos();
-    private native MediaWrapper[] nativeGetSortedVideos(int sort, boolean desc, boolean includeMissing);
-    private native MediaWrapper[] nativeGetRecentVideos();
-    private native MediaWrapper[] nativeGetAudio();
-    private native MediaWrapper[] nativeGetSortedAudio(int sort, boolean desc, boolean includeMissing);
-    private native MediaWrapper[] nativeGetSortedPagedAudio(int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    private native MediaWrapper[] nativeGetSortedPagedVideos(int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    private native MediaWrapper[] nativeGetRecentAudio();
-    private native int nativeGetVideoCount();
-    private native int nativeGetAudioCount();
-    private native int nativeGetVideoGroupsCount(String query);
-    private native void nativeSetVideoGroupsPrefixLength(int length);
 
-    private native boolean nativeRegroupAll();
-
-    private native boolean nativeRegroup(long mediaId);
     private native void nativePauseBackgroundOperations();
     private native void nativeResumeBackgroundOperations();
     private native void nativeReload();
@@ -451,13 +213,4 @@ public class MedialibraryImpl extends Medialibrary {
     private native void nativeForceRescan();
     private native int nativeSetLastTime(long mediaId, long progress);
     private native boolean nativeSetLastPosition(long mediaId, float position);
-    private native void nativeSetMediaUpdatedCbFlag(int flags);
-    private native void nativeSetMediaAddedCbFlag(int flags);
-    private native MediaWrapper[] nativeSearchMedia(String query);
-    private native MediaWrapper[] nativeSearchPagedMedia(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    private native int nativeGetSearchMediaCount(String query);
-    private native MediaWrapper[] nativeSearchPagedAudio(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    private native int nativeGetSearchAudioCount(String query);
-    private native MediaWrapper[] nativeSearchPagedVideo(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    private native int nativeGetSearchVideoCount(String query);
 }

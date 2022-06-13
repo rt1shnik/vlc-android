@@ -145,53 +145,6 @@ internal class MediaSessionCallback(private val playbackService: PlaybackService
                     when (mediaIdUri.removeQuery().toString()) {
                         MediaSessionBrowser.ID_NO_MEDIA -> playbackService.displayPlaybackError(R.string.search_no_result)
                         MediaSessionBrowser.ID_NO_PLAYLIST -> playbackService.displayPlaybackError(R.string.noplaylist)
-                        MediaSessionBrowser.ID_SHUFFLE_ALL -> {
-                            val tracks = context.getFromMl { audio }
-                            if (tracks.isNotEmpty() && isActive) {
-                                tracks.sortWith(MediaComparators.ANDROID_AUTO)
-                                loadMedia(tracks.toList(), SecureRandom().nextInt(min(tracks.size, MEDIALIBRARY_PAGE_SIZE)))
-                                if (!playbackService.isShuffling) playbackService.shuffle()
-                            } else {
-                                playbackService.displayPlaybackError(R.string.search_no_result)
-                            }
-                        }
-                        MediaSessionBrowser.ID_LAST_ADDED -> {
-                            val tracks = context.getFromMl { getPagedAudio(Medialibrary.SORT_INSERTIONDATE, true, false, MediaSessionBrowser.MAX_HISTORY_SIZE, 0) }
-                            if (tracks.isNotEmpty() && isActive) {
-                                loadMedia(tracks.toList(), position)
-                            }
-                        }
-                        MediaSessionBrowser.ID_HISTORY -> {
-                            val tracks = context.getFromMl { lastMediaPlayed()?.toList()?.filter { MediaSessionBrowser.isMediaAudio(it) } }
-                            if (!tracks.isNullOrEmpty() && isActive) {
-                                val mediaList = tracks.subList(0, tracks.size.coerceAtMost(MediaSessionBrowser.MAX_HISTORY_SIZE))
-                                loadMedia(mediaList, position)
-                            }
-                        }
-                        MediaSessionBrowser.ID_STREAM -> {
-                            val tracks = context.getFromMl { lastStreamsPlayed() }
-                            if (tracks.isNotEmpty() && isActive) {
-                                tracks.sortWith(MediaComparators.ANDROID_AUTO)
-                                loadMedia(tracks.toList(), position)
-                            }
-                        }
-                        MediaSessionBrowser.ID_TRACK -> {
-                            val tracks = context.getFromMl { audio }
-                            if (tracks.isNotEmpty() && isActive) {
-                                tracks.sortWith(MediaComparators.ANDROID_AUTO)
-                                loadMedia(tracks.toList(), pageOffset + position)
-                            }
-                        }
-                        else -> {
-                            val id = ContentUris.parseId(mediaIdUri)
-                            when (mediaIdUri.retrieveParent().toString()) {
-                                MediaSessionBrowser.ID_MEDIA -> {
-                                    val tracks = context.getFromMl { getMedia(id)?.tracks }
-                                    if (isActive) tracks?.let { loadMedia(it.toList()) }
-                                }
-                                else -> throw IllegalStateException("Failed to load: $mediaId")
-                            }
-                        }
                     }
             } catch (e: Exception) {
                 Log.e(TAG, "Could not play media: $mediaId", e)

@@ -20,17 +20,11 @@
 
 package org.videolan.medialibrary.interfaces;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -39,8 +33,6 @@ import org.videolan.medialibrary.SingleEvent;
 import org.videolan.medialibrary.Tools;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
 
-import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,14 +56,6 @@ abstract public class Medialibrary {
     public final static int NbMedia = 15;
 
     protected long mInstanceID;
-    public static final int FLAG_MEDIA_UPDATED_AUDIO        = 1 << 0;
-    public static final int FLAG_MEDIA_UPDATED_AUDIO_EMPTY  = 1 << 1;
-    public static final int FLAG_MEDIA_UPDATED_VIDEO        = 1 << 2;
-    public static final int FLAG_MEDIA_UPDATED_VIDEO_EMPTY  = 1 << 3;
-    public static final int FLAG_MEDIA_ADDED_AUDIO          = 1 << 4;
-    public static final int FLAG_MEDIA_ADDED_AUDIO_EMPTY    = 1 << 5;
-    public static final int FLAG_MEDIA_ADDED_VIDEO          = 1 << 6;
-    public static final int FLAG_MEDIA_ADDED_VIDEO_EMPTY    = 1 << 7;
 
     public static final int ML_INIT_SUCCESS = 0;
     public static final int ML_INIT_ALREADY_INITIALIZED = 1;
@@ -138,12 +122,6 @@ abstract public class Medialibrary {
         return instance;
     }
 
-    /* used only before API 13: substitute for NewWeakGlobalRef */
-    @SuppressWarnings("unused") /* Used from JNI */
-    private Object getWeakReference() {
-        return new WeakReference<>(this);
-    }
-
     public long getId() {
         return mInstanceID;
     }
@@ -154,41 +132,6 @@ abstract public class Medialibrary {
 
     public boolean isInitiated() {
         return mIsInitiated;
-    }
-
-    public static String[] getBanList() {
-        return new String[] {
-                "/Android/data/",
-                "/Android/media/",
-                "/Alarms/",
-                "/Ringtones/",
-                "/Notifications/",
-                "/alarms/",
-                "/ringtones/",
-                "/notifications/",
-                "/audio/Alarms/",
-                "/audio/Ringtones/",
-                "/audio/Notifications/",
-                "/audio/alarms/",
-                "/audio/ringtones/",
-                "/audio/notifications/",
-                "/WhatsApp/Media/WhatsApp%20Animated%20Gifs/",
-        };
-    }
-
-    public static File[] getDefaultFolders() {
-        return new File[]{
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES),
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS),
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
-        };
-    }
-
-    protected boolean canReadStorage(Context context) {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || ContextCompat.checkSelfPermission(context,
-                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
     }
 
     public interface MediaCb {
@@ -612,60 +555,19 @@ abstract public class Medialibrary {
     abstract public boolean construct(Context context);
     abstract public int init(Context context);
     abstract public void start();
-    abstract public void banFolder(@NonNull String path);
-    abstract public void unbanFolder(@NonNull String path);
-    abstract public String[] bannedFolders();
-    abstract public String[] getDevices();
-    abstract public void addDevice(@NonNull String uuid, @NonNull String path, boolean removable);
-    abstract public boolean isDeviceKnown(@NonNull String uuid, @NonNull String path, boolean removable);
-    abstract public boolean deleteRemovableDevices();
-    abstract public void discover(@NonNull String path);
     abstract public void setLibVLCInstance(long libVLC);
-    abstract public boolean setDiscoverNetworkEnabled(boolean enabled);
-    abstract public void removeFolder(@NonNull String mrl);
-    abstract public String[] getFoldersList();
-    abstract public boolean removeDevice(String uuid, String path);
-    abstract public MediaWrapper[] getVideos();
-    abstract public MediaWrapper[] getPagedVideos(int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    abstract public MediaWrapper[] getVideos(int sort, boolean desc, boolean includeMissing);
-    abstract public MediaWrapper[] getRecentVideos();
-    abstract public MediaWrapper[] getAudio();
-    abstract public MediaWrapper[] getAudio(int sort, boolean desc, boolean includeMissing);
-    abstract public MediaWrapper[] getPagedAudio(int sort, boolean desc, boolean includeMissing, int nbitems, int offset);
-    abstract public MediaWrapper[] getRecentAudio();
-    abstract public int getVideoCount();
-    abstract public int getAudioCount();
-    abstract public int getVideoGroupsCount(@Nullable String query);
-    abstract public void setVideoGroupsPrefixLength(int lenght);
 
-    abstract public boolean regroupAll();
-
-    abstract public boolean regroup(long mediaId);
     abstract public void pauseBackgroundOperations();
     abstract public void resumeBackgroundOperations();
     abstract public void reload();
     abstract public void reload(String entrypoint);
     abstract public void forceParserRetry();
     abstract public void forceRescan();
-    abstract public MediaWrapper[] lastMediaPlayed();
-    abstract public MediaWrapper[] lastStreamsPlayed();
-    abstract public boolean clearHistory();
-    abstract public void clearDatabase(boolean restorePlaylist);
-    abstract public boolean addToHistory(String mrl, String title);
     abstract public MediaWrapper getMedia(long id);
     abstract public MediaWrapper getMedia(Uri uri);
     abstract public MediaWrapper getMedia(String mrl);
     abstract public MediaWrapper addMedia(String mrl, long duration);
     abstract public boolean removeExternalMedia(long id);
-    abstract public boolean flushUserProvidedThumbnails();
-    abstract public MediaWrapper addStream(String mrl, String title);
     abstract public int setLastTime(long mediaId, long time);
     abstract public boolean setLastPosition(long mediaId, float position);
-    abstract public MediaWrapper[] searchMedia(String query);
-    abstract public MediaWrapper[] searchMedia(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    abstract public int getMediaCount(String query);
-    abstract public MediaWrapper[] searchAudio(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    abstract public int getAudioCount(String query);
-    abstract public MediaWrapper[] searchVideo(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    abstract public int getVideoCount(String query);
 }

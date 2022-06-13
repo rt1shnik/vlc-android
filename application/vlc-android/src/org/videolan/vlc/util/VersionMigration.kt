@@ -99,10 +99,6 @@ object VersionMigration {
                 Log.e(this::class.java.simpleName, e.message, e)
             }
         }
-        val settings = Settings.getInstance(context)
-        val tv = AndroidDevices.isAndroidTv || !AndroidDevices.isChromeBook && !AndroidDevices.hasTsp ||
-                settings.getBoolean("tv_ui", false)
-        if (!tv) context.getFromMl { flushUserProvidedThumbnails() }
     }
 
     /**
