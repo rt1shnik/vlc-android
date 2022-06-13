@@ -185,10 +185,6 @@ internal class MediaSessionCallback(private val playbackService: PlaybackService
                         else -> {
                             val id = ContentUris.parseId(mediaIdUri)
                             when (mediaIdUri.retrieveParent().toString()) {
-                                MediaSessionBrowser.ID_PLAYLIST -> {
-                                    val tracks = context.getFromMl { getPlaylist(id, Settings.includeMissing)?.tracks }
-                                    if (isActive) tracks?.let { loadMedia(it.toList(), allowRandom = true) }
-                                }
                                 MediaSessionBrowser.ID_MEDIA -> {
                                     val tracks = context.getFromMl { getMedia(id)?.tracks }
                                     if (isActive) tracks?.let { loadMedia(it.toList()) }

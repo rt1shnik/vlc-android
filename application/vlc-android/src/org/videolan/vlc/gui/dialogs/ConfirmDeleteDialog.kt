@@ -36,7 +36,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDE
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.videolan.medialibrary.interfaces.media.MediaWrapper
-import org.videolan.medialibrary.interfaces.media.Playlist
 import org.videolan.medialibrary.media.MediaLibraryItem
 import org.videolan.vlc.R
 
@@ -116,7 +115,6 @@ class ConfirmDeleteDialog : VLCBottomSheetDialogFragment() {
 
             }
             mediaList[0] is MediaWrapper -> getString(if ((mediaList[0] as MediaWrapper).type == MediaWrapper.TYPE_DIR) R.string.confirm_delete_folder else R.string.confirm_delete, mediaList[0].title)
-            mediaList[0] is Playlist -> getString(R.string.confirm_delete_playlist, mediaList[0].title)
             else -> getString(R.string.confirm_delete_several_media, mediaList.size)
         }
 

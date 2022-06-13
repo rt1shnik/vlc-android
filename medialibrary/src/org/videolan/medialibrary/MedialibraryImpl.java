@@ -33,7 +33,6 @@ import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.util.VLCUtil;
 import org.videolan.medialibrary.interfaces.Medialibrary;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
-import org.videolan.medialibrary.interfaces.media.Playlist;
 
 import java.io.File;
 
@@ -252,37 +251,6 @@ public class MedialibraryImpl extends Medialibrary {
         return mIsInitiated && mediaId > 0 && nativeRegroup(mediaId);
     }
 
-    @WorkerThread
-    public Playlist[] getPlaylists() {
-        return getPlaylists(Medialibrary.SORT_DEFAULT, false, true);
-    }
-
-    @WorkerThread
-    public Playlist[] getPlaylists(int sort, boolean desc, boolean includeMissing) {
-        return mIsInitiated ? nativeGetPlaylists(sort, desc, includeMissing) : new Playlist[0];
-    }
-
-    @WorkerThread
-    public Playlist[] getPagedPlaylists(int sort, boolean desc, boolean includeMissing, int nbItems, int offset) {
-        return mIsInitiated ? nativeGetPagedPlaylists(sort, desc, includeMissing, nbItems, offset) : new Playlist[0];
-    }
-
-    public int getPlaylistsCount() {
-        return mIsInitiated ? nativeGetPlaylistsCount() : 0;
-    }
-
-    public int getPlaylistsCount(String query) {
-        return mIsInitiated ? nativeGetPlaylistSearchCount(query) : 0;
-    }
-
-    public Playlist getPlaylist(long playlistId, boolean includeMissing) {
-        return mIsInitiated ? nativeGetPlaylist(playlistId, includeMissing) : null;
-    }
-
-    public Playlist createPlaylist(String name, boolean includeMissing) {
-        return mIsInitiated && !TextUtils.isEmpty(name) ? nativePlaylistCreate(name, includeMissing) : null;
-    }
-
     public void pauseBackgroundOperations() {
         if (mIsInitiated) nativePauseBackgroundOperations();
     }
@@ -430,14 +398,6 @@ public class MedialibraryImpl extends Medialibrary {
         return mIsInitiated ? nativeGetSearchVideoCount(query) : 0;
     }
 
-    public Playlist[] searchPlaylist(String query, boolean includeMissing) {
-        return mIsInitiated && !TextUtils.isEmpty(query) ? nativeSearchPlaylist(query, includeMissing) : null;
-    }
-
-    public Playlist[] searchPlaylist(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset) {
-        return mIsInitiated && !TextUtils.isEmpty(query) ? nativeSearchPagedPlaylist(query, sort, desc, includeMissing, nbItems, offset) : null;
-    }
-
     // Native methods
     private native void nativeConstruct(String dbPath, String thumbsPath);
     private native int nativeInit(String dbPath);
@@ -483,11 +443,6 @@ public class MedialibraryImpl extends Medialibrary {
     private native boolean nativeRegroupAll();
 
     private native boolean nativeRegroup(long mediaId);
-    private native Playlist[] nativeGetPlaylists(int sort, boolean desc, boolean includeMissing);
-    private native Playlist[] nativeGetPagedPlaylists(int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    private native int nativeGetPlaylistsCount();
-    private native Playlist nativeGetPlaylist(long playlistId, boolean includeMissing);
-    private native Playlist nativePlaylistCreate(String name, boolean includeMissing);
     private native void nativePauseBackgroundOperations();
     private native void nativeResumeBackgroundOperations();
     private native void nativeReload();
@@ -505,9 +460,4 @@ public class MedialibraryImpl extends Medialibrary {
     private native int nativeGetSearchAudioCount(String query);
     private native MediaWrapper[] nativeSearchPagedVideo(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     private native int nativeGetSearchVideoCount(String query);
-    private native int nativeGetGenreSearchCount(String query);
-    private native Playlist[] nativeSearchPlaylist(String query, boolean includeMissing);
-    private native Playlist[] nativeSearchPagedPlaylist(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    private native int nativeGetPlaylistSearchCount(String query);
-    private native int nativeGetSearchFoldersCount(String query);
 }

@@ -38,7 +38,6 @@ import org.videolan.medialibrary.MLServiceLocator;
 import org.videolan.medialibrary.SingleEvent;
 import org.videolan.medialibrary.Tools;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
-import org.videolan.medialibrary.interfaces.media.Playlist;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -642,13 +641,6 @@ abstract public class Medialibrary {
     abstract public boolean regroupAll();
 
     abstract public boolean regroup(long mediaId);
-    abstract public Playlist[] getPlaylists(int sort, boolean desc, boolean includeMissing);
-    abstract public Playlist[] getPlaylists();
-    abstract public Playlist[] getPagedPlaylists(int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
-    abstract public int getPlaylistsCount();
-    abstract public int getPlaylistsCount(String query);
-    abstract public Playlist getPlaylist(long playlistId, boolean includeMissing);
-    abstract public Playlist createPlaylist(String name, boolean includeMissing);
     abstract public void pauseBackgroundOperations();
     abstract public void resumeBackgroundOperations();
     abstract public void reload();
@@ -676,6 +668,4 @@ abstract public class Medialibrary {
     abstract public int getAudioCount(String query);
     abstract public MediaWrapper[] searchVideo(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
     abstract public int getVideoCount(String query);
-    abstract public Playlist[] searchPlaylist(String query, boolean includeMissing);
-    abstract public Playlist[] searchPlaylist(String query, int sort, boolean desc, boolean includeMissing, int nbItems, int offset);
 }

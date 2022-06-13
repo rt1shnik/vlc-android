@@ -1,18 +1,11 @@
 package org.videolan.resources.util
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
-import android.view.View
-import androidx.core.content.ContextCompat
-import org.videolan.libvlc.util.AndroidUtil
 import org.videolan.medialibrary.interfaces.media.MediaWrapper
-import org.videolan.medialibrary.interfaces.media.Playlist
 import org.videolan.medialibrary.media.MediaLibraryItem
-import org.videolan.resources.AppContextProvider
 import org.videolan.resources.R
 
 const val LENGTH_WEEK = 7 * 24 * 60 * 60
@@ -52,38 +45,7 @@ fun MediaLibraryItem.getYear() = when (itemType) {
     else -> "-"
 }
 
-fun MediaLibraryItem.getTracksCount() = when (itemType) {
-    MediaLibraryItem.TYPE_PLAYLIST -> (this as Playlist).tracksCount
-    else -> 0
-}
-
-
-fun canReadStorage(context: Context): Boolean {
-    return !AndroidUtil.isMarshMallowOrLater || ContextCompat.checkSelfPermission(context,
-            Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED || isExternalStorageManager()
-}
-
 /**
  * Check if the app has the [Manifest.permission.MANAGE_EXTERNAL_STORAGE] granted
  */
 fun isExternalStorageManager(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()
-
-@JvmOverloads
-fun canWriteStorage(context: Context = AppContextProvider.appContext): Boolean {
-    return ContextCompat.checkSelfPermission(context,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-}
-
-
-
-fun applyOverscanMargin(activity: Activity) {
-    val hm = activity.resources.getDimensionPixelSize(R.dimen.tv_overscan_horizontal)
-    val vm = activity.resources.getDimensionPixelSize(R.dimen.tv_overscan_vertical)
-    activity.findViewById<View>(android.R.id.content).setPadding(hm, vm, hm, vm)
-}
-
-fun applyOverscanMargin(view: View) {
-    val hm = view.resources.getDimensionPixelSize(R.dimen.tv_overscan_horizontal)
-    val vm = view.resources.getDimensionPixelSize(R.dimen.tv_overscan_vertical)
-    view.setPadding(hm + view.paddingLeft, vm + view.paddingTop, hm + view.paddingRight, vm + view.paddingBottom)
-}

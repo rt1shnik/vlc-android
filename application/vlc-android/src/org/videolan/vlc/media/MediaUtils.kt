@@ -69,47 +69,6 @@ object MediaUtils {
         SubtitleDownloaderDialogFragment.newInstance(mediaUris, mediaTitles).show(activity.supportFragmentManager, "Subtitle_downloader")
     }
 
-
-    fun deleteItem(activity:FragmentActivity, item: MediaLibraryItem, onDeleteFailed:(MediaLibraryItem)->Unit) {
-        val deletionAction = when (item) {
-            is MediaWrapper,
-            is Playlist -> Runnable { deletePlaylist(item as Playlist) }
-            else -> Runnable { onDeleteFailed.invoke(item) }
-        }
-
-        if (item is MediaWrapper) {
-            if (Permissions.checkWritePermission(activity, item, deletionAction)) deletionAction.run()
-        } else {
-            deletionAction.run()
-        }
-    }
-
-    suspend fun deleteMedia(mw: MediaLibraryItem, failCB: Runnable? = null) = withContext(Dispatchers.IO) {
-        val foldersToReload = LinkedList<String>()
-        val mediaPaths = LinkedList<String>()
-        for (media in mw.tracks) {
-            val path = media.uri.path
-            val parentPath = FileUtils.getParent(path)
-            if (FileUtils.deleteFile(media.uri)) parentPath?.let {
-                if (media.id > 0L && !foldersToReload.contains(it)) {
-                    foldersToReload.add(it)
-                }
-                mediaPaths.add(media.location)
-            }
-        }
-        val mediaLibrary = Medialibrary.getInstance()
-        for (folder in foldersToReload) mediaLibrary.reload(folder)
-        if (mediaPaths.isEmpty()) {
-            failCB?.run()
-            false
-        } else true
-    }
-
-    fun loadlastPlaylist(context: Context?, type: Int) {
-        if (context == null) return
-        SuspendDialogCallback(context) { service -> service.loadLastPlaylist(type) }
-    }
-
     fun appendMedia(context: Context?, media: List<MediaWrapper>?) {
         if (media == null || media.isEmpty() || context == null) return
         SuspendDialogCallback(context) { service ->
@@ -391,8 +350,6 @@ object MediaUtils {
     } catch (ignored: NullPointerException) {
     } catch (ignored: IllegalStateException) {
     } catch (ignored: SecurityException) {}
-
-    fun deletePlaylist(playlist: Playlist) = AppScope.launch(Dispatchers.IO) { playlist.delete() }
 
     fun openMediaNoUiFromTvContent(context: Context, data: Uri?) = AppScope.launch {
         val id = data?.lastPathSegment ?: return@launch

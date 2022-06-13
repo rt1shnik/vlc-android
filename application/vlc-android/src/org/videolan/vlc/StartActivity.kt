@@ -152,7 +152,6 @@ class StartActivity : FragmentActivity() {
                 lifecycleScope.launch {
                     getFromMl {
                         val album = when(type) {
-                         "playlist" ->   getPlaylist(id.toLong(), false)
                          else ->   getMedia(id.toLong())
                         }
                         MediaUtils.playTracks(this@StartActivity, album, 0)
