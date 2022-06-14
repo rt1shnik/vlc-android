@@ -54,14 +54,6 @@ public class MedialibraryImpl extends Medialibrary {
             nativeReload(Tools.encodeVLCMrl(entryPoint));
     }
 
-    public void forceParserRetry() {
-        if (mIsInitiated) nativeForceParserRetry();
-    }
-
-    public void forceRescan() {
-        if (mIsInitiated) nativeForceRescan();
-    }
-
     @Nullable
     public MediaWrapper getMedia(long id) {
         return mIsInitiated ? nativeGetMedia(id) : null;

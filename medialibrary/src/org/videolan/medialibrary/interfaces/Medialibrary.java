@@ -132,8 +132,6 @@ abstract public class Medialibrary {
     abstract public void resumeBackgroundOperations();
     abstract public void reload();
     abstract public void reload(String entrypoint);
-    abstract public void forceParserRetry();
-    abstract public void forceRescan();
     abstract public MediaWrapper getMedia(long id);
     abstract public MediaWrapper getMedia(Uri uri);
     abstract public MediaWrapper getMedia(String mrl);
