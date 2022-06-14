@@ -236,10 +236,7 @@ public class MediaWrapperImpl extends MediaWrapper {
     private native void nativeSetMediaStringMetadata(Medialibrary ml, long id, int metaDataType, String metadataValue);
     private native void nativeSetMediaLongMetadata(Medialibrary ml, long id, int metaDataType, long metadataValue);
     private native void nativeSetMediaTitle(Medialibrary ml, long id, String name);
-    private native boolean nativeRemoveFromHistory(Medialibrary ml, long id);
-    private native void nativeSetMediaThumbnail(Medialibrary ml, long id, String mrl);
     private native boolean nativeSetMediaPlayCount(Medialibrary ml, long id, long playCount);
-    private native boolean nativeRemoveMediaThumbnail(Medialibrary ml, long id);
     private native Bookmark[] nativeGetBookmarks(Medialibrary ml, long id);
     private native Bookmark nativeAddBookmark(Medialibrary ml, long id, long time);
     private native boolean nativeRemoveBookmark(Medialibrary ml, long id, long time);
