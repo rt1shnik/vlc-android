@@ -509,7 +509,7 @@ open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.Even
         service.executeUpdate(true)
     }
 
-    fun saveMediaMeta() {
+    open fun saveMediaMeta() {
         val titleIdx = player.getTitleIdx()
         val currentMedia = getCurrentMedia() ?: return
         if (currentMedia.uri.scheme == "fd") return
