@@ -80,8 +80,6 @@ abstract public class Medialibrary {
     protected final List<OnMedialibraryReadyListener> onMedialibraryReadyListeners = new ArrayList<>();
     protected final List<OnDeviceChangeListener> onDeviceChangeListeners = new ArrayList<>();
     protected volatile boolean isMedialibraryStarted = false;
-    protected final List<EntryPointsEventsCb> entryPointsEventsCbList = new ArrayList<>();
-    private MedialibraryExceptionHandler mExceptionHandler;
     protected static Context sContext;
 
     protected static final Medialibrary instance = MLServiceLocator.getAbstractMedialibrary();
@@ -161,47 +159,6 @@ abstract public class Medialibrary {
             synchronized (onMedialibraryReadyListeners) {
                 for (OnMedialibraryReadyListener listener : onMedialibraryReadyListeners) listener.onMedialibraryIdle();
             }
-        }
-    }
-    @SuppressWarnings("unused")
-    public void onUnhandledException(String context, String errMsg, boolean clearSuggested) {
-        if (mExceptionHandler != null) mExceptionHandler.onUnhandledException(context, errMsg, clearSuggested);
-    }
-
-    @SuppressWarnings("unused")
-    public void onEntryPointBanned(String entryPoint, boolean success) {
-        synchronized (entryPointsEventsCbList) {
-            if (!entryPointsEventsCbList.isEmpty())
-                for (EntryPointsEventsCb cb : entryPointsEventsCbList)
-                    cb.onEntryPointBanned(entryPoint, success);
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onEntryPointUnbanned(String entryPoint, boolean success) {
-        synchronized (entryPointsEventsCbList) {
-            if (!entryPointsEventsCbList.isEmpty())
-                for (EntryPointsEventsCb cb : entryPointsEventsCbList)
-                    cb.onEntryPointUnbanned(entryPoint, success);
-        }
-    }
-
-
-    @SuppressWarnings("unused")
-    void onEntryPointAdded(String entryPoint, boolean success) {
-        synchronized (entryPointsEventsCbList) {
-            if (!entryPointsEventsCbList.isEmpty())
-                for (EntryPointsEventsCb cb : entryPointsEventsCbList)
-                    cb.onEntryPointAdded(entryPoint, success);
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void onEntryPointRemoved(String entryPoint, boolean success) {
-        synchronized (entryPointsEventsCbList) {
-            if (!entryPointsEventsCbList.isEmpty())
-                for (EntryPointsEventsCb cb : entryPointsEventsCbList)
-                    cb.onEntryPointRemoved(entryPoint, success);
         }
     }
 
