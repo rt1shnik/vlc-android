@@ -125,7 +125,7 @@ open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackS
     lateinit var displayManager: DisplayManager
     var rootView: View? = null
     var videoUri: Uri? = null
-    val savedMediaList: ArrayList<MediaWrapper> = ArrayList()
+    var savedMediaList: ArrayList<MediaWrapper>? = null
     private var askResume = true
 
     open val isVideo = true
@@ -466,10 +466,7 @@ open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackS
         UiTools.setRotationAnimation(this)
         if (savedInstanceState != null) {
             savedTime = savedInstanceState.getLong(KEY_TIME)
-            val mediaList = savedInstanceState.getParcelableArrayList<MediaWrapper>(KEY_MEDIA_LIST)
-            mediaList?.let {
-                savedMediaList.addAll(mediaList)
-            }
+            savedMediaList = savedInstanceState.getParcelableArrayList(KEY_MEDIA_LIST)
             val list = savedInstanceState.getBoolean(KEY_LIST, false)
             if (list) {
                 intent.removeExtra(PLAY_EXTRA_ITEM_LOCATION)
@@ -635,11 +632,11 @@ open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackS
             outState.putLong(KEY_TIME, savedTime)
             if (playlistModel == null) outState.putParcelable(KEY_URI, videoUri)
         }
-        val mediaList = service?.playlistManager?.getMediaList()
-        mediaList?.let {
-            outState.putParcelableArrayList(KEY_MEDIA_LIST, ArrayList(it))
+        val mediaList = service?.playlistManager?.getMediaList() ?: savedMediaList
+        if (mediaList != null) {
+            outState.putParcelableArrayList(KEY_MEDIA_LIST, ArrayList(mediaList))
+            savedMediaList = null
         }
-
         videoUri = null
         outState.putBoolean(KEY_LIST, overlayDelegate.hasPlaylist)
     }
@@ -723,6 +720,9 @@ open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackS
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     override fun onStop() {
         super.onStop()
+        service?.playlistManager?.getMediaList()?.let {
+            savedMediaList = ArrayList(it)
+        }
         startedScope.cancel()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceReceiver)
 
@@ -2077,9 +2077,9 @@ open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackS
     open fun onServiceChanged(service: PlaybackService?) {
         if (service != null) {
             this.service = service
-            if (savedMediaList.isNotEmpty() && service.currentMediaWrapper == null) {
-                service.append(savedMediaList)
-                savedMediaList.clear()
+            if (savedMediaList != null && service.currentMediaWrapper == null) {
+                service.append(savedMediaList!!)
+                savedMediaList = null
             }
             //We may not have the permission to access files
             if (!switchingView)
