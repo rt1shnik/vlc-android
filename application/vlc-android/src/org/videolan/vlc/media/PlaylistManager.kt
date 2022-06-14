@@ -183,7 +183,6 @@ open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.Even
         playIndex(currentIndex)
         service.onPlaylistLoaded()
         if (mlUpdate) {
-            service.awaitMedialibraryStarted()
             mediaList.replaceWith(withContext(Dispatchers.IO) { mediaList.copy.updateWithMLMeta() })
             if (BuildConfig.BETA) {
                 Log.d(TAG, "load after ml update with values: ")

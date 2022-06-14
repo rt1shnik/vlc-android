@@ -37,7 +37,6 @@ import kotlinx.coroutines.*
 import org.videolan.libvlc.util.AndroidUtil
 import org.videolan.medialibrary.MLServiceLocator
 import org.videolan.resources.*
-import org.videolan.resources.util.getFromMl
 import org.videolan.resources.util.launchForeground
 import org.videolan.tools.*
 import org.videolan.vlc.gui.BetaWelcomeActivity
@@ -146,17 +145,6 @@ class StartActivity : FragmentActivity() {
             launchForeground(serviceInent)
         } else {
             if (action != null && action.startsWith("vlc.mediashortcut:")) {
-                val split = action.split(":")
-                val type = split[split.count() - 2]
-                val id = split.last()
-                lifecycleScope.launch {
-                    getFromMl {
-                        val album = when(type) {
-                         else ->   getMedia(id.toLong())
-                        }
-                        MediaUtils.playTracks(this@StartActivity, album, 0)
-                    }
-                }
             } else {
                 val target = idFromShortcut
                 if (target == R.id.ml_menu_last_playlist)
@@ -214,7 +202,6 @@ class StartActivity : FragmentActivity() {
             } catch (ex: SecurityException) {
                 intent.data?.let { MediaUtils.openMediaNoUi(it) }
             }
-            intent.data?.authority == getString(R.string.tv_provider_authority) -> MediaUtils.openMediaNoUiFromTvContent(this@StartActivity, intent.data)
             else -> withContext(Dispatchers.IO) { FileUtils.getUri(intent.data)}?.let { MediaUtils.openMediaNoUi(it) }
         }
         finish()

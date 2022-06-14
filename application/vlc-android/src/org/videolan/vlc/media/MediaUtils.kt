@@ -27,7 +27,6 @@ import org.videolan.medialibrary.media.MediaLibraryItem
 import org.videolan.resources.*
 import org.videolan.resources.interfaces.IMediaContentResolver
 import org.videolan.resources.interfaces.ResumableList
-import org.videolan.resources.util.getFromMl
 import org.videolan.tools.*
 import org.videolan.vlc.PlaybackService
 import org.videolan.vlc.R
@@ -111,11 +110,6 @@ object MediaUtils {
         SuspendDialogCallback(context) { service -> service.load(media) }
     }
 
-    fun openMediaNoUi(ctx: Context, id: Long) = AppScope.launch {
-        val media = ctx.getFromMl { getMedia(id) }
-        openMediaNoUi(ctx, media)
-    }
-
     fun openMediaNoUi(uri: Uri) = openMediaNoUi(AppContextProvider.appContext, MLServiceLocator.getAbstractMediaWrapper(uri))
 
     fun openMediaNoUi(context: Context?, media: MediaWrapper?) {
@@ -123,37 +117,6 @@ object MediaUtils {
         object : BaseCallBack(context) {
             override fun onServiceReady(service: PlaybackService) {
                 service.load(media)
-            }
-        }
-    }
-
-    fun playTracks(context: Context, item: MediaLibraryItem, position: Int, shuffle:Boolean = false) = context.scope.launch {
-        openList(context, withContext(Dispatchers.IO) { item.tracks }.toList(), position, shuffle)
-    }
-
-    fun playAll(context: Activity?, provider: MedialibraryProvider<MediaWrapper>, position: Int, shuffle: Boolean) {
-        if (context == null) return
-        SuspendDialogCallback(context) { service ->
-            val count = withContext(Dispatchers.IO) { provider.getTotalCount() }
-            fun play(list: List<MediaWrapper>) {
-                service.load(list, if (shuffle) SecureRandom().nextInt(min(count, MEDIALIBRARY_PAGE_SIZE)) else position)
-                if (shuffle && !service.isShuffling) service.shuffle()
-            }
-            when (count) {
-                0 -> return@SuspendDialogCallback
-                in 1..MEDIALIBRARY_PAGE_SIZE -> play(withContext(Dispatchers.IO) { provider.getAll().toList() })
-                else -> {
-                    var index = 0
-                    val appendList = mutableListOf<MediaWrapper>()
-                    while (index < count) {
-                        val pageCount = min(MEDIALIBRARY_PAGE_SIZE, count - index)
-                        val list = withContext(Dispatchers.IO) { provider.getPage(pageCount, index).toList() }
-                        if (index == 0) play(list)
-                        else appendList.addAll(list)
-                        index += pageCount
-                    }
-                    service.append(appendList)
-                }
             }
         }
     }
@@ -350,27 +313,6 @@ object MediaUtils {
     } catch (ignored: NullPointerException) {
     } catch (ignored: IllegalStateException) {
     } catch (ignored: SecurityException) {}
-
-    fun openMediaNoUiFromTvContent(context: Context, data: Uri?) = AppScope.launch {
-        val id = data?.lastPathSegment ?: return@launch
-        when {
-            id.startsWith(CONTENT_PREFIX) -> {
-                val intent = Intent(ACTION_OPEN_CONTENT).putExtra(EXTRA_CONTENT_ID, id)
-                context.localBroadcastManager.sendBroadcast(intent)
-            }
-            else -> { //Media from medialib
-                val mw = context.getFromMl {
-                    val longId = id.substringAfter("_").toLong()
-                    when {
-                        else -> getMedia(longId)
-                    }
-                } ?: return@launch
-                when (mw) {
-                    is MediaWrapper -> openMediaNoUi(mw.uri)
-                }
-            }
-        }
-    }
 }
 
 suspend fun MediaContentResolver.getList(context: Context, id: String) : ResumableList {

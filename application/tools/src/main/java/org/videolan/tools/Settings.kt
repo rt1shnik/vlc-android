@@ -99,10 +99,7 @@ const val POSITION_IN_MEDIA_LIST = "position_in_media_list"
 const val SHOW_REMAINING_TIME = "show_remaining_time"
 const val PREF_PLAYLIST_TIPS_SHOWN = "playlist_tips_shown"
 const val PREF_AUDIOPLAYER_TIPS_SHOWN = "audioplayer_tips_shown"
-const val KEY_MEDIALIBRARY_SCAN = "ml_scan"
 const val KEY_SHOW_TRACK_INFO = "show_track_info"
-const val ML_SCAN_ON = 0
-const val ML_SCAN_OFF = 1
 
 //Tips
 

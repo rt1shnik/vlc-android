@@ -40,7 +40,6 @@ import org.videolan.medialibrary.interfaces.media.MediaWrapper
 import org.videolan.medialibrary.interfaces.media.MediaWrapper.TYPE_ALL
 import org.videolan.medialibrary.interfaces.media.MediaWrapper.TYPE_VIDEO
 import org.videolan.resources.AndroidDevices
-import org.videolan.resources.util.getFromMl
 import org.videolan.tools.AppScope
 import org.videolan.tools.isStarted
 import org.videolan.vlc.R
@@ -114,13 +113,8 @@ fun FragmentActivity.share(medias: List<MediaWrapper>) = lifecycleScope.launch {
 }
 
 fun MediaWrapper?.isMedia() = this != null && (type == MediaWrapper.TYPE_AUDIO || type == MediaWrapper.TYPE_VIDEO)
-fun MediaWrapper?.isBrowserMedia() = this != null && (isMedia() || type == MediaWrapper.TYPE_DIR || type == MediaWrapper.TYPE_PLAYLIST)
-
-fun Context.getAppSystemService(name: String) = applicationContext.getSystemService(name)!!
 
 fun Long.random() = (SecureRandom().nextFloat() * this).toLong()
-
-suspend fun Context.awaitMedialibraryStarted() = getFromMl { isStarted }
 
 @WorkerThread
 fun List<MediaWrapper>.updateWithMLMeta() : MutableList<MediaWrapper> {

@@ -32,15 +32,6 @@ public class MedialibraryImpl extends Medialibrary {
     private static final String TAG = "VLC/JMedialibrary";
 
     @Override
-    public void start() {
-        if (isStarted()) return;
-        isMedialibraryStarted = true;
-        synchronized (onMedialibraryReadyListeners) {
-            for (OnMedialibraryReadyListener listener : onMedialibraryReadyListeners) listener.onMedialibraryReady();
-        }
-    }
-
-    @Override
     public void setLibVLCInstance(long libVLC) {
         if (mIsInitiated) nativeSetLibVLCInstance(libVLC);
     }

@@ -1,7 +1,6 @@
 package org.videolan.vlc
 
 import android.annotation.SuppressLint
-import android.content.ContentUris
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -12,17 +11,12 @@ import android.view.KeyEvent
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
 import org.videolan.medialibrary.Tools
-import org.videolan.medialibrary.interfaces.Medialibrary
 import org.videolan.medialibrary.interfaces.media.MediaWrapper
 import org.videolan.resources.*
-import org.videolan.resources.util.getFromMl
 import org.videolan.tools.PLAYBACK_HISTORY
 import org.videolan.tools.Settings
 import org.videolan.tools.removeQuery
-import org.videolan.tools.retrieveParent
-import org.videolan.vlc.gui.helpers.MediaComparators
 import org.videolan.vlc.media.MediaSessionBrowser
-import org.videolan.vlc.util.awaitMedialibraryStarted
 import java.security.SecureRandom
 import kotlin.math.abs
 import kotlin.math.min
@@ -180,15 +174,6 @@ internal class MediaSessionCallback(private val playbackService: PlaybackService
         playbackService.mediaSession.setPlaybackState(playbackState)
         playbackService.lifecycleScope.launch(Dispatchers.IO) {
             if (!isActive) return@launch
-            playbackService.awaitMedialibraryStarted()
-            if (!isActive) return@launch
-            if (!isActive) return@launch
-            playbackService.lifecycleScope.launch(Dispatchers.Main) {
-                when {
-                    playbackService.hasMedia() -> playbackService.play()
-                    else -> playbackService.displayPlaybackError(R.string.search_no_result)
-                }
-            }
         }
     }
 

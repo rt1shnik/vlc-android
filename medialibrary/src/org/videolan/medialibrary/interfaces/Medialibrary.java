@@ -32,9 +32,6 @@ import org.videolan.medialibrary.MLServiceLocator;
 import org.videolan.medialibrary.Tools;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 abstract public class Medialibrary {
 
     // Sorting
@@ -72,8 +69,6 @@ abstract public class Medialibrary {
     protected volatile boolean mIsWorking = false;
     protected static MutableLiveData<Boolean> sRunning = new MutableLiveData<>();
 
-    protected final List<OnMedialibraryReadyListener> onMedialibraryReadyListeners = new ArrayList<>();
-    protected final List<OnDeviceChangeListener> onDeviceChangeListeners = new ArrayList<>();
     protected volatile boolean isMedialibraryStarted = false;
     protected static Context sContext;
 
@@ -112,19 +107,6 @@ abstract public class Medialibrary {
         return mIsInitiated;
     }
 
-    public interface OnMedialibraryReadyListener {
-        void onMedialibraryReady();
-        void onMedialibraryIdle();
-    }
-
-    public interface OnDeviceChangeListener {
-        void onDeviceChange();
-    }
-
-    public interface MedialibraryExceptionHandler {
-        void onUnhandledException(String context, String errMsg, boolean clearSuggested);
-    }
-
     // If media is not in ML, find it with its path
     public MediaWrapper findMedia(MediaWrapper mw) {
         if (mIsInitiated && mw != null && mw.getId() == 0L) {
@@ -146,31 +128,6 @@ abstract public class Medialibrary {
         return mw;
     }
 
-    @SuppressWarnings("unused")
-    public void onBackgroundTasksIdleChanged(boolean isIdle) {
-        mIsWorking = !isIdle;
-        sRunning.postValue(mIsWorking);
-        if (isIdle) {
-            synchronized (onMedialibraryReadyListeners) {
-                for (OnMedialibraryReadyListener listener : onMedialibraryReadyListeners) listener.onMedialibraryIdle();
-            }
-        }
-    }
-
-    public void addOnMedialibraryReadyListener(OnMedialibraryReadyListener cb) {
-        synchronized (onMedialibraryReadyListeners) {
-            if (!onMedialibraryReadyListeners.contains(cb))
-                onMedialibraryReadyListeners.add(cb);
-        }
-    }
-
-    public void removeOnMedialibraryReadyListener(OnMedialibraryReadyListener cb) {
-        synchronized (onMedialibraryReadyListeners) {
-            onMedialibraryReadyListeners.remove(cb);
-        }
-    }
-
-    abstract public void start();
     abstract public void setLibVLCInstance(long libVLC);
 
     abstract public void pauseBackgroundOperations();

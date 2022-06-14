@@ -65,7 +65,6 @@ import org.videolan.medialibrary.interfaces.Medialibrary
 import org.videolan.medialibrary.interfaces.media.MediaWrapper
 import org.videolan.resources.*
 import org.videolan.resources.util.VLCCrashHandler
-import org.videolan.resources.util.getFromMl
 import org.videolan.resources.util.launchForeground
 import org.videolan.tools.*
 import org.videolan.vlc.gui.helpers.AudioUtil
@@ -1621,10 +1620,8 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
         result: Result<List<MediaBrowserCompat.MediaItem>>
     ) {
         result.detach()
-        val reload = parentId == MediaSessionBrowser.ID_LAST_ADDED && parentId != lastParentId
         lastParentId = parentId
         lifecycleScope.launch(start = CoroutineStart.UNDISPATCHED) {
-            awaitMedialibraryStarted()
             Log.e(TAG, "Failed to load children for $parentId")
         }
     }
