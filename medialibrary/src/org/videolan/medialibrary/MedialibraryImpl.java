@@ -37,15 +37,6 @@ public class MedialibraryImpl extends Medialibrary {
         super.finalize();
     }
 
-    public void reload() {
-        if (mIsInitiated) nativeReload();
-    }
-
-    public void reload(String entryPoint) {
-        if (mIsInitiated && !TextUtils.isEmpty(entryPoint))
-            nativeReload(Tools.encodeVLCMrl(entryPoint));
-    }
-
     @Nullable
     public MediaWrapper getMedia(long id) {
         return mIsInitiated ? nativeGetMedia(id) : null;
@@ -110,8 +101,6 @@ public class MedialibraryImpl extends Medialibrary {
     private native MediaWrapper nativeGetMediaFromMrl(String mrl);
     private native MediaWrapper nativeAddMedia(String mrl, long duration);
 
-    private native void nativeReload();
-    private native void nativeReload(String entryPoint);
     private native int nativeSetLastTime(long mediaId, long progress);
     private native boolean nativeSetLastPosition(long mediaId, float position);
 }

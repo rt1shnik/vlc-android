@@ -110,8 +110,6 @@ abstract public class Medialibrary {
         return mw;
     }
 
-    abstract public void reload();
-    abstract public void reload(String entrypoint);
     abstract public MediaWrapper getMedia(long id);
     abstract public MediaWrapper getMedia(Uri uri);
     abstract public MediaWrapper getMedia(String mrl);
