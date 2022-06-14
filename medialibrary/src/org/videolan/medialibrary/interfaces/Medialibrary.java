@@ -128,8 +128,6 @@ abstract public class Medialibrary {
         return mw;
     }
 
-    abstract public void setLibVLCInstance(long libVLC);
-
     abstract public void pauseBackgroundOperations();
     abstract public void resumeBackgroundOperations();
     abstract public void reload();

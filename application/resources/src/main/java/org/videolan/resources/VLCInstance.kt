@@ -64,7 +64,6 @@ object VLCInstance : SingletonHolder<ILibVLC, Context>({ init(it.applicationCont
         sLibVLC.release()
         sLibVLC = libVLCFactory.getFromOptions(AppContextProvider.appContext, VLCOptions.libOptions)
         instance = sLibVLC
-        Medialibrary.getInstance().setLibVLCInstance((sLibVLC as LibVLC).getInstance())
     }
 
     fun testCompatibleCPU(context: Context): Boolean {

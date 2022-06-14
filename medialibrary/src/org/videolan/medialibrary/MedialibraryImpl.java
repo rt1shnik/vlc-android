@@ -32,11 +32,6 @@ public class MedialibraryImpl extends Medialibrary {
     private static final String TAG = "VLC/JMedialibrary";
 
     @Override
-    public void setLibVLCInstance(long libVLC) {
-        if (mIsInitiated) nativeSetLibVLCInstance(libVLC);
-    }
-
-    @Override
     protected void finalize() throws Throwable {
         if (mIsInitiated) nativeRelease();
         super.finalize();
