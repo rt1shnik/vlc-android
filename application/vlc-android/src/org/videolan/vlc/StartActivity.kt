@@ -115,13 +115,6 @@ class StartActivity : FragmentActivity() {
             }
         }
 
-        // Setting test mode with stubbed media library if required
-        if (intent.hasExtra(MLServiceLocator.EXTRA_TEST_STUBS)
-                && intent.getBooleanExtra(MLServiceLocator.EXTRA_TEST_STUBS, false)) {
-            MLServiceLocator.setLocatorMode(MLServiceLocator.LocatorMode.TESTS)
-            Log.i(TAG, "onCreate: Setting test mode`")
-        }
-
         // Start application
         /* Get the current version from package */
         val settings = Settings.getInstance(this)
