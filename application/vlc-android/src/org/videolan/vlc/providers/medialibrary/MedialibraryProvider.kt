@@ -90,13 +90,8 @@ abstract class MedialibraryProvider<T : MediaLibraryItem>(val context: Context) 
         }
     }
 
-    suspend fun awaitRefresh() {
-        refresh()
-        refreshDeferred?.await()
-    }
-
     fun refresh(): Boolean {
-        if ((isRefreshing && medialibrary.isWorking) || !medialibrary.isStarted || !this::dataSource.isInitialized) return false
+        if ((isRefreshing && medialibrary.isWorking) || !this::dataSource.isInitialized) return false
         privateHeaders.clear()
         if (!dataSource.isInvalid) {
             isRefreshing = true
@@ -129,7 +124,6 @@ abstract class MedialibraryProvider<T : MediaLibraryItem>(val context: Context) 
             try {
                 callback.onResult(page.toList(), params.requestedStartPosition, count)
             } catch (e: IllegalArgumentException) {}
-            isRefreshing = !medialibrary.isStarted
         }
 
         override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<T>) {

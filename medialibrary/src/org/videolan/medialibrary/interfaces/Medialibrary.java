@@ -47,18 +47,12 @@ abstract public class Medialibrary {
     public final static int SORT_FILENAME = 10;
     public final static int TrackNumber = 11;
     public final static int TrackId = 12;
-    public final static int NbVideo = 13;
-    public final static int NbAudio = 14;
     public final static int NbMedia = 15;
 
     protected long mInstanceID;
 
-    public static final int ML_INIT_SUCCESS = 0;
-    public static final int ML_INIT_ALREADY_INITIALIZED = 1;
     public static final int ML_INIT_FAILED = 2;
-    public static final int ML_INIT_DB_RESET = 3;
     public static final int ML_INIT_DB_CORRUPTED = 4;
-    public static final int ML_INIT_DB_UNRECOVERABLE = 5;
 
     public static final int ML_SET_TIME_ERROR = 0;
     public static final int ML_SET_TIME_BEGIN = 1;
@@ -67,23 +61,13 @@ abstract public class Medialibrary {
 
     protected volatile boolean mIsInitiated = false;
     protected volatile boolean mIsWorking = false;
-    protected static MutableLiveData<Boolean> sRunning = new MutableLiveData<>();
 
-    protected volatile boolean isMedialibraryStarted = false;
     protected static Context sContext;
 
     protected static final Medialibrary instance = MLServiceLocator.getAbstractMedialibrary();
 
     public static Context getContext() {
         return sContext;
-    }
-
-    public static LiveData<Boolean> getState() {
-        return sRunning;
-    }
-
-    public boolean isStarted() {
-        return isMedialibraryStarted;
     }
 
     protected void finalize() throws Throwable {
