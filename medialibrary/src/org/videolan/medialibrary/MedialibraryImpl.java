@@ -20,73 +20,16 @@
 
 package org.videolan.medialibrary;
 
-import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.WorkerThread;
 
-import org.videolan.libvlc.LibVLC;
-import org.videolan.libvlc.util.VLCUtil;
 import org.videolan.medialibrary.interfaces.Medialibrary;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
 
-import java.io.File;
-
 public class MedialibraryImpl extends Medialibrary {
     private static final String TAG = "VLC/JMedialibrary";
-
-    public boolean construct(Context context) {
-        if (context == null) throw new IllegalStateException("context cannot be null");
-        if (mIsInitiated) return false;
-        sContext = context;
-        final File extFilesDir = context.getExternalFilesDir(null);
-        File dbDirectory = context.getDir("db", Context.MODE_PRIVATE);
-        if (extFilesDir == null || !extFilesDir.exists()
-                || dbDirectory == null || !dbDirectory.canWrite())
-            return false;
-        LibVLC.loadLibraries();
-        try {
-            System.loadLibrary("c++_shared");
-            System.loadLibrary("mla");
-        } catch (UnsatisfiedLinkError ule) {
-            Log.e(TAG, "Can't load mla: " + ule);
-            return false;
-        }
-        final File oldDir = new File(extFilesDir + THUMBS_FOLDER_NAME);
-        if (oldDir.isDirectory()) {
-            //remove old thumbnails directory
-            new Thread(() -> {
-
-                String[] children = oldDir.list();
-                if (children != null) {
-                    for (String child : children) {
-                        new File(oldDir, child).delete();
-                    }
-                }
-                oldDir.delete();
-            }).start();
-        }
-        nativeConstruct(dbDirectory + VLC_MEDIA_DB_NAME, extFilesDir + MEDIALIB_FOLDER_NAME);
-        return true;
-    }
-
-    public int init(Context context) {
-        if (context == null) return ML_INIT_FAILED;
-        if (mIsInitiated) return ML_INIT_ALREADY_INITIALIZED;
-        if (sContext == null) throw new IllegalStateException("Medialibrary construct has to be called before init");
-        File dbDirectory = context.getDir("db", Context.MODE_PRIVATE);
-        int initCode = nativeInit(dbDirectory + VLC_MEDIA_DB_NAME);
-        if (initCode == ML_INIT_DB_CORRUPTED) {
-            Log.e(TAG, "Medialib database is corrupted. Clearing it and try to restore playlists");
-        }
-
-        mIsInitiated = initCode != ML_INIT_FAILED;
-        return initCode;
-    }
 
     @Override
     public void start() {

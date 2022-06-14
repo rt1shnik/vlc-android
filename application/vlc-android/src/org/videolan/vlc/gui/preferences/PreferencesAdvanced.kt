@@ -120,24 +120,6 @@ class PreferencesAdvanced : BasePreferenceFragment(), SharedPreferences.OnShared
                 android.os.Process.killProcess(android.os.Process.myPid())
                 return true
             }
-            "dump_media_db" -> {
-                if (Medialibrary.getInstance().isWorking)
-                    UiTools.snacker(requireActivity(), getString(R.string.settings_ml_block_scan))
-                else {
-                    val dst = File(AndroidDevices.EXTERNAL_PUBLIC_DIRECTORY + Medialibrary.VLC_MEDIA_DB_NAME)
-                    lifecycleScope.launch {
-                        if (getWritePermission(Uri.fromFile(dst))) {
-                            val copied = withContext(Dispatchers.IO) {
-                                val db = File(requireContext().getDir("db", Context.MODE_PRIVATE).toString() + Medialibrary.VLC_MEDIA_DB_NAME)
-
-                                FileUtils.copyFile(db, dst)
-                            }
-                            Toast.makeText(context, getString(if (copied) R.string.dump_db_succes else R.string.dump_db_failure), Toast.LENGTH_LONG).show()
-                        }
-                    }
-                }
-                return true
-            }
             "optional_features" -> {
                 loadFragment(PreferencesOptional())
                 return true

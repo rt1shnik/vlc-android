@@ -69,10 +69,6 @@ suspend inline fun waitForML() = withContext(Dispatchers.IO) {
     }
 }
 
-suspend fun Context.dbExists(coroutineContextProvider: CoroutineContextProvider = CoroutineContextProvider()) = withContext(coroutineContextProvider.IO) {
-    File(getDir("db", Context.MODE_PRIVATE).toString() + Medialibrary.VLC_MEDIA_DB_NAME).exists()
-}
-
 fun Context.launchForeground(intent: Intent) {
     try {
         startService(intent)

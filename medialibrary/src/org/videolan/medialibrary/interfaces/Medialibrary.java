@@ -68,11 +68,6 @@ abstract public class Medialibrary {
     public static final int ML_SET_TIME_AS_IS = 2;
     public static final int ML_SET_TIME_END = 3;
 
-    public static final MediaWrapper[] EMPTY_COLLECTION = {};
-    public static final String VLC_MEDIA_DB_NAME = "/vlc_media.db";
-    public static final String THUMBS_FOLDER_NAME = "/thumbs";
-    public static final String MEDIALIB_FOLDER_NAME = "/medialib";
-
     protected volatile boolean mIsInitiated = false;
     protected volatile boolean mIsWorking = false;
     protected static MutableLiveData<Boolean> sRunning = new MutableLiveData<>();
@@ -175,8 +170,6 @@ abstract public class Medialibrary {
         }
     }
 
-    abstract public boolean construct(Context context);
-    abstract public int init(Context context);
     abstract public void start();
     abstract public void setLibVLCInstance(long libVLC);
 
