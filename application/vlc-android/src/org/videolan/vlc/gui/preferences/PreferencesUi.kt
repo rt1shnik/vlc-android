@@ -142,7 +142,6 @@ class PreferencesUi : BasePreferenceFragment(), SharedPreferences.OnSharedPrefer
                 } catch (e: NumberFormatException) {
                     6
                 }
-                Medialibrary.getInstance().setVideoGroupsPrefixLength(goupSizeValue)
                 (activity as PreferencesActivity).setRestart()
             }
             "include_missing" -> {

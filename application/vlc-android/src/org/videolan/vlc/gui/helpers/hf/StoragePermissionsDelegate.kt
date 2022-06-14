@@ -45,13 +45,11 @@ import org.videolan.resources.AndroidDevices
 import org.videolan.resources.EXTRA_FIRST_RUN
 import org.videolan.resources.EXTRA_UPGRADE
 import org.videolan.resources.util.isExternalStorageManager
-import org.videolan.resources.util.startMedialibrary
 import org.videolan.tools.INITIAL_PERMISSION_ASKED
 import org.videolan.tools.Settings
 import org.videolan.tools.isCallable
 import org.videolan.tools.putSingle
 import org.videolan.vlc.BuildConfig
-import org.videolan.vlc.gui.onboarding.ONBOARDING_DONE_KEY
 import org.videolan.vlc.util.FileUtils
 import org.videolan.vlc.util.Permissions
 import org.videolan.vlc.util.Permissions.canReadStorage
@@ -166,12 +164,11 @@ class StoragePermissionsDelegate : BaseHeadlessFragment() {
             val intent = intent
             val upgrade = intent?.getBooleanExtra(EXTRA_UPGRADE, false) ?: false
             val firstRun = upgrade && intent.getBooleanExtra(EXTRA_FIRST_RUN, false)
-            val settings = Settings.getInstance(this)
             lifecycleScope.launch {
                 val granted = getStoragePermission(write)
                 val model : PermissionViewmodel by viewModels()
                 if (model.permissionPending) model.deferredGrant.complete(granted)
-                if (granted && withContext(Dispatchers.IO) { settings.getBoolean(ONBOARDING_DONE_KEY, false) })
+                if (granted)
                     (cb ?: getAction(this@askStoragePermission, firstRun, upgrade)).run()
             }
         }
@@ -196,7 +193,6 @@ class StoragePermissionsDelegate : BaseHeadlessFragment() {
 
         private fun getAction(activity: FragmentActivity, firstRun: Boolean, upgrade: Boolean) = Runnable {
             if (activity is CustomActionController) activity.onStorageAccessGranted()
-            else activity.startMedialibrary(firstRun, upgrade, true)
         }
 
         suspend fun FragmentActivity.getWritePermission(uri: Uri) = if (uri.path?.startsWith(AndroidDevices.EXTERNAL_PUBLIC_DIRECTORY) == true) {

@@ -56,8 +56,8 @@ object NotificationHelper {
 
     private val notificationIntent = Intent()
 
-    fun createPlaybackNotification(ctx: Context, video: Boolean, title: String, artist: String,
-                                   album: String, cover: Bitmap?, playing: Boolean, pausable: Boolean,
+    fun createPlaybackNotification(ctx: Context, video: Boolean, title: String,
+                                   cover: Bitmap?, playing: Boolean, pausable: Boolean,
                                    seekable: Boolean, speed: Float, podcastMode: Boolean,
                                    seekInCompactView: Boolean, enabledActions: Long,
                                    sessionToken: MediaSessionCompat.Token?,
@@ -68,9 +68,8 @@ object NotificationHelper {
         builder.setSmallIcon(if (video) R.drawable.ic_notif_video else R.drawable.ic_notif_audio)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentTitle(title)
-                .setContentText(getMediaDescription(artist, album))
                 .setLargeIcon(cover)
-                .setTicker("$title - $artist")
+                .setTicker(title)
                 .setAutoCancel(!playing)
                 .setOngoing(playing)
                 .setCategory(NotificationCompat.CATEGORY_TRANSPORT)

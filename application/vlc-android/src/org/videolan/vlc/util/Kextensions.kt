@@ -35,16 +35,11 @@ import kotlinx.coroutines.flow.collect
 import org.videolan.libvlc.Media
 import org.videolan.libvlc.interfaces.IMedia
 import org.videolan.libvlc.util.AndroidUtil
-import org.videolan.medialibrary.Tools
 import org.videolan.medialibrary.interfaces.Medialibrary
 import org.videolan.medialibrary.interfaces.media.MediaWrapper
 import org.videolan.medialibrary.interfaces.media.MediaWrapper.TYPE_ALL
 import org.videolan.medialibrary.interfaces.media.MediaWrapper.TYPE_VIDEO
-import org.videolan.medialibrary.interfaces.media.Playlist
-import org.videolan.medialibrary.interfaces.media.VideoGroup
-import org.videolan.medialibrary.media.MediaLibraryItem
 import org.videolan.resources.AndroidDevices
-import org.videolan.resources.util.getFromMl
 import org.videolan.tools.AppScope
 import org.videolan.tools.isStarted
 import org.videolan.vlc.R
@@ -118,13 +113,8 @@ fun FragmentActivity.share(medias: List<MediaWrapper>) = lifecycleScope.launch {
 }
 
 fun MediaWrapper?.isMedia() = this != null && (type == MediaWrapper.TYPE_AUDIO || type == MediaWrapper.TYPE_VIDEO)
-fun MediaWrapper?.isBrowserMedia() = this != null && (isMedia() || type == MediaWrapper.TYPE_DIR || type == MediaWrapper.TYPE_PLAYLIST)
-
-fun Context.getAppSystemService(name: String) = applicationContext.getSystemService(name)!!
 
 fun Long.random() = (SecureRandom().nextFloat() * this).toLong()
-
-suspend fun Context.awaitMedialibraryStarted() = getFromMl { isStarted }
 
 @WorkerThread
 fun List<MediaWrapper>.updateWithMLMeta() : MutableList<MediaWrapper> {
@@ -169,27 +159,6 @@ fun asyncText(view: TextView, text: CharSequence?) {
     setTextAsync(view, text, params)
 }
 
-@BindingAdapter("app:asyncText", requireAll = false)
-fun asyncTextItem(view: TextView, item: MediaLibraryItem?) {
-    if (item == null) {
-        view.visibility = View.GONE
-        return
-    }
-    val text = if (item is Playlist) {
-        if (item.duration != 0L) {
-            val duration = Tools.millisToString(item.duration)
-            TextUtils.separatedString(view.context.getString(R.string.track_number, item.tracksCount), if (item.nbDurationUnknown > 0) "$duration+" else duration)
-        } else view.context.getString(R.string.track_number, item.tracksCount)
-    } else item.description
-    if (text.isNullOrEmpty()) {
-        view.visibility = View.GONE
-        return
-    }
-    view.visibility = View.VISIBLE
-    val params = TextViewCompat.getTextMetricsParams(view)
-    setTextAsync(view, text, params)
-}
-
 private fun setTextAsync(view: TextView, text: CharSequence, params: PrecomputedTextCompat.Params) {
     val ref = WeakReference(view)
     AppScope.launch(Dispatchers.Default) {
@@ -224,11 +193,6 @@ fun CharSequence.getDescriptionSpan(context: Context):SpannableString {
 
 const val presentReplacementMarker = "§*§"
 const val missingReplacementMarker = "*§*"
-
-fun MediaLibraryItem.getPresenceDescription() = when (this) {
-    is VideoGroup -> TextUtils.separatedString("${this.presentCount} §*§", "${this.mediaCount() - this.presentCount} *§*")
-    else -> ""
-}
 
 @BindingAdapter("app:presenceDescription", requireAll = false)
 fun presenceDescription(view: TextView, description: String?) {

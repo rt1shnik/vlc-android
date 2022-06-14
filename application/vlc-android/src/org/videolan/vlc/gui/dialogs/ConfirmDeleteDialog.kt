@@ -35,12 +35,9 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import org.videolan.medialibrary.interfaces.media.Album
 import org.videolan.medialibrary.interfaces.media.MediaWrapper
-import org.videolan.medialibrary.interfaces.media.Playlist
 import org.videolan.medialibrary.media.MediaLibraryItem
 import org.videolan.vlc.R
-import java.lang.IllegalStateException
 
 const val CONFIRM_DELETE_DIALOG_MEDIALIST = "CONFIRM_DELETE_DIALOG_MEDIALIST"
 const val CONFIRM_DELETE_DIALOG_TITLE = "CONFIRM_DELETE_DIALOG_TITLE"
@@ -118,8 +115,6 @@ class ConfirmDeleteDialog : VLCBottomSheetDialogFragment() {
 
             }
             mediaList[0] is MediaWrapper -> getString(if ((mediaList[0] as MediaWrapper).type == MediaWrapper.TYPE_DIR) R.string.confirm_delete_folder else R.string.confirm_delete, mediaList[0].title)
-            mediaList[0] is Album -> getString(R.string.confirm_delete_album, mediaList[0].title)
-            mediaList[0] is Playlist -> getString(R.string.confirm_delete_playlist, mediaList[0].title)
             else -> getString(R.string.confirm_delete_several_media, mediaList.size)
         }
 

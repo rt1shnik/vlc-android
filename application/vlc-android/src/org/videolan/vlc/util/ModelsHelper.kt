@@ -6,27 +6,13 @@ import kotlinx.coroutines.withContext
 import org.videolan.libvlc.MediaPlayer
 import org.videolan.libvlc.interfaces.IMedia
 import org.videolan.medialibrary.interfaces.Medialibrary.*
-import org.videolan.medialibrary.interfaces.media.Album
 import org.videolan.medialibrary.interfaces.media.MediaWrapper
-import org.videolan.medialibrary.interfaces.media.VideoGroup
-import org.videolan.medialibrary.media.DummyItem
 import org.videolan.medialibrary.media.MediaLibraryItem
 import org.videolan.resources.util.*
 import org.videolan.vlc.PlaybackService
 import kotlin.math.floor
 
 object ModelsHelper {
-
-    suspend fun generateSections(sort: Int, items: List<MediaLibraryItem>) = withContext(Dispatchers.IO) {
-        val array = splitList(sort, items)
-        val datalist = mutableListOf<MediaLibraryItem>()
-        for ((key, list) in array) {
-            datalist.add(DummyItem(key))
-            datalist.addAll(list)
-        }
-        datalist
-    }
-
     internal suspend fun splitList(sort: Int, items: Collection<MediaLibraryItem>) = withContext(Dispatchers.IO) {
         val array = mutableMapOf<String, MutableList<MediaLibraryItem>>()
         when (sort) {
@@ -57,53 +43,11 @@ object ModelsHelper {
                     array[currentLengthCategory]?.add(item)
                 }
             }
-            SORT_RELEASEDATE -> {
-                var currentYear: String? = null
-                for (item in items) {
-                    if (item.itemType == MediaLibraryItem.TYPE_DUMMY) continue
-                    val year = item.getYear()
-                    if (currentYear === null || currentYear != year) {
-                        currentYear = year
-                        if (array[currentYear].isNullOrEmpty()) array[currentYear] = mutableListOf()
-                    }
-                    array[currentYear]?.add(item)
-                }
-            }
-            SORT_ARTIST -> {
-                var currentArtist: String? = null
-                for (item in items) {
-                    if (item.itemType == MediaLibraryItem.TYPE_DUMMY) continue
-                    val artist = (item as MediaWrapper).artist ?: ""
-                    if (currentArtist === null || currentArtist != artist) {
-                        currentArtist = artist
-                        if (array[currentArtist].isNullOrEmpty()) array[currentArtist] = mutableListOf()
-                    }
-                    array[currentArtist]?.add(item)
-                }
-            }
-            SORT_ALBUM -> {
-                var currentAlbum: String? = null
-                for (item in items) {
-                    if (item.itemType == MediaLibraryItem.TYPE_DUMMY) continue
-                    val album = (item as MediaWrapper).album ?: ""
-                    if (currentAlbum === null || currentAlbum != album) {
-                        currentAlbum = album
-                        if (array[currentAlbum].isNullOrEmpty()) array[currentAlbum] = mutableListOf()
-                    }
-                    array[currentAlbum]?.add(item)
-                }
-            }
         }
         if (sort == SORT_DEFAULT || sort == SORT_FILENAME || sort == SORT_ALPHA)
             array.toSortedMap()
         else array
     }
-
-    fun MediaLibraryItem.getFirstLetter(): String {
-        return if (title.isEmpty() || !Character.isLetter(title[0]) || isSpecialItem()) "#" else title.substring(0, 1).toUpperCase()
-    }
-
-    fun MediaLibraryItem.getDiscNumberString(): String? = if (this is MediaWrapper && this.discNumber != 0) "Disc ${this.discNumber}" else null
 
     fun getHeader(context: Context?, sort: Int, item: MediaLibraryItem?, aboveItem: MediaLibraryItem?) = if (context !== null && item != null) when (sort) {
         SORT_DEFAULT,
@@ -115,14 +59,6 @@ object ModelsHelper {
                 letter.takeIf { it != previous }
             }
         }
-        TrackId -> {
-            val disc = item.getDiscNumberString()
-            if (aboveItem == null) disc
-            else {
-                val previousDisc = aboveItem.getDiscNumberString()
-                disc.takeIf { it != previousDisc }
-            }
-        }
         SORT_DURATION -> {
             val length = item.getLength()
             val lengthCategory = length.lengthToCategory()
@@ -130,14 +66,6 @@ object ModelsHelper {
             else {
                 val previous = aboveItem.getLength().lengthToCategory()
                 lengthCategory.takeIf { it != previous }
-            }
-        }
-        SORT_RELEASEDATE -> {
-            val year = item.getYear()
-            if (aboveItem == null) year
-            else {
-                val previous = aboveItem.getYear()
-                year.takeIf { it != previous }
             }
         }
         SORT_LASTMODIFICATIONDATE -> {
@@ -150,22 +78,6 @@ object ModelsHelper {
                     if (prevCat != category) getTimeCategoryString(context, category) else null
                 }
             } else null
-        }
-        SORT_ARTIST -> {
-            val artist = (item as? MediaWrapper)?.artist ?: (item as? Album)?.albumArtist ?: ""
-            if (aboveItem == null) artist
-            else {
-                val previous = (aboveItem as? MediaWrapper)?.artist ?: (aboveItem as? Album)?.albumArtist ?: ""
-                artist.takeIf { it != previous }
-            }
-        }
-        SORT_ALBUM -> {
-            val album = (item as MediaWrapper).album ?: ""
-            if (aboveItem == null) album
-            else {
-                val previous = (aboveItem as MediaWrapper).album ?: ""
-                album.takeIf { it != previous }
-            }
         }
         SORT_FILENAME -> {
             val title = FileUtils.getFileNameFromPath((item as? MediaWrapper)?.uri.toString())
@@ -204,10 +116,6 @@ object EmptyPBSCallback : PlaybackService.Callback {
     override fun onMediaPlayerEvent(event: MediaPlayer.Event) {}
 }
 
-interface RefreshModel {
-    fun refresh()
-}
-
 interface SortModule {
     fun sort(sort: Int)
     fun canSortByName() = true
@@ -232,7 +140,6 @@ interface SortModule {
         SORT_RELEASEDATE -> canSortByReleaseDate()
         SORT_FILESIZE -> canSortByFileSize()
         SORT_ARTIST -> canSortByArtist()
-        SORT_ALBUM -> canSortByAlbum()
         SORT_PLAYCOUNT -> canSortByPlayCount()
         TrackId -> canSortByTrackId()
         NbMedia -> canSortByMediaNumber()

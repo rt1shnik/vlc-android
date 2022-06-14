@@ -12,7 +12,6 @@ import kotlinx.coroutines.launch
 import org.videolan.vlc.R
 import org.videolan.vlc.StartActivity
 import org.videolan.vlc.databinding.DialogExtDeviceBinding
-import org.videolan.vlc.gui.helpers.MedialibraryUtils
 import org.videolan.resources.EXTRA_PATH
 
 private const val TAG = "VLC/DeviceDialog"
@@ -66,7 +65,6 @@ class DeviceDialog : DialogFragment() {
 
         override fun scan(v: View) {
             context?.let {
-                MedialibraryUtils.addDevice(path, it.applicationContext)
                 it.startActivity(Intent(it, StartActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             }
             dismiss()

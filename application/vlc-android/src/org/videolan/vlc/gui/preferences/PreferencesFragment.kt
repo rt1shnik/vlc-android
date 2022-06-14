@@ -38,7 +38,6 @@ import org.videolan.tools.PLAYBACK_HISTORY
 import org.videolan.tools.RESULT_RESTART
 import org.videolan.vlc.BuildConfig
 import org.videolan.vlc.R
-import org.videolan.vlc.gui.SecondaryActivity
 import org.videolan.vlc.gui.helpers.UiTools
 import org.videolan.vlc.gui.preferences.search.PreferenceItem
 import org.videolan.vlc.util.Permissions
@@ -99,9 +98,6 @@ class PreferencesFragment : BasePreferenceFragment(), SharedPreferences.OnShared
                     UiTools.snacker(requireActivity(), getString(R.string.settings_ml_block_scan))
                 } else {
                     val activity = requireActivity()
-                    val intent = Intent(activity.applicationContext, SecondaryActivity::class.java)
-                    intent.putExtra("fragment", SecondaryActivity.STORAGE_BROWSER)
-                    startActivity(intent)
                     activity.setResult(RESULT_RESTART)
                 }
                 return true

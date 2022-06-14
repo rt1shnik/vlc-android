@@ -26,11 +26,8 @@ package org.videolan.vlc.gui.helpers
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
-import android.app.PendingIntent
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.media.MediaRouter
 import android.os.Build
@@ -41,57 +38,32 @@ import android.text.TextUtils
 import android.view.*
 import android.view.animation.*
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.view.ActionMode
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
-import androidx.core.content.pm.ShortcutInfoCompat
-import androidx.core.content.pm.ShortcutManagerCompat
-import androidx.core.graphics.drawable.IconCompat
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
-import nl.dionsegijn.konfetti.KonfettiView
-import nl.dionsegijn.konfetti.models.Shape
-import nl.dionsegijn.konfetti.models.Size
 import org.videolan.libvlc.util.AndroidUtil
 import org.videolan.medialibrary.MLServiceLocator
 import org.videolan.medialibrary.Tools
-import org.videolan.medialibrary.interfaces.Medialibrary
 import org.videolan.medialibrary.interfaces.media.*
 import org.videolan.medialibrary.media.MediaLibraryItem
 import org.videolan.resources.*
-import org.videolan.resources.util.launchForeground
 import org.videolan.tools.*
-import org.videolan.vlc.BuildConfig.VLC_VERSION_NAME
-import org.videolan.vlc.MediaParsingService
 import org.videolan.vlc.R
-import org.videolan.vlc.StartActivity
 import org.videolan.vlc.gui.*
-import org.videolan.vlc.gui.browser.MediaBrowserFragment
 import org.videolan.vlc.gui.dialogs.*
-import org.videolan.vlc.gui.helpers.BitmapUtil.vectorToBitmap
-import org.videolan.vlc.gui.preferences.PreferencesActivity
 import org.videolan.vlc.media.MediaUtils
-import org.videolan.vlc.media.getAll
-import org.videolan.vlc.providers.medialibrary.MedialibraryProvider
-import org.videolan.vlc.util.FileUtils
-import org.videolan.vlc.util.ThumbnailsProvider
-import org.videolan.vlc.util.openLinkIfPossible
-import kotlin.math.min
 
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
@@ -99,129 +71,9 @@ object UiTools {
     var currentNightMode: Int = 0
     private val TAG = "VLC/UiTools"
     private var DEFAULT_COVER_VIDEO_DRAWABLE: BitmapDrawable? = null
-    private var DEFAULT_COVER_AUDIO_DRAWABLE: BitmapDrawable? = null
-    private var DEFAULT_COVER_AUDIO_AUTO_DRAWABLE: BitmapDrawable? = null
-    private var DEFAULT_COVER_ALBUM_DRAWABLE: BitmapDrawable? = null
-    private var DEFAULT_COVER_ARTIST_DRAWABLE: BitmapDrawable? = null
-    private var DEFAULT_COVER_MOVIE_DRAWABLE: BitmapDrawable? = null
-    private var DEFAULT_COVER_TVSHOW_DRAWABLE: BitmapDrawable? = null
-    private var DEFAULT_COVER_FOLDER_DRAWABLE: BitmapDrawable? = null
-
-    private var DEFAULT_COVER_VIDEO_DRAWABLE_BIG: BitmapDrawable? = null
-    private var DEFAULT_COVER_AUDIO_DRAWABLE_BIG: BitmapDrawable? = null
-    private var DEFAULT_COVER_ALBUM_DRAWABLE_BIG: BitmapDrawable? = null
-    private var DEFAULT_COVER_ARTIST_DRAWABLE_BIG: BitmapDrawable? = null
-    private var DEFAULT_COVER_MOVIE_DRAWABLE_BIG: BitmapDrawable? = null
-    private var DEFAULT_COVER_TVSHOW_DRAWABLE_BIG: BitmapDrawable? = null
-    private var DEFAULT_COVER_FOLDER_DRAWABLE_BIG: BitmapDrawable? = null
 
     private val sHandler = Handler(Looper.getMainLooper())
     const val DELETE_DURATION = 3000
-
-    fun getDefaultVideoDrawable(context: Context): BitmapDrawable {
-        if (DEFAULT_COVER_VIDEO_DRAWABLE == null) {
-            DEFAULT_COVER_VIDEO_DRAWABLE = BitmapDrawable(context.resources, getBitmapFromDrawable(context, R.drawable.ic_no_thumbnail_1610))
-        }
-        return DEFAULT_COVER_VIDEO_DRAWABLE!!
-    }
-
-    fun getDefaultAudioDrawable(context: Context): BitmapDrawable {
-        if (DEFAULT_COVER_AUDIO_DRAWABLE == null) {
-            DEFAULT_COVER_AUDIO_DRAWABLE = BitmapDrawable(context.resources, getBitmapFromDrawable(context, R.drawable.ic_no_song))
-        }
-        return DEFAULT_COVER_AUDIO_DRAWABLE!!
-    }
-
-    fun getDefaultAudioAutoDrawable(context: Context): BitmapDrawable {
-        if (DEFAULT_COVER_AUDIO_AUTO_DRAWABLE == null) {
-            DEFAULT_COVER_AUDIO_AUTO_DRAWABLE = BitmapDrawable(context.resources, getBitmapFromDrawable(context, R.drawable.ic_auto_nothumb))
-        }
-        return DEFAULT_COVER_AUDIO_AUTO_DRAWABLE!!
-    }
-
-    fun getDefaultFolderDrawable(context: Context): BitmapDrawable {
-        if (DEFAULT_COVER_FOLDER_DRAWABLE == null) {
-            DEFAULT_COVER_FOLDER_DRAWABLE = BitmapDrawable(context.resources, getBitmapFromDrawable(context, R.drawable.ic_menu_folder))
-        }
-        return DEFAULT_COVER_FOLDER_DRAWABLE!!
-    }
-
-    fun getDefaultAlbumDrawable(context: Context): BitmapDrawable {
-        if (DEFAULT_COVER_ALBUM_DRAWABLE == null) {
-            DEFAULT_COVER_ALBUM_DRAWABLE = BitmapDrawable(context.resources, getBitmapFromDrawable(context, R.drawable.ic_no_album))
-        }
-        return DEFAULT_COVER_ALBUM_DRAWABLE!!
-    }
-
-    fun getDefaultArtistDrawable(context: Context): BitmapDrawable {
-        if (DEFAULT_COVER_ARTIST_DRAWABLE == null) {
-            DEFAULT_COVER_ARTIST_DRAWABLE = BitmapDrawable(context.resources, getBitmapFromDrawable(context, R.drawable.ic_no_artist))
-        }
-        return DEFAULT_COVER_ARTIST_DRAWABLE!!
-    }
-
-    fun getDefaultMovieDrawable(context: Context): BitmapDrawable {
-        if (DEFAULT_COVER_MOVIE_DRAWABLE == null) {
-            DEFAULT_COVER_MOVIE_DRAWABLE = BitmapDrawable(context.resources, getBitmapFromDrawable(context, R.drawable.ic_browser_movie))
-        }
-        return DEFAULT_COVER_MOVIE_DRAWABLE!!
-    }
-
-    fun getDefaultTvshowDrawable(context: Context): BitmapDrawable {
-        if (DEFAULT_COVER_TVSHOW_DRAWABLE == null) {
-            DEFAULT_COVER_TVSHOW_DRAWABLE = BitmapDrawable(context.resources, getBitmapFromDrawable(context, R.drawable.ic_browser_tvshow))
-        }
-        return DEFAULT_COVER_TVSHOW_DRAWABLE!!
-    }
-
-    fun getDefaultVideoDrawableBig(context: Context): BitmapDrawable {
-        if (DEFAULT_COVER_VIDEO_DRAWABLE_BIG == null) {
-            DEFAULT_COVER_VIDEO_DRAWABLE_BIG = BitmapDrawable(context.resources, getBitmapFromDrawable(context, R.drawable.ic_browser_video_big_normal))
-        }
-        return DEFAULT_COVER_VIDEO_DRAWABLE_BIG!!
-    }
-
-    fun getDefaultAudioDrawableBig(context: Context): BitmapDrawable {
-        if (DEFAULT_COVER_AUDIO_DRAWABLE_BIG == null) {
-            DEFAULT_COVER_AUDIO_DRAWABLE_BIG = BitmapDrawable(context.resources, getBitmapFromDrawable(context, R.drawable.ic_song_big))
-        }
-        return DEFAULT_COVER_AUDIO_DRAWABLE_BIG!!
-    }
-
-    fun getDefaultAlbumDrawableBig(context: Context): BitmapDrawable {
-        if (DEFAULT_COVER_ALBUM_DRAWABLE_BIG == null) {
-            DEFAULT_COVER_ALBUM_DRAWABLE_BIG = BitmapDrawable(context.resources, getBitmapFromDrawable(context, R.drawable.ic_album_big))
-        }
-        return DEFAULT_COVER_ALBUM_DRAWABLE_BIG!!
-    }
-
-    fun getDefaultArtistDrawableBig(context: Context): BitmapDrawable {
-        if (DEFAULT_COVER_ARTIST_DRAWABLE_BIG == null) {
-            DEFAULT_COVER_ARTIST_DRAWABLE_BIG = BitmapDrawable(context.resources, getBitmapFromDrawable(context, R.drawable.ic_artist_big))
-        }
-        return DEFAULT_COVER_ARTIST_DRAWABLE_BIG!!
-    }
-
-    fun getDefaultMovieDrawableBig(context: Context): BitmapDrawable {
-        if (DEFAULT_COVER_MOVIE_DRAWABLE_BIG == null) {
-            DEFAULT_COVER_MOVIE_DRAWABLE_BIG = BitmapDrawable(context.resources, getBitmapFromDrawable(context, R.drawable.ic_browser_movie_big))
-        }
-        return DEFAULT_COVER_MOVIE_DRAWABLE_BIG!!
-    }
-
-    fun getDefaultTvshowDrawableBig(context: Context): BitmapDrawable {
-        if (DEFAULT_COVER_TVSHOW_DRAWABLE_BIG == null) {
-            DEFAULT_COVER_TVSHOW_DRAWABLE_BIG = BitmapDrawable(context.resources, getBitmapFromDrawable(context, R.drawable.ic_browser_tvshow_big))
-        }
-        return DEFAULT_COVER_TVSHOW_DRAWABLE_BIG!!
-    }
-
-    fun getDefaultFolderDrawableBig(context: Context): BitmapDrawable {
-        if (DEFAULT_COVER_FOLDER_DRAWABLE_BIG == null) {
-            DEFAULT_COVER_FOLDER_DRAWABLE_BIG = BitmapDrawable(context.resources, getBitmapFromDrawable(context, R.drawable.ic_menu_folder_big))
-        }
-        return DEFAULT_COVER_FOLDER_DRAWABLE_BIG!!
-    }
 
     private fun getSnackAnchorView(activity: Activity, overAudioPlayer: Boolean = false) =
             if (activity is BaseActivity && activity.getSnackAnchorView(overAudioPlayer) != null) activity.getSnackAnchorView(overAudioPlayer) else activity.findViewById(android.R.id.content)
@@ -291,25 +143,6 @@ object UiTools {
         sHandler.postDelayed(action, DELETE_DURATION.toLong())
     }
 
-    fun snackerMessageInfinite(activity:Activity, message: String):Snackbar? {
-        val view = getSnackAnchorView(activity) ?: return null
-        return Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE)
-    }
-
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    fun snackerMissing(activity: FragmentActivity) {
-        val view = getSnackAnchorView(activity) ?: return
-        val snack = Snackbar.make(view, activity.getString(R.string.missing_media_snack), Snackbar.LENGTH_LONG)
-                .setAction(R.string.ok) {
-                    activity.lifecycleScope.launch {
-                        PreferencesActivity.launchWithPref(activity, "include_missing")
-                    }
-                }
-        if (AndroidUtil.isLolliPopOrLater)
-            snack.view.elevation = view.resources.getDimensionPixelSize(R.dimen.audio_player_elevation).toFloat()
-        snack.show()
-    }
-
     /**
      * Get a resource id from an attribute id.
      *
@@ -324,111 +157,6 @@ object UiTools {
         return resId
     }
 
-    /**
-     * Get a color id from an attribute id.
-     *
-     * @param context
-     * @param attrId
-     * @return the color id
-     */
-    fun getColorFromAttribute(context: Context, attrId: Int): Int {
-        return ContextCompat.getColor(context, getResourceFromAttribute(context, attrId))
-    }
-
-    fun setViewOnClickListener(v: View?, ocl: View.OnClickListener?) {
-        v?.setOnClickListener(ocl)
-    }
-
-    /**
-     * Fill the about main view for mobile and TV
-     */
-    fun fillAboutView(activity: FragmentActivity, v: View) {
-        val builddate = v.context.getString(R.string.build_time)
-        val appVersion = v.findViewById<TextView>(R.id.app_version)
-        appVersion.text = VLC_VERSION_NAME
-        val appVersionDate = v.findViewById<TextView>(R.id.app_version_date)
-        appVersionDate.text = builddate
-        v.findViewById<View>(R.id.sliding_tabs).setGone()
-
-        val logo = v.findViewById<ImageView>(R.id.logo)
-        val konfettiView = v.findViewById<KonfettiView>(R.id.konfetti)
-        logo.setOnClickListener {
-            logo.animate().rotationBy(360F).translationY(-24.dp.toFloat()).setDuration(600).setInterpolator(AccelerateDecelerateInterpolator()).withEndAction {
-                logo.animate().translationY(0F).setStartDelay(75).setDuration(300).setInterpolator(OvershootInterpolator(3.0F)).withEndAction {
-
-                }
-                konfettiView.build()
-                        .addColors(ContextCompat.getColor(activity, R.color.orange200), ContextCompat.getColor(activity, R.color.orange800), ContextCompat.getColor(activity, R.color.orange500))
-                        .setDirection(315.0, 360.0)
-                        .setSpeed(3f, 9f)
-                        .setFadeOutEnabled(true)
-                        .setTimeToLive(2000L)
-                        .addShapes(Shape.Circle, Shape.Square)
-                        .addSizes(Size(4))
-                        .setPosition(logo.x + logo.width - 12.dp, logo.x + logo.width - 12.dp, logo.y + logo.height - 24.dp, logo.y + logo.height + 24.dp)
-                        .setRotationEnabled(false)
-                        .setDelay(275)
-                        .burst(35)
-                konfettiView.build()
-                        .addColors(ContextCompat.getColor(activity, R.color.orange200), ContextCompat.getColor(activity, R.color.orange800), ContextCompat.getColor(activity, R.color.orange500))
-                        .setDirection(180.0, 225.0)
-                        .setSpeed(3f, 9f)
-                        .setFadeOutEnabled(true)
-                        .setTimeToLive(2000L)
-                        .addShapes(Shape.Circle, Shape.Square)
-                        .addSizes(Size(4))
-                        .setPosition(logo.x + 12.dp, logo.x + 12.dp, logo.y + logo.height - 24.dp, logo.y + logo.height + 24.dp)
-                        .setRotationEnabled(false)
-                        .setDelay(275)
-                        .burst(35)
-            }
-        }
-
-        v.findViewById<View>(R.id.version_card).setOnClickListener {
-            AboutVersionDialog.newInstance().show(activity.supportFragmentManager, "AboutVersionDialog")
-        }
-        v.findViewById<View>(R.id.about_website_container).setOnClickListener {
-            activity.openLinkIfPossible("https://www.videolan.org/vlc/")
-        }
-        v.findViewById<View>(R.id.about_forum_container).setOnClickListener {
-            activity.openLinkIfPossible("https://forum.videolan.org/viewforum.php?f=35")
-        }
-        v.findViewById<View>(R.id.about_sources_container).setOnClickListener {
-            activity.openLinkIfPossible("https://code.videolan.org/videolan/vlc-android")
-        }
-
-        v.findViewById<View>(R.id.about_authors_container).setOnClickListener {
-            activity.startActivity(Intent(activity, AuthorsActivity::class.java))
-        }
-        v.findViewById<View>(R.id.about_libraries_container).setOnClickListener {
-            activity.startActivity(Intent(activity, LibrariesActivity::class.java))
-        }
-        v.findViewById<View>(R.id.about_vlc_card).setOnClickListener {
-           var licenseText = ""
-            activity.lifecycleScope.launchWhenStarted {
-                licenseText = AppContextProvider.appContext.assets.open("vlc_license.txt").bufferedReader().use {
-                   it.readText()
-               }
-            }
-            LicenseDialog.newInstance(LibraryWithLicense(activity.getString(R.string.app_name),activity.getString(R.string.about_copyright) , activity.getString(R.string.about_license), licenseText, "https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt")).show(activity.supportFragmentManager, "LicenseDialog")
-        }
-
-        val donationsButton = v.findViewById<CardView>(R.id.donationsButton)
-//        VLCBilling.getInstance(activity.application).addStatusListener {
-//            manageDonationVisibility(activity,donationsButton)
-//        }
-//        manageDonationVisibility(activity,donationsButton)
-
-
-        donationsButton.setOnClickListener {
-            activity.showDonations()
-        }
-    }
-
-//    private fun manageDonationVisibility(activity: FragmentActivity, donationsButton:View) {
-//        if (VLCBilling.getInstance(activity.application).status == BillingStatus.FAILURE ||  VLCBilling.getInstance(activity.application).skuDetails.isEmpty()) donationsButton.setGone() else donationsButton.setVisible()
-//    }
-
     fun setKeyboardVisibility(v: View?, show: Boolean) {
         if (v == null) return
         val inputMethodManager = v.context.applicationContext.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -440,71 +168,6 @@ object UiTools {
         }
     }
 
-    fun FragmentActivity.addToPlaylistAsync(parent: String, includeSubfolders: Boolean = false) {
-        if (!isStarted()) return
-        val savePlaylistDialog = SavePlaylistDialog()
-        savePlaylistDialog.arguments = bundleOf(SavePlaylistDialog.KEY_FOLDER to parent,
-                SavePlaylistDialog.KEY_SUB_FOLDERS to includeSubfolders)
-        savePlaylistDialog.show(supportFragmentManager, "fragment_add_to_playlist")
-    }
-
-    fun FragmentActivity.addToPlaylist(list: List<MediaWrapper>) {
-        addToPlaylist(list.toTypedArray(), SavePlaylistDialog.KEY_NEW_TRACKS)
-    }
-
-    fun FragmentActivity.addToPlaylist(tracks: Array<MediaWrapper>, key: String) {
-        if (!isStarted()) return
-        val savePlaylistDialog = SavePlaylistDialog()
-        savePlaylistDialog.arguments = bundleOf(key to tracks)
-        savePlaylistDialog.show(supportFragmentManager, "fragment_add_to_playlist")
-    }
-
-    fun FragmentActivity.addToGroup(tracks: List<MediaWrapper>, forbidNewGroup:Boolean , newGroupListener: ()->Unit) {
-        if (!isStarted()) return
-        val addToGroupDialog = AddToGroupDialog()
-        addToGroupDialog.arguments = bundleOf(AddToGroupDialog.KEY_TRACKS to tracks.toTypedArray(), AddToGroupDialog.FORBID_NEW_GROUP to forbidNewGroup)
-        addToGroupDialog.show(supportFragmentManager, "fragment_add_to_group")
-        addToGroupDialog.newGroupListener = newGroupListener
-    }
-
-    /**
-     * Creates a shortcut to the media on the launcher
-     * @param mediaLibraryItem: the [MediaLibraryItem] to create a shortcut to
-     */
-    suspend fun FragmentActivity.createShortcut(mediaLibraryItem: MediaLibraryItem) {
-        if (!isStarted()) return
-
-        val context = this
-        withContext(Dispatchers.IO) {
-            val iconBitmap = if (mediaLibraryItem is Genre || mediaLibraryItem is Playlist)
-                ThumbnailsProvider.getPlaylistOrGenreImage("playlist:${mediaLibraryItem.id}_${48.dp}", mediaLibraryItem.tracks.toList(), 48.dp)
-            else
-                BitmapCache.getBitmapFromMemCache(ThumbnailsProvider.getMediaCacheKey(mediaLibraryItem is MediaWrapper, mediaLibraryItem, 48.dp.toString()))
-                        ?: ThumbnailsProvider.obtainBitmap(mediaLibraryItem, 48.dp)
-
-
-            val size = min(48.dp, iconBitmap?.height ?: 0)
-            val iconCompat = IconCompat.createWithAdaptiveBitmap(iconBitmap.centerCrop(size, size)
-                    ?: vectorToBitmap(context, R.drawable.ic_icon, 48.dp, 48.dp))
-            val actionType = when (mediaLibraryItem) {
-                is Album -> "album"
-                is Artist -> "artist"
-                is Genre -> "genre"
-                is Playlist -> "playlist"
-                else -> "media"
-            }
-            val pinShortcutInfo = ShortcutInfoCompat.Builder(context, mediaLibraryItem.id.toString())
-                    .setShortLabel(mediaLibraryItem.title)
-                    .setIntent(Intent(context, StartActivity::class.java).apply { action = "vlc.mediashortcut:$actionType:${mediaLibraryItem.id}" })
-                    .setIcon(iconCompat)
-                    .build()
-
-            val pinnedShortcutCallbackIntent = ShortcutManagerCompat.createShortcutResultIntent(context, pinShortcutInfo)
-            val successCallback = PendingIntent.getBroadcast(context, 0, pinnedShortcutCallbackIntent, 0)
-            ShortcutManagerCompat.requestPinShortcut(context, pinShortcutInfo, successCallback.intentSender)
-        }
-    }
-
     fun FragmentActivity.showVideoTrack(menuListener:(VideoTracksDialog.VideoTrackOption) -> Unit, trackSelectionListener:(Int, VideoTracksDialog.TrackType) -> Unit) {
         if (!isStarted()) return
         val videoTracksDialog = VideoTracksDialog()
@@ -513,155 +176,7 @@ object UiTools {
         videoTracksDialog.menuItemListener = menuListener
         videoTracksDialog.trackSelectionListener = trackSelectionListener
     }
-
-    fun FragmentActivity.showDonations() {
-        if (!isStarted()) return
-//        val videoTracksDialog = VLCBillingDialog()
-//        videoTracksDialog.show(supportFragmentManager, "fragment_donations")
-    }
-
-    fun FragmentActivity.showMediaInfo(mediaWrapper: MediaWrapper) {
-        val i = Intent(this, InfoActivity::class.java)
-        i.putExtra(TAG_ITEM, mediaWrapper)
-        startActivity(i)
-    }
-
     fun Context.isTablet() = resources.getBoolean(R.bool.is_tablet)
-
-    fun getDefaultCover(context: Context, item: MediaLibraryItem): BitmapDrawable {
-        return when (item.itemType) {
-            MediaLibraryItem.TYPE_ARTIST -> getDefaultArtistDrawable(context)
-            MediaLibraryItem.TYPE_ALBUM -> getDefaultAlbumDrawable(context)
-            MediaLibraryItem.TYPE_MEDIA -> {
-                if ((item as MediaWrapper).type == MediaWrapper.TYPE_VIDEO) getDefaultVideoDrawable(context) else getDefaultAudioDrawable(context)
-            }
-            else -> getDefaultAudioDrawable(context)
-        }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-    @JvmOverloads
-    fun blurBitmap(bitmap: Bitmap?, radius: Float = 15.0f): Bitmap? {
-        if (bitmap == null || bitmap.config == null) return null
-        try {
-            //Let's create an empty bitmap with the same size of the bitmap we want to blur
-            val outBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
-
-            //Instantiate a new Renderscript
-            val rs = RenderScript.create(AppContextProvider.appContext)
-
-            //Create an Intrinsic Blur Script using the Renderscript
-            val blurScript = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs))
-
-
-            //Create the Allocations (in/out) with the Renderscript and the in/out bitmaps
-            val allIn = Allocation.createFromBitmap(rs, if (bitmap.config == Bitmap.Config.ARGB_8888) bitmap else bitmap.copy(Bitmap.Config.ARGB_8888, true))
-            val allOut = Allocation.createFromBitmap(rs, outBitmap)
-
-            //Set the radius of the blur
-            blurScript.setRadius(radius)
-
-            //Perform the Renderscript
-            blurScript.setInput(allIn)
-            blurScript.forEach(allOut)
-
-            //Copy the final bitmap created by the out Allocation to the outBitmap
-            allOut.copyTo(outBitmap)
-
-            //After finishing everything, we destroy the Renderscript.
-            rs.destroy()
-
-            return outBitmap
-        } catch (ignored: RSInvalidStateException) {
-            return null
-        }
-
-    }
-
-    fun updateSortTitles(menu: Menu, provider: MedialibraryProvider<*>) {
-        val sort = provider.sort
-        val desc = provider.desc
-        var item: MenuItem? = menu.findItem(R.id.ml_menu_sortby_name)
-        item?.title = "${provider.context.getString(R.string.sortby_name)} ${if (sort == Medialibrary.SORT_ALPHA && !desc) "▼" else ""}"
-        item = menu.findItem(R.id.ml_menu_sortby_filename)
-        item?.title = "${provider.context.getString(R.string.sortby_filename)} ${if (sort == Medialibrary.SORT_FILENAME && !desc) "▼" else ""}"
-        item = menu.findItem(R.id.ml_menu_sortby_artist_name)
-        item?.title = "${provider.context.getString(R.string.sortby_artist_name)} ${if (sort == Medialibrary.SORT_ARTIST && !desc) "▼" else ""}"
-        item = menu.findItem(R.id.ml_menu_sortby_album_name)
-        item?.title = "${provider.context.getString(R.string.sortby_album_name)} ${if (sort == Medialibrary.SORT_ALBUM && !desc) "▼" else ""}"
-        item = menu.findItem(R.id.ml_menu_sortby_length)
-        item?.title = "${provider.context.getString(R.string.sortby_length)} ${if (sort == Medialibrary.SORT_DURATION && !desc) "▼" else ""}"
-        item = menu.findItem(R.id.ml_menu_sortby_date)
-        item?.title = "${provider.context.getString(R.string.sortby_date)} ${if (sort == Medialibrary.SORT_RELEASEDATE && !desc) "▼" else ""}"
-        item = menu.findItem(R.id.ml_menu_sortby_last_modified)
-        item?.title = "${provider.context.getString(R.string.sortby_last_modified_date)} ${if (sort == Medialibrary.SORT_LASTMODIFICATIONDATE && !desc) "▼" else ""}"
-        //        item = menu.findItem(R.id.ml_menu_sortby_number); TODO sort by track number
-        //        if (item != null) item.setTitle(sort == Medialibrary.SORT_ && !desc ? R.string.sortby_number_desc : R.string.sortby_number);
-
-    }
-
-    fun updateSortTitles(sortable: MediaBrowserFragment<*>) {
-        val menu = sortable.menu ?: return
-        val model = sortable.viewModel
-        val sort = model.sort
-        val desc = model.desc
-        var item: MenuItem? = menu.findItem(R.id.ml_menu_sortby_name)
-        item?.title = "${sortable.requireContext().getString(R.string.sortby_name)} ${if (sort == Medialibrary.SORT_ALPHA && !desc) "▼" else ""}"
-        item = menu.findItem(R.id.ml_menu_sortby_filename)
-        item?.title = "${sortable.requireContext().getString(R.string.sortby_filename)} ${if (sort == Medialibrary.SORT_FILENAME && !desc) "▼" else ""}"
-        item = menu.findItem(R.id.ml_menu_sortby_artist_name)
-        item?.title = "${sortable.requireContext().getString(R.string.sortby_artist_name)} ${if (sort == Medialibrary.SORT_ARTIST && !desc) "▼" else ""}"
-        item = menu.findItem(R.id.ml_menu_sortby_album_name)
-        item?.title = "${sortable.requireContext().getString(R.string.sortby_album_name)} ${if (sort == Medialibrary.SORT_ALBUM && !desc) "▼" else ""}"
-        item = menu.findItem(R.id.ml_menu_sortby_length)
-        item?.title = "${sortable.requireContext().getString(R.string.sortby_length)} ${if (sort == Medialibrary.SORT_DURATION && !desc) "▼" else ""}"
-        item = menu.findItem(R.id.ml_menu_sortby_date)
-        item?.title = "${sortable.requireContext().getString(R.string.sortby_date)} ${if (sort == Medialibrary.SORT_RELEASEDATE && !desc) "▼" else ""}"
-        item = menu.findItem(R.id.ml_menu_sortby_last_modified)
-        item?.title = "${sortable.requireContext().getString(R.string.sortby_last_modified_date)} ${if (sort == Medialibrary.SORT_RELEASEDATE && !desc) "▼" else ""}"
-        //        item = menu.findItem(R.id.ml_menu_sortby_number); TODO sort by track number
-        //        if (item != null) item.setTitle(sort == Medialibrary.SORT_ && !desc ? R.string.sortby_number_desc : R.string.sortby_number);
-
-    }
-
-    fun confirmExit(activity: Activity) {
-        AlertDialog.Builder(activity)
-                .setMessage(R.string.exit_app_msg)
-                .setTitle(R.string.exit_app)
-                .setPositiveButton(R.string.ok) { _, _ -> activity.finish() }
-                .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }.create().show()
-    }
-
-    fun newStorageDetected(activity: Activity?, path: String?) {
-        if (activity == null) return
-        val uuid = FileUtils.getFileNameFromPath(path)
-        val deviceName = FileUtils.getStorageTag(uuid)
-        val message = String.format(activity.getString(R.string.ml_external_storage_msg), deviceName
-                ?: uuid)
-        val si = Intent(ACTION_DISCOVER_DEVICE, null, activity, MediaParsingService::class.java)
-                .putExtra(EXTRA_PATH, path)
-        if (activity is AppCompatActivity) {
-            val builder = AlertDialog.Builder(activity)
-                    .setTitle(R.string.ml_external_storage_title)
-                    .setCancelable(false)
-                    .setMessage(message)
-                    .setPositiveButton(R.string.ml_external_storage_accept) { _, _ ->
-                        activity.launchForeground(si)
-                    }
-                    .setNegativeButton(R.string.ml_external_storage_decline) { dialog, _ -> dialog.dismiss() }
-            builder.show()
-        } else {
-            val builder = android.app.AlertDialog.Builder(activity)
-                    .setTitle(R.string.ml_external_storage_title)
-                    .setCancelable(false)
-                    .setMessage(message)
-                    .setPositiveButton(R.string.ml_external_storage_accept) { _, _ ->
-                        activity.launchForeground(si)
-                    }
-                    .setNegativeButton(R.string.ml_external_storage_decline) { dialog, _ -> dialog.dismiss() }
-            builder.show()
-        }
-    }
 
     @TargetApi(Build.VERSION_CODES.N)
     fun setOnDragListener(activity: Activity) {
@@ -844,7 +359,6 @@ fun BaseActivity.applyTheme() {
 }
 
 fun getTvIconRes(mediaLibraryItem: MediaLibraryItem) = when (mediaLibraryItem.itemType) {
-    MediaLibraryItem.TYPE_ALBUM -> R.drawable.ic_album_big
     MediaLibraryItem.TYPE_ARTIST -> R.drawable.ic_artist_big
     MediaLibraryItem.TYPE_GENRE -> R.drawable.ic_genre_big
     MediaLibraryItem.TYPE_MEDIA -> {
@@ -892,20 +406,12 @@ suspend fun fillActionMode(context: Context, mode: ActionMode, multiSelectHelper
         selection.forEach { mediaItem ->
             when (mediaItem) {
                 is MediaWrapper -> realCount += 1
-                is Album -> realCount += mediaItem.realTracksCount
-                is Artist -> realCount += mediaItem.tracksCount
-                is VideoGroup -> realCount += mediaItem.mediaCount()
-                is Folder -> realCount += mediaItem.mediaCount(Folder.TYPE_FOLDER_VIDEO)
             }
         }
 
         selection.forEach { mediaItem ->
             when (mediaItem) {
                 is MediaWrapper -> length += mediaItem.length
-                is Album -> mediaItem.getAll().forEach { length += it.length }
-                is Artist -> mediaItem.getAll().forEach { length += it.length }
-                is VideoGroup -> mediaItem.getAll().forEach { length += it.length }
-                is Folder -> mediaItem.getAll().forEach { length += it.length }
             }
         }
     }

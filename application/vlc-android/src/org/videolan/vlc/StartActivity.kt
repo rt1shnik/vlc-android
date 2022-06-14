@@ -37,14 +37,10 @@ import kotlinx.coroutines.*
 import org.videolan.libvlc.util.AndroidUtil
 import org.videolan.medialibrary.MLServiceLocator
 import org.videolan.resources.*
-import org.videolan.resources.util.getFromMl
 import org.videolan.resources.util.launchForeground
-import org.videolan.resources.util.startMedialibrary
 import org.videolan.tools.*
 import org.videolan.vlc.gui.BetaWelcomeActivity
 import org.videolan.vlc.gui.helpers.hf.StoragePermissionsDelegate.Companion.getStoragePermission
-import org.videolan.vlc.gui.onboarding.ONBOARDING_DONE_KEY
-import org.videolan.vlc.gui.onboarding.startOnboarding
 import org.videolan.vlc.gui.video.VideoPlayerActivity
 import org.videolan.vlc.media.MediaUtils
 import org.videolan.vlc.util.FileUtils
@@ -119,13 +115,6 @@ class StartActivity : FragmentActivity() {
             }
         }
 
-        // Setting test mode with stubbed media library if required
-        if (intent.hasExtra(MLServiceLocator.EXTRA_TEST_STUBS)
-                && intent.getBooleanExtra(MLServiceLocator.EXTRA_TEST_STUBS, false)) {
-            MLServiceLocator.setLocatorMode(MLServiceLocator.LocatorMode.TESTS)
-            Log.i(TAG, "onCreate: Setting test mode`")
-        }
-
         // Start application
         /* Get the current version from package */
         val settings = Settings.getInstance(this)
@@ -149,21 +138,6 @@ class StartActivity : FragmentActivity() {
             launchForeground(serviceInent)
         } else {
             if (action != null && action.startsWith("vlc.mediashortcut:")) {
-                val split = action.split(":")
-                val type = split[split.count() - 2]
-                val id = split.last()
-                lifecycleScope.launch {
-                    getFromMl {
-                        val album = when(type) {
-                         "album" ->   getAlbum(id.toLong())
-                         "artist" ->   getArtist(id.toLong())
-                         "genre" ->   getGenre(id.toLong())
-                         "playlist" ->   getPlaylist(id.toLong(), false)
-                         else ->   getMedia(id.toLong())
-                        }
-                        MediaUtils.playTracks(this@StartActivity, album, 0)
-                    }
-                }
             } else {
                 val target = idFromShortcut
                 if (target == R.id.ml_menu_last_playlist)
@@ -174,7 +148,6 @@ class StartActivity : FragmentActivity() {
         }
         FileUtils.copyLua(applicationContext, upgrade)
         FileUtils.copyHrtfs(applicationContext, upgrade)
-        if (AndroidDevices.watchDevices) this.enableStorageMonitoring()
         finish()
     }
 
@@ -187,10 +160,9 @@ class StartActivity : FragmentActivity() {
 
     private fun startApplication(tv: Boolean, firstRun: Boolean, upgrade: Boolean, target: Int, removeDevices:Boolean = false) {
         val settings = Settings.getInstance(this@StartActivity)
-        val onboarding = !tv && !settings.getBoolean(ONBOARDING_DONE_KEY, false)
         // Start Medialibrary from background to workaround Dispatchers.Main causing ANR
         // cf https://github.com/Kotlin/kotlinx.coroutines/issues/878
-        if (!onboarding || !firstRun) {
+        if (!firstRun) {
             Thread {
                 AppScope.launch {
                     // workaround for a Android 9 bug
@@ -198,8 +170,6 @@ class StartActivity : FragmentActivity() {
                     if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P && !awaitAppIsForegroung()) {
                         return@launch
                     }
-                    this@StartActivity.startMedialibrary(firstRun, upgrade, true, removeDevices)
-                    if (onboarding) settings.putSingle(ONBOARDING_DONE_KEY, true)
                 }
             }.start()
             val mainIntent = Intent(Intent.ACTION_VIEW)
@@ -209,8 +179,6 @@ class StartActivity : FragmentActivity() {
             if (tv && intent.hasExtra(EXTRA_PATH)) mainIntent.putExtra(EXTRA_PATH, intent.getStringExtra(EXTRA_PATH))
             if (target != 0) mainIntent.putExtra(EXTRA_TARGET, target)
             startActivity(mainIntent)
-        } else {
-            startOnboarding()
         }
     }
 
@@ -227,7 +195,6 @@ class StartActivity : FragmentActivity() {
             } catch (ex: SecurityException) {
                 intent.data?.let { MediaUtils.openMediaNoUi(it) }
             }
-            intent.data?.authority == getString(R.string.tv_provider_authority) -> MediaUtils.openMediaNoUiFromTvContent(this@StartActivity, intent.data)
             else -> withContext(Dispatchers.IO) { FileUtils.getUri(intent.data)}?.let { MediaUtils.openMediaNoUi(it) }
         }
         finish()

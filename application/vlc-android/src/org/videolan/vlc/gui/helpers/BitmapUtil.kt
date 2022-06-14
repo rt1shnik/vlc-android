@@ -52,52 +52,9 @@ object BitmapUtil {
         return b ?: BitmapCache.getBitmapFromMemCache(media.location)
     }
 
-    private fun fetchPicture(media: MediaWrapper): Bitmap? {
-
-        val picture = readCoverBitmap(media.artworkURL)
-        if (picture != null) BitmapCache.addBitmapToMemCache(media.location, picture)
-        return picture
-    }
-
     fun getPicture(media: MediaWrapper): Bitmap? {
-        val picture = getPictureFromCache(media)
-        return picture ?: fetchPicture(media)
+        return getPictureFromCache(media)
     }
-
-    private fun readCoverBitmap(path: String?): Bitmap? {
-        if (path == null) return null
-        val ctx = AppContextProvider.appContext
-        val res = ctx.resources
-        var uri = Uri.decode(path)
-        if (uri.startsWith("file://")) uri = uri.substring(7)
-        var cover: Bitmap? = null
-        val options = BitmapFactory.Options()
-        val height = res.getDimensionPixelSize(R.dimen.grid_card_thumb_height)
-        val width = res.getDimensionPixelSize(R.dimen.grid_card_thumb_width)
-
-        /* Get the resolution of the bitmap without allocating the memory */
-        options.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(uri, options)
-
-        if (options.outWidth > 0 && options.outHeight > 0) {
-            if (options.outWidth > width) {
-                options.outWidth = width
-                options.outHeight = height
-            }
-            options.inJustDecodeBounds = false
-
-            // Decode the file (with memory allocation this time)
-            try {
-                cover = BitmapFactory.decodeFile(uri, options)
-            } catch (e: OutOfMemoryError) {
-                cover = null
-            }
-
-        }
-
-        return cover
-    }
-
 
     fun centerCrop(srcBmp: Bitmap, width: Int, height: Int): Bitmap {
         val widthDiff = srcBmp.width - width

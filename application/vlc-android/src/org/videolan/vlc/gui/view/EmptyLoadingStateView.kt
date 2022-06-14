@@ -44,7 +44,6 @@ import androidx.transition.TransitionManager
 import org.videolan.resources.ACTIVITY_RESULT_PREFERENCES
 import org.videolan.vlc.R
 import org.videolan.vlc.gui.BaseActivity
-import org.videolan.vlc.gui.SecondaryActivity
 import org.videolan.vlc.gui.helpers.getBitmapFromDrawable
 import org.videolan.vlc.gui.helpers.hf.StoragePermissionsDelegate.Companion.askStoragePermission
 
@@ -135,10 +134,7 @@ class EmptyLoadingStateView : FrameLayout {
         state = EmptyLoadingState.LOADING
 
         noMediaButton.setOnClickListener {
-            val intent = Intent(context.applicationContext, SecondaryActivity::class.java)
-            intent.putExtra("fragment", SecondaryActivity.STORAGE_BROWSER)
-            (context as Activity).startActivityForResult(intent, ACTIVITY_RESULT_PREFERENCES)
-            noMediaClickListener?.invoke()
+
         }
         grantPermissionButton.setOnClickListener {
              (context as? FragmentActivity)?.askStoragePermission(false, null)

@@ -50,7 +50,6 @@ import org.videolan.tools.BitmapCache
 import org.videolan.tools.Settings
 import org.videolan.tools.putSingle
 import org.videolan.vlc.BuildConfig
-import org.videolan.vlc.MediaParsingService
 import org.videolan.vlc.R
 import org.videolan.vlc.gui.DebugLogActivity
 import org.videolan.vlc.gui.dialogs.ConfirmDeleteDialog
@@ -104,48 +103,6 @@ class PreferencesAdvanced : BasePreferenceFragment(), SharedPreferences.OnShared
                 startActivity(intent)
                 return true
             }
-            "clear_history" -> {
-                AlertDialog.Builder(requireContext())
-                        .setTitle(R.string.clear_playback_history)
-                        .setMessage(R.string.validation)
-                        .setIcon(R.drawable.ic_warning)
-                        .setPositiveButton(R.string.yes) { _, _ ->
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                Medialibrary.getInstance().clearHistory()
-                                Settings.getInstance(requireActivity()).edit().remove(KEY_AUDIO_LAST_PLAYLIST).remove(KEY_MEDIA_LAST_PLAYLIST).apply()
-                            }
-                        }
-
-                        .setNegativeButton(R.string.cancel, null).show()
-                return true
-            }
-            "clear_media_db" -> {
-                val dialog = ConfirmDeleteDialog.newInstance(title = getString(R.string.clear_media_db), description = getString(R.string.clear_media_db_message), buttonText = getString(R.string.clear))
-                dialog.show(requireActivity().supportFragmentManager, RenameDialog::class.simpleName)
-                dialog.setListener {
-                    lifecycleScope.launch {
-                        val medialibrary = Medialibrary.getInstance()
-                        requireActivity().stopService(Intent(requireActivity(), MediaParsingService::class.java))
-                        withContext((Dispatchers.IO)) {
-                            medialibrary.clearDatabase(false)
-                            //delete thumbnails
-                            try {
-                                requireActivity().getExternalFilesDir(null)?. let {
-                                    val files = File(it.absolutePath + Medialibrary.MEDIALIB_FOLDER_NAME).listFiles()
-                                    files?.forEach { file ->
-                                        if (file.isFile) FileUtils.deleteFile(file)
-                                    }
-                                }
-                                BitmapCache.clear()
-                            } catch (e: IOException) {
-                                Log.e(this::class.java.simpleName, e.message, e)
-                            }
-                        }
-                        medialibrary.discover(AndroidDevices.EXTERNAL_PUBLIC_DIRECTORY)
-                    }
-                }
-                return true
-            }
             "clear_app_data" -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     val dialog = ConfirmDeleteDialog.newInstance(title = getString(R.string.clear_app_data), description = getString(R.string.clear_app_data_message), buttonText = getString(R.string.clear))
@@ -161,24 +118,6 @@ class PreferencesAdvanced : BasePreferenceFragment(), SharedPreferences.OnShared
             }
             "quit_app" -> {
                 android.os.Process.killProcess(android.os.Process.myPid())
-                return true
-            }
-            "dump_media_db" -> {
-                if (Medialibrary.getInstance().isWorking)
-                    UiTools.snacker(requireActivity(), getString(R.string.settings_ml_block_scan))
-                else {
-                    val dst = File(AndroidDevices.EXTERNAL_PUBLIC_DIRECTORY + Medialibrary.VLC_MEDIA_DB_NAME)
-                    lifecycleScope.launch {
-                        if (getWritePermission(Uri.fromFile(dst))) {
-                            val copied = withContext(Dispatchers.IO) {
-                                val db = File(requireContext().getDir("db", Context.MODE_PRIVATE).toString() + Medialibrary.VLC_MEDIA_DB_NAME)
-
-                                FileUtils.copyFile(db, dst)
-                            }
-                            Toast.makeText(context, getString(if (copied) R.string.dump_db_succes else R.string.dump_db_failure), Toast.LENGTH_LONG).show()
-                        }
-                    }
-                }
                 return true
             }
             "optional_features" -> {

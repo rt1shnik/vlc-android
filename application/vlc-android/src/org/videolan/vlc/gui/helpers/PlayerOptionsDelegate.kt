@@ -24,11 +24,9 @@ import org.videolan.tools.Settings
 import org.videolan.vlc.PlaybackService
 import org.videolan.vlc.R
 import org.videolan.vlc.databinding.PlayerOptionItemBinding
-import org.videolan.vlc.gui.AudioPlayerContainerActivity
 import org.videolan.vlc.gui.DiffUtilAdapter
 import org.videolan.vlc.gui.audio.EqualizerFragment
 import org.videolan.vlc.gui.dialogs.*
-import org.videolan.vlc.gui.helpers.UiTools.addToPlaylist
 import org.videolan.vlc.gui.video.VideoPlayerActivity
 import org.videolan.vlc.media.PlayerController
 
@@ -184,13 +182,6 @@ open class PlayerOptionsDelegate(val activity: FragmentActivity, val service: Pl
             ID_SHOW_VIDEO_TIPS -> {
                 hide()
                 (activity as VideoPlayerActivity).tipsDelegate.init()
-            }
-            ID_SHOW_AUDIO_TIPS -> {
-                hide()
-                val audioPlayerContainerActivity = activity as AudioPlayerContainerActivity
-                audioPlayerContainerActivity.findViewById<ViewStub>(R.id.audio_player_tips)?.let {
-                    audioPlayerContainerActivity.tipsDelegate.init(it)
-                }
             }
             ID_BOOKMARK -> {
                 hide()

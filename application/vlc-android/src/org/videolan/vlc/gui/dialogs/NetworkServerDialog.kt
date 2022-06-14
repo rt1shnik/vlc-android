@@ -16,12 +16,9 @@ import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.textfield.TextInputLayout
-import kotlinx.coroutines.launch
 import org.videolan.medialibrary.interfaces.media.MediaWrapper
-import org.videolan.tools.AppScope
 import org.videolan.vlc.R
 import org.videolan.vlc.gui.DialogActivity
-import org.videolan.vlc.gui.MainActivity
 
 class NetworkServerDialog : VLCBottomSheetDialogFragment(), AdapterView.OnItemSelectedListener, TextWatcher, View.OnClickListener {
 
@@ -45,7 +42,6 @@ class NetworkServerDialog : VLCBottomSheetDialogFragment(), AdapterView.OnItemSe
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        (activity as? MainActivity)?.forceRefresh()
     }
 
     override fun getDefaultState(): Int = BottomSheetBehavior.STATE_EXPANDED
