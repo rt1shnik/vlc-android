@@ -701,7 +701,6 @@ open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackS
     }
 
     override fun onStart() {
-        medialibrary.pauseBackgroundOperations()
         super.onStart()
         startedScope = MainScope()
         startPlaybackService()
@@ -750,7 +749,6 @@ open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackS
         intent = Intent()
         handler.removeCallbacksAndMessages(null)
         previousMediaPath = null
-        medialibrary.resumeBackgroundOperations()
     }
 
     private fun saveBrightness() {

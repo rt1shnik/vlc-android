@@ -37,14 +37,6 @@ public class MedialibraryImpl extends Medialibrary {
         super.finalize();
     }
 
-    public void pauseBackgroundOperations() {
-        if (mIsInitiated) nativePauseBackgroundOperations();
-    }
-
-    public void resumeBackgroundOperations() {
-        if (mIsInitiated) nativeResumeBackgroundOperations();
-    }
-
     public void reload() {
         if (mIsInitiated) nativeReload();
     }
@@ -118,8 +110,6 @@ public class MedialibraryImpl extends Medialibrary {
     private native MediaWrapper nativeGetMediaFromMrl(String mrl);
     private native MediaWrapper nativeAddMedia(String mrl, long duration);
 
-    private native void nativePauseBackgroundOperations();
-    private native void nativeResumeBackgroundOperations();
     private native void nativeReload();
     private native void nativeReload(String entryPoint);
     private native int nativeSetLastTime(long mediaId, long progress);
