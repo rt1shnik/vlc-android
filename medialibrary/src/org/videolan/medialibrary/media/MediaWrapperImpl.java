@@ -22,39 +22,17 @@
 package org.videolan.medialibrary.media;
 
 
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Parcel;
 
 import org.videolan.libvlc.interfaces.IMedia;
-import org.videolan.medialibrary.Tools;
 import org.videolan.medialibrary.interfaces.Medialibrary;
 import org.videolan.medialibrary.interfaces.media.Bookmark;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
 
-import java.util.Locale;
-
 @SuppressWarnings("JniMissingFunction")
 public class MediaWrapperImpl extends MediaWrapper {
     public final static String TAG = "VLC/MediaWrapperImpl";
-
-    public MediaWrapperImpl(long id, String mrl, long time, float position, long length, int type, String title,
-                            String filename, String artist, String genre,
-                            int width, int height, String artworkURL, int audio, int spu, int trackNumber,
-                            int discNumber, long lastModified, long seen, boolean isThumbnailGenerated, int releaseDate, boolean isPresent) {
-        super(id, mrl, time, position, length, type, title, filename, artist,
-                genre, width, height, artworkURL,
-                audio, spu, trackNumber, discNumber, lastModified,
-                seen, isThumbnailGenerated, releaseDate, isPresent);
-    }
-
-    public MediaWrapperImpl(Uri uri, long time, float position, long length, int type,
-                            Bitmap picture, String title, String artist, String genre,
-                            int width, int height, String artworkURL, int audio, int spu, int trackNumber, int discNumber, long lastModified, long seen) {
-        super(uri, time, position, length, type, picture, title, artist,
-                genre, width, height, artworkURL,
-                audio, spu, trackNumber, discNumber, lastModified, seen);
-    }
 
     public MediaWrapperImpl(Uri uri) { super(uri); }
     public MediaWrapperImpl(IMedia media) { super(media); }
@@ -65,82 +43,12 @@ public class MediaWrapperImpl extends MediaWrapper {
         if (mId != 0 && ml.isInitiated()) nativeSetMediaTitle(ml, mId, name);
     }
 
-    public void setArtist(String artist) {
-        mArtist = artist;
-    }
-
-    public String getArtist() {
-        return mArtist;
-    }
-
-    public Boolean isArtistUnknown() {
-        return mArtist == null;
-    }
-
-    public String getGenre() {
-        if (mGenre == null)
-            return null;
-        else if (mGenre.length() > 1)/* Make genres case insensitive via normalisation */
-            return Character.toUpperCase(mGenre.charAt(0)) + mGenre.substring(1).toLowerCase(Locale.getDefault());
-        else
-            return mGenre;
-    }
-
-    public String getCopyright() {
-        return mCopyright;
-    }
-
-    public int getTrackNumber() {
-        return mTrackNumber;
-    }
-
-    public int getDiscNumber() {
-        return mDiscNumber;
-    }
-
-    public String getRating() {
-        return mRating;
-    }
-
-    public String getDate() {
-        return mDate;
-    }
-
     public String getSettings() {
         return mSettings;
     }
 
     public String getNowPlaying() {
         return mNowPlaying;
-    }
-
-    public String getPublisher() {
-        return mPublisher;
-    }
-
-    public String getEncodedBy() {
-        return mEncodedBy;
-    }
-
-    public String getTrackID() {
-        return mTrackID;
-    }
-
-    public String getArtworkURL() {
-        return mArtworkURL;
-    }
-
-    public boolean isThumbnailGenerated() {
-        return mThumbnailGenerated;
-    }
-
-    @Override
-    public String getArtworkMrl() {
-        return mArtworkURL;
-    }
-
-    public void setArtworkURL(String url) {
-        mArtworkURL = url;
     }
 
     public long getLastModified() {

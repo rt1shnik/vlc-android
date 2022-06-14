@@ -725,7 +725,7 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
         else {
             val pi = if (::playlistManager.isInitialized) sessionPendingIntent else null
             NotificationHelper.createPlaybackNotification(ctx, false,
-                    ctx.resources.getString(R.string.loading), "", null, false, true,
+                    ctx.resources.getString(R.string.loading), null, false, true,
                     true, speed, isPodcastMode, false, enabledActions, null, pi)
         }
         startForeground(3, notification)
@@ -853,7 +853,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
                 if (isPlayingPopup || !notificationShowing) return@launch
                 try {
                     val title = if (metaData == null) mw.title else metaData.getString(MediaMetadataCompat.METADATA_KEY_TITLE)
-                    val artist = if (metaData == null) mw.artist else metaData.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST)
                     var cover = if (coverOnLockscreen && metaData != null)
                         metaData.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART) else null
                     if (coverOnLockscreen && cover == null)
@@ -862,7 +861,7 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
                         cover = ctx.getBitmapFromDrawable(R.drawable.ic_no_media)
 
                     notification = NotificationHelper.createPlaybackNotification(ctx,
-                            canSwitchToVideo(), title, artist, cover, playing, isPausable,
+                            canSwitchToVideo(), title, cover, playing, isPausable,
                             isSeekable, speed, isPodcastMode, seekInCompactView, enabledActions,
                             sessionToken, sessionPendingIntent)
                     if (isPlayingPopup) return@launch
@@ -982,8 +981,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
             val bob = MediaMetadataCompat.Builder().apply {
                 putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
                 putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, MediaSessionBrowser.generateMediaId(media))
-                putString(MediaMetadataCompat.METADATA_KEY_GENRE, MediaUtils.getMediaGenre(ctx, media))
-                putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, media.trackNumber.toLong())
                 putString(MediaMetadataCompat.METADATA_KEY_ARTIST, MediaUtils.getMediaArtist(ctx, media))
                 putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, MediaUtils.getMediaReferenceArtist(ctx, media))
                 putString(MediaMetadataCompat.METADATA_KEY_ALBUM, MediaUtils.getMediaAlbum(ctx, media))
@@ -1162,7 +1159,7 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
         val widgetIntent = Intent(VLCAppWidgetProvider.ACTION_WIDGET_UPDATE)
         if (playlistManager.hasCurrentMedia()) {
             widgetIntent.putExtra("title", media!!.title)
-            widgetIntent.putExtra("artist", if (media.isArtistUnknown!! && media.nowPlaying != null)
+            widgetIntent.putExtra("artist", if (media.nowPlaying != null)
                 media.nowPlaying
             else
                 MediaUtils.getMediaArtist(this@PlaybackService, media))
@@ -1204,7 +1201,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
         if (lifecycleScope.isActive) lifecycleScope.launch(Dispatchers.Default) {
             sendBroadcast(Intent("com.android.music.metachanged")
                     .putExtra("track", media.title)
-                    .putExtra("artist", media.artist)
                     .putExtra("duration", media.length)
                     .putExtra("playing", isPlaying)
                     .putExtra("package", "org.videolan.vlc"))

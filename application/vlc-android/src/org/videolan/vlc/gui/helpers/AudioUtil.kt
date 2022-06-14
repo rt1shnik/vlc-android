@@ -75,7 +75,6 @@ object AudioUtil {
             val values = contentValuesOf(
                     MediaStore.MediaColumns.TITLE to song.title,
                     MediaStore.MediaColumns.MIME_TYPE to "audio/*",
-                    MediaStore.Audio.Media.ARTIST to song.artist,
                     MediaStore.Audio.Media.IS_RINGTONE to true,
                     MediaStore.Audio.Media.IS_NOTIFICATION to false,
                     MediaStore.Audio.Media.IS_ALARM to false,

@@ -43,41 +43,11 @@ object ModelsHelper {
                     array[currentLengthCategory]?.add(item)
                 }
             }
-            SORT_RELEASEDATE -> {
-                var currentYear: String? = null
-                for (item in items) {
-                    if (item.itemType == MediaLibraryItem.TYPE_DUMMY) continue
-                    val year = item.getYear()
-                    if (currentYear === null || currentYear != year) {
-                        currentYear = year
-                        if (array[currentYear].isNullOrEmpty()) array[currentYear] = mutableListOf()
-                    }
-                    array[currentYear]?.add(item)
-                }
-            }
-            SORT_ARTIST -> {
-                var currentArtist: String? = null
-                for (item in items) {
-                    if (item.itemType == MediaLibraryItem.TYPE_DUMMY) continue
-                    val artist = (item as MediaWrapper).artist ?: ""
-                    if (currentArtist === null || currentArtist != artist) {
-                        currentArtist = artist
-                        if (array[currentArtist].isNullOrEmpty()) array[currentArtist] = mutableListOf()
-                    }
-                    array[currentArtist]?.add(item)
-                }
-            }
         }
         if (sort == SORT_DEFAULT || sort == SORT_FILENAME || sort == SORT_ALPHA)
             array.toSortedMap()
         else array
     }
-
-    fun MediaLibraryItem.getFirstLetter(): String {
-        return if (title.isEmpty() || !Character.isLetter(title[0]) || isSpecialItem()) "#" else title.substring(0, 1).toUpperCase()
-    }
-
-    fun MediaLibraryItem.getDiscNumberString(): String? = if (this is MediaWrapper && this.discNumber != 0) "Disc ${this.discNumber}" else null
 
     fun getHeader(context: Context?, sort: Int, item: MediaLibraryItem?, aboveItem: MediaLibraryItem?) = if (context !== null && item != null) when (sort) {
         SORT_DEFAULT,
@@ -89,14 +59,6 @@ object ModelsHelper {
                 letter.takeIf { it != previous }
             }
         }
-        TrackId -> {
-            val disc = item.getDiscNumberString()
-            if (aboveItem == null) disc
-            else {
-                val previousDisc = aboveItem.getDiscNumberString()
-                disc.takeIf { it != previousDisc }
-            }
-        }
         SORT_DURATION -> {
             val length = item.getLength()
             val lengthCategory = length.lengthToCategory()
@@ -104,14 +66,6 @@ object ModelsHelper {
             else {
                 val previous = aboveItem.getLength().lengthToCategory()
                 lengthCategory.takeIf { it != previous }
-            }
-        }
-        SORT_RELEASEDATE -> {
-            val year = item.getYear()
-            if (aboveItem == null) year
-            else {
-                val previous = aboveItem.getYear()
-                year.takeIf { it != previous }
             }
         }
         SORT_LASTMODIFICATIONDATE -> {

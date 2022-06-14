@@ -1,6 +1,5 @@
 package org.videolan.medialibrary;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Parcel;
 
@@ -39,29 +38,6 @@ public class MLServiceLocator {
             instance = new MedialibraryImpl();
         }
         return instance;
-    }
-
-    // MediaWrapper
-    public static MediaWrapper getAbstractMediaWrapper(long id, String mrl, long time, float position, long length,
-                                                       int type, String title, String filename,
-                                                       String artist, String genre, int width, int height,
-                                                       String artworkURL, int audio, int spu,
-                                                       int trackNumber, int discNumber, long lastModified,
-                                                       long seen, boolean isThumbnailGenerated, int releaseDate, boolean isPresent) {
-        return new MediaWrapperImpl(id, mrl, time, position, length, type, title,
-                filename, artist, genre, width, height, artworkURL,
-                audio, spu, trackNumber, discNumber, lastModified, seen, isThumbnailGenerated, releaseDate, isPresent);
-    }
-
-    public static MediaWrapper getAbstractMediaWrapper(Uri uri, long time, float position, long length, int type,
-                                                       Bitmap picture, String title, String artist,
-                                                       String genre,
-                                                       int width, int height, String artworkURL,
-                                                       int audio, int spu, int trackNumber,
-                                                       int discNumber, long lastModified, long seen) {
-        return new MediaWrapperImpl(uri, time, position, length, type, picture, title, artist, genre,
-                width, height, artworkURL, audio, spu, trackNumber,
-                discNumber, lastModified, seen);
     }
 
     public static MediaWrapper getAbstractMediaWrapper(Uri uri) {

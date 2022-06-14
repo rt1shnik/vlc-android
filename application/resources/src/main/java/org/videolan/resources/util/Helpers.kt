@@ -40,11 +40,6 @@ fun MediaLibraryItem.getLength() = when {
     else -> 0L
 }
 
-fun MediaLibraryItem.getYear() = when (itemType) {
-    MediaLibraryItem.TYPE_MEDIA -> if ((this as MediaWrapper).releaseYear <= 0) "-" else releaseYear.toString()
-    else -> "-"
-}
-
 /**
  * Check if the app has the [Manifest.permission.MANAGE_EXTERNAL_STORAGE] granted
  */

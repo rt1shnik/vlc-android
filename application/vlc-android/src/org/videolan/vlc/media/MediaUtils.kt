@@ -147,7 +147,6 @@ object MediaUtils {
     fun getMediaArtist(ctx: Context, media: MediaWrapper?): String = when {
         media == null -> getMediaString(ctx, R.string.unknown_artist)
         media.type == MediaWrapper.TYPE_VIDEO -> ""
-        media.artist != null -> media.artist
         media.nowPlaying != null -> media.title
         isSchemeStreaming(media.uri.scheme) -> ""
         else -> getMediaString(ctx, R.string.unknown_artist)
@@ -162,29 +161,6 @@ object MediaUtils {
         media.nowPlaying != null -> ""
         isSchemeStreaming(media.uri.scheme) -> ""
         else -> getMediaString(ctx, R.string.unknown_album)
-    }
-
-    fun getMediaGenre(ctx: Context, media: MediaWrapper?) = media?.genre
-            ?: getMediaString(ctx, R.string.unknown_genre)
-
-    fun getMediaSubtitle(media: MediaWrapper): String? {
-        var subtitle = when {
-            media.type == MediaWrapper.TYPE_VIDEO -> ""
-            media.length > 0L -> media.artist
-            isSchemeStreaming(media.uri.scheme) -> media.uri.toString()
-            else -> media.artist
-        }
-        if (media.length > 0L) {
-            if (media.type == MediaWrapper.TYPE_VIDEO) {
-                subtitle = Tools.millisToText(media.length)
-                val resolution = generateResolutionClass(media.width, media.height)
-                if (resolution != null) subtitle = "$subtitle ⋅ $resolution"
-            } else {
-                subtitle = if (subtitle.isNullOrEmpty()) Tools.millisToString(media.length)
-                else "$subtitle ⋅ ${Tools.millisToString(media.length)}"
-            }
-        }
-        return subtitle
     }
 
     fun getMediaDescription(artist: String?): String {
