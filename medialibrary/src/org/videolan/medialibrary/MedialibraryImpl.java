@@ -79,10 +79,6 @@ public class MedialibraryImpl extends Medialibrary {
         return mIsInitiated && !TextUtils.isEmpty(vlcMrl) ? nativeAddMedia(vlcMrl, duration) : null;
     }
 
-    public boolean removeExternalMedia(long id) {
-        return mIsInitiated && nativeRemoveExternalMedia(id);
-    }
-
     public int setLastTime(long mediaId, long lastTime) {
         if (!mIsInitiated || mediaId < 1) {
             return ML_SET_TIME_ERROR;
@@ -116,22 +112,16 @@ public class MedialibraryImpl extends Medialibrary {
     }
 
     // Native methods
-    private native void nativeConstruct(String dbPath, String thumbsPath);
-    private native int nativeInit(String dbPath);
     private native void nativeRelease();
 
-    private native void nativeSetLibVLCInstance(long libVLC);
     private native MediaWrapper nativeGetMedia(long id);
     private native MediaWrapper nativeGetMediaFromMrl(String mrl);
     private native MediaWrapper nativeAddMedia(String mrl, long duration);
-    private native boolean nativeRemoveExternalMedia(long id);
 
     private native void nativePauseBackgroundOperations();
     private native void nativeResumeBackgroundOperations();
     private native void nativeReload();
     private native void nativeReload(String entryPoint);
-    private native void nativeForceParserRetry();
-    private native void nativeForceRescan();
     private native int nativeSetLastTime(long mediaId, long progress);
     private native boolean nativeSetLastPosition(long mediaId, float position);
 }

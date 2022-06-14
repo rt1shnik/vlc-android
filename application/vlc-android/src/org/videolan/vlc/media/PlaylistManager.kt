@@ -711,7 +711,6 @@ open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.Even
         if (BuildConfig.BETA) Log.d(TAG, "expand with values: ", Exception("Call stack"))
         val index = currentIndex
         val expandedMedia = getCurrentMedia()
-        val stream = expandedMedia?.type == MediaWrapper.TYPE_STREAM
         val ml = player.expand()
         var ret = -1
 
@@ -733,17 +732,6 @@ open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.Even
             mediaList.addEventListener(this)
             addUpdateActor.trySend(Unit)
             service.onMediaListChanged()
-            if (mrl !== null && ml.count == 1) {
-                getCurrentMedia()?.apply {
-                    AppScope.launch(Dispatchers.IO) {
-                        if (stream) {
-                            type = MediaWrapper.TYPE_STREAM
-                            entryUrl = mrl
-                            medialibrary.getMedia(mrl)?.run { if (id > 0) medialibrary.removeExternalMedia(id) }
-                        }
-                    }
-                }
-            }
             ret = index
         }
         ml?.release()

@@ -25,8 +25,6 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import org.videolan.medialibrary.MLServiceLocator;
 import org.videolan.medialibrary.Tools;
@@ -120,7 +118,6 @@ abstract public class Medialibrary {
     abstract public MediaWrapper getMedia(Uri uri);
     abstract public MediaWrapper getMedia(String mrl);
     abstract public MediaWrapper addMedia(String mrl, long duration);
-    abstract public boolean removeExternalMedia(long id);
     abstract public int setLastTime(long mediaId, long time);
     abstract public boolean setLastPosition(long mediaId, float position);
 }
