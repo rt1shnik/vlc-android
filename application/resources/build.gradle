@@ -53,11 +53,9 @@ dependencies {
 
     api project(':application:tools')
     devApi project(':application:libvlc')
-    devApi project(':application:medialibrary')
+    api project(':application:medialibrary')
     debugApi "org.videolan.android:libvlc-all:$rootProject.ext.libvlcVersion"
-    debugApi "org.videolan.android:medialibrary-all:$rootProject.ext.medialibraryVersion"
     releaseApi "org.videolan.android:libvlc-all:$rootProject.ext.libvlcVersion"
-    releaseApi "org.videolan.android:medialibrary-all:$rootProject.ext.medialibraryVersion"
 
     api "com.google.android.material:material:$rootProject.ext.androidxMaterialVersion"
 
