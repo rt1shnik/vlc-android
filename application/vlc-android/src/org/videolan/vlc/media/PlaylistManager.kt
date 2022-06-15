@@ -978,7 +978,7 @@ open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.Even
                     }
                     if (player.getCurrentTime() % 10 == 0L) savePosition()
                     val now = System.currentTimeMillis()
-                    if (now - lastTimeMetaSaved > 5000L){
+                    if (now - lastTimeMetaSaved > 30000L){
                         lastTimeMetaSaved = now
                         saveMediaMeta()
                     }
