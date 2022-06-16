@@ -3,11 +3,6 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-    </data>
-
-
     <LinearLayout
         android:id="@+id/hud_right_overlay"
         android:layout_width="match_parent"
