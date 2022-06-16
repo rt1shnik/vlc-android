@@ -290,8 +290,8 @@
     <string name="automatic">Автоматически</string>
     <string name="screen_orientation">Ориентация экрана</string>
     <string name="screen_orientation_sensor">Автоматическая (от сенсора)</string>
-    <string name="screen_orientation_portrait">Альбомная</string>
-    <string name="screen_orientation_landscape">Книжная</string>
+    <string name="screen_orientation_portrait">Книжная</string>
+    <string name="screen_orientation_landscape">Альбомная</string>
     <string name="screen_orientation_landscape_reverse">Обратная альбомная</string>
     <string name="screen_orientation_last_locked">Последняя зафиксированная ориентация</string>
     <string name="enable_black_theme">Чёрная тема</string>
