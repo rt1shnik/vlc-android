@@ -34,7 +34,7 @@ public abstract class MediaLibraryItem implements Parcelable {
     public abstract int getTracksCount();
     public abstract int getItemType();
 
-    protected long mId;
+    public long mId;
     protected String mTitle;
     protected String mDescription;
     private int mFlags;
