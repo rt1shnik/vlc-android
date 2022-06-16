@@ -109,6 +109,7 @@ public abstract class MediaWrapper extends MediaLibraryItem implements Parcelabl
     protected int mFlags = 0;
     protected long mLastModified = 0L;
     protected IMedia.Slave[] mSlaves = null;
+    public Float speed = -1f;
 
     protected long mSeen = 0L;
 

@@ -542,8 +542,7 @@ open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.Even
                     }
                 }
             }
-            media.setStringMeta(MediaWrapper.META_SPEED, rate.toString())
-
+            media.speed = rate
         }
     }
 
@@ -580,9 +579,9 @@ open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.Even
 
             player.setSpuTrack(media.getMetaLong(MediaWrapper.META_SUBTITLE_TRACK).toInt())
             player.setSpuDelay(media.getMetaLong(MediaWrapper.META_SUBTITLE_DELAY))
-            val rateString = media.getMetaString(MediaWrapper.META_SPEED)
-            if (!rateString.isNullOrEmpty()) {
-                player.setRate(rateString.toFloat(), false)
+            val speed = media.speed
+            if (speed > 0) {
+                player.setRate(speed, false)
             }
         }
     }
