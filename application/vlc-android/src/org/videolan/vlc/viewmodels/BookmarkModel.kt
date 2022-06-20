@@ -26,59 +26,24 @@ package org.videolan.vlc.viewmodels
 
 import android.content.Context
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onEach
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.videolan.libvlc.MediaPlayer
 import org.videolan.libvlc.interfaces.IMedia
-import org.videolan.medialibrary.Tools
 import org.videolan.medialibrary.interfaces.media.Bookmark
 import org.videolan.medialibrary.interfaces.media.BookmarkBase
 import org.videolan.tools.livedata.LiveDataset
 import org.videolan.vlc.PlaybackService
-import org.videolan.vlc.R
 
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
-class BookmarkModel : ViewModel(), PlaybackService.Callback {
+open class BookmarkModel : ViewModel(), PlaybackService.Callback {
 
     val dataset = LiveDataset<Bookmark>()
-    var service: PlaybackService? = null
 
-    init {
-        PlaybackService.serviceFlow.onEach { onServiceChanged(it) }
-            .onCompletion { onServiceChanged(null) }
-            .launchIn(viewModelScope)
-    }
-
-    private fun setup(service: PlaybackService) {
-        service.addCallback(this)
-        update()
-    }
-
-    fun refresh() {
-        service?.currentMediaWrapper?.let {
-            viewModelScope.launch {
-                dataset.value = withContext(Dispatchers.IO) {
-                    it.bookmarks ?: arrayOf<Bookmark>()
-                }.toMutableList()
-            }
-        }
-    }
-
-    private fun onServiceChanged(service: PlaybackService?) {
-        if (this.service == service) return
-        if (service != null) {
-            this.service = service
-            setup(service)
-        } else {
-            this.service?.apply {
-                removeCallback(this@BookmarkModel)
-            }
-            this.service = null
-        }
+    open fun refresh() {
     }
 
     companion object {
@@ -97,41 +62,15 @@ class BookmarkModel : ViewModel(), PlaybackService.Callback {
     }
 
     fun delete(bookmark: Bookmark) {
-        service?.currentMediaWrapper?.let { media ->
-            viewModelScope.launch {
 
-                withContext(Dispatchers.IO) {
-                    media.removeBookmark(bookmark.time)
-                }
-                refresh()
-            }
-        }
     }
 
     fun addBookmark(context: Context) {
-        if (service == null) return
-        service?.currentMediaWrapper?.let {
-            viewModelScope.launch {
-                withContext(Dispatchers.IO) {
-                    val bookmark = it.addBookmark(service!!.getTime())
-                    bookmark?.setName(context.getString(R.string.bookmark_default_name, Tools.millisToString(service!!.getTime())))
-                }
-                refresh()
-            }
-        }
+
     }
 
     suspend fun rename(bookmark: BookmarkBase, name: String) : List<Bookmark> {
         var bookmarks: List<BookmarkBase> = listOf()
-        service?.currentMediaWrapper?.let {
-            viewModelScope.launch {
-                withContext(Dispatchers.IO) {
-                    bookmark.setName(name)
-                    bookmarks = it.bookmarks.toList()
-                    bookmarks[bookmarks.indexOf(bookmark)].setName(name)
-                }
-            }
-        }
         return bookmarks
     }
 
