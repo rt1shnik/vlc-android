@@ -57,7 +57,7 @@ import org.videolan.vlc.R
 import org.videolan.vlc.databinding.PlayerHudBinding
 import org.videolan.vlc.databinding.PlayerHudRightBinding
 import org.videolan.vlc.gui.dialogs.VideoTracksDialog
-import org.videolan.vlc.gui.helpers.BookmarkListDelegate
+import org.videolan.vlc.gui.helpers.BookmarkListDelegateImpl
 import org.videolan.vlc.gui.helpers.OnRepeatListenerKey
 import org.videolan.vlc.gui.helpers.UiTools
 import org.videolan.vlc.gui.helpers.UiTools.showVideoTrack
@@ -840,7 +840,7 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
     fun showBookmarks() {
         player.service?.let {
             if (!this::bookmarkListDelegate.isInitialized) {
-                bookmarkListDelegate = BookmarkListDelegate(player, it, player.bookmarkModel)
+                bookmarkListDelegate = createBookmarkListDelegate(it)
                 bookmarkListDelegate.markerContainer = hudBinding.bookmarkMarkerContainer
                 bookmarkListDelegate.visibilityListener = {
                     if (bookmarkListDelegate.visible) showOverlayTimeout(VideoPlayerActivity.OVERLAY_INFINITE)
@@ -850,6 +850,10 @@ open class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) 
             bookmarkListDelegate.show()
             bookmarkListDelegate.setProgressHeight((player.getScreenHeight() - hudBinding.constraintLayout2.height + 12.dp).toFloat())
         }
+    }
+
+    protected open fun createBookmarkListDelegate(service: PlaybackService): BookmarkListDelegate {
+        return BookmarkListDelegateImpl(player, service, player.bookmarkModel)
     }
 
     fun isBookmarkShown() = ::bookmarkListDelegate.isInitialized && bookmarkListDelegate.visible

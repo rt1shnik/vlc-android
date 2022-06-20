@@ -47,23 +47,24 @@ import org.videolan.vlc.BuildConfig
 import org.videolan.vlc.PlaybackService
 import org.videolan.vlc.R
 import org.videolan.vlc.gui.dialogs.RenameDialog
+import org.videolan.vlc.gui.video.BookmarkListDelegate
 import org.videolan.vlc.viewmodels.BookmarkModel
 
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
-class BookmarkListDelegate(val activity: FragmentActivity, val service: PlaybackService, private val bookmarkModel: BookmarkModel) :
-    LifecycleObserver, BookmarkAdapter.IBookmarkManager {
+class BookmarkListDelegateImpl(val activity: FragmentActivity, val service: PlaybackService, private val bookmarkModel: BookmarkModel) :
+    LifecycleObserver, BookmarkAdapter.IBookmarkManager, BookmarkListDelegate {
 
-    lateinit var markerContainer: ConstraintLayout
+    override lateinit var markerContainer: ConstraintLayout
     private lateinit var adapter: BookmarkAdapter
     lateinit var bookmarkList: RecyclerView
     lateinit var rootView: ConstraintLayout
     private lateinit var emptyView: View
-    lateinit var visibilityListener: () -> Unit
-    val visible: Boolean
+    override lateinit var visibilityListener: () -> Unit
+    override val visible: Boolean
         get() = rootView.visibility != View.GONE
 
-    fun show() {
+    override fun show() {
         activity.findViewById<ViewStub>(R.id.bookmarks_stub)?.let {
             rootView = it.inflate() as ConstraintLayout
             bookmarkList = rootView.findViewById(R.id.bookmark_list)
@@ -123,7 +124,7 @@ class BookmarkListDelegate(val activity: FragmentActivity, val service: Playback
         visibilityListener.invoke()
     }
 
-    fun hide() {
+    override fun hide() {
         rootView.setGone()
         markerContainer.setGone()
         visibilityListener.invoke()
@@ -161,7 +162,7 @@ class BookmarkListDelegate(val activity: FragmentActivity, val service: Playback
         service.setTime(item.time)
     }
 
-    fun setProgressHeight(y: Float) {
+    override fun setProgressHeight(y: Float) {
         val constraintSet = ConstraintSet()
         constraintSet.clone(rootView)
         constraintSet.setGuidelineBegin(R.id.progressbar_guideline, y.toInt())
