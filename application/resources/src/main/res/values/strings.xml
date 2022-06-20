@@ -109,7 +109,7 @@
     <string name="internal_memory">Internal memory</string>
     <string name="audio">Audio</string>
     <string name="video">Video</string>
-    <string name="bookmarks">Bookmarks</string>
+    <string name="bookmarks">Annotations</string>
     <string name="equalizer">Equalizer</string>
     <string name="all_albums">All albums</string>
     <string name="genres">Genres</string>
