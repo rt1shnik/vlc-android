@@ -36,6 +36,7 @@ import org.videolan.medialibrary.interfaces.media.Bookmark
 import org.videolan.medialibrary.interfaces.media.BookmarkBase
 import org.videolan.tools.livedata.LiveDataset
 import org.videolan.vlc.PlaybackService
+import org.videolan.vlc.gui.video.VideoPlayerActivity
 
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
@@ -65,7 +66,7 @@ open class BookmarkModel : ViewModel(), PlaybackService.Callback {
 
     }
 
-    fun addBookmark(context: Context) {
+    open fun addBookmark(context: VideoPlayerActivity) {
 
     }
 

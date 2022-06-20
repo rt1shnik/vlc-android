@@ -49,11 +49,12 @@ import org.videolan.vlc.PlaybackService
 import org.videolan.vlc.R
 import org.videolan.vlc.gui.dialogs.RenameDialog
 import org.videolan.vlc.gui.video.BookmarkListDelegate
+import org.videolan.vlc.gui.video.VideoPlayerActivity
 import org.videolan.vlc.viewmodels.BookmarkModel
 
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
-open class BookmarkListDelegateImpl(val activity: FragmentActivity, val service: PlaybackService, private val bookmarkModel: BookmarkModel) :
+open class BookmarkListDelegateImpl(val activity: VideoPlayerActivity, val service: PlaybackService, private val bookmarkModel: BookmarkModel) :
     LifecycleObserver, BookmarkListDelegate {
 
     override lateinit var markerContainer: ConstraintLayout
