@@ -151,10 +151,6 @@ open class BookmarkListDelegateImpl(val activity: FragmentActivity, val service:
         service.setTime(item.time)
     }
 
-    override fun getBookmarks(): List<Bookmark> {
-        return bookmarkModel.dataset.getList()
-    }
-
     override fun setProgressHeight(y: Float) {
         val constraintSet = ConstraintSet()
         constraintSet.clone(rootView)
