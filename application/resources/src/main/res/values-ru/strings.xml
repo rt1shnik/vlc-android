@@ -843,7 +843,7 @@
     <string name="stop_unpaubale">Это медиа нельзя поставить на паузу. Остановить его?</string>
     <string name="delete_forever">Удалить навсегда</string>
     <string name="add_to_existing_playlist">Добавить в существующий плейлист</string>
-    <string name="bookmarks_title">Избранное</string>
+    <string name="bookmarks_title">Аннотации</string>
     <string name="no_bookmark">В избранном пока пусто</string>
     <string name="bookmark_name">Избранное %s</string>
     <string name="optional_features">Дополнительные возможности</string>
