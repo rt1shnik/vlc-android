@@ -62,8 +62,7 @@ open class BookmarkModel : ViewModel(), PlaybackService.Callback {
         if (event.type == MediaPlayer.Event.Opening) refresh()
     }
 
-    fun delete(bookmark: Bookmark) {
-
+    open fun delete(bookmark: Bookmark) {
     }
 
     open fun addBookmark(context: VideoPlayerActivity) {
