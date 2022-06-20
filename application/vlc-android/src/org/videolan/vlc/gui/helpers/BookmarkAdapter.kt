@@ -44,7 +44,7 @@ import org.videolan.vlc.gui.DiffUtilAdapter
 
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
-class BookmarkAdapter(val bookmarkManager: IBookmarkManager) :
+open class BookmarkAdapter(val bookmarkManager: IBookmarkManager) :
     DiffUtilAdapter<Bookmark, BookmarkAdapter.ViewHolder>() {
     private val handler by lazy(LazyThreadSafetyMode.NONE) { Handler() }
 
@@ -100,6 +100,7 @@ class BookmarkAdapter(val bookmarkManager: IBookmarkManager) :
     interface IBookmarkManager {
         fun onPopupMenu(view: View, position: Int, item: Bookmark?)
         fun onBookmarkClick(position: Int, item: Bookmark)
+        fun getBookmarks(): List<Bookmark>
     }
 
     override fun createCB(): DiffCallback<Bookmark> = object : DiffCallback<Bookmark>() {

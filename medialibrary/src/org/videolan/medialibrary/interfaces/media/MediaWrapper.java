@@ -33,7 +33,6 @@ import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.interfaces.IMedia;
 import org.videolan.libvlc.util.Extensions;
-import org.videolan.libvlc.util.VLCUtil;
 import org.videolan.medialibrary.MLServiceLocator;
 import org.videolan.medialibrary.Tools;
 import org.videolan.medialibrary.media.MediaLibraryItem;
@@ -119,8 +118,8 @@ public abstract class MediaWrapper extends MediaLibraryItem implements Parcelabl
     public abstract boolean setLongMeta(int metaDataType, long metaDataValue);
     public abstract boolean setStringMeta(int metaDataType, String metaDataValue);
     public abstract boolean setPlayCount(long playCount);
-    public abstract Bookmark[] getBookmarks();
-    public abstract Bookmark addBookmark(long time);
+    public abstract BookmarkBase[] getBookmarks();
+    public abstract BookmarkBase addBookmark(long time);
     public abstract boolean removeBookmark(long time);
     public abstract boolean removeAllBookmarks();
 

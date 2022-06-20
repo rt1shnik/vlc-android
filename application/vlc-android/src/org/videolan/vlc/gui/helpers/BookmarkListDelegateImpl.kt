@@ -41,6 +41,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
 import org.videolan.medialibrary.interfaces.media.Bookmark
+import org.videolan.medialibrary.interfaces.media.BookmarkBase
 import org.videolan.tools.setGone
 import org.videolan.tools.setVisible
 import org.videolan.vlc.BuildConfig
@@ -52,8 +53,8 @@ import org.videolan.vlc.viewmodels.BookmarkModel
 
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
-class BookmarkListDelegateImpl(val activity: FragmentActivity, val service: PlaybackService, private val bookmarkModel: BookmarkModel) :
-    LifecycleObserver, BookmarkAdapter.IBookmarkManager, BookmarkListDelegate {
+open class BookmarkListDelegateImpl(val activity: FragmentActivity, val service: PlaybackService, private val bookmarkModel: BookmarkModel) :
+    LifecycleObserver, BookmarkListDelegate {
 
     override lateinit var markerContainer: ConstraintLayout
     private lateinit var adapter: BookmarkAdapter
@@ -136,18 +137,6 @@ class BookmarkListDelegateImpl(val activity: FragmentActivity, val service: Play
         menu.inflate(R.menu.bookmark_options)
         menu.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.bookmark_rename -> {
-                    val dialog = RenameDialog.newInstance(bookmark)
-                    dialog.show(activity.supportFragmentManager, RenameDialog::class.simpleName)
-                    dialog.setListener { media, name ->
-                        activity.lifecycleScope.launch {
-                            val bookmarks = bookmarkModel.rename(media as Bookmark, name)
-                            adapter.update(bookmarks)
-                            bookmarkModel.refresh()
-                        }
-                    }
-                    true
-                }
                 R.id.bookmark_delete -> {
                     bookmarkModel.delete(bookmark)
                     true
@@ -160,6 +149,10 @@ class BookmarkListDelegateImpl(val activity: FragmentActivity, val service: Play
 
     override fun onBookmarkClick(position: Int, item: Bookmark) {
         service.setTime(item.time)
+    }
+
+    override fun getBookmarks(): List<Bookmark> {
+        return bookmarkModel.dataset.getList()
     }
 
     override fun setProgressHeight(y: Float) {
