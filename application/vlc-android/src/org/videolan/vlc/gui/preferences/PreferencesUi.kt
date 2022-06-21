@@ -101,11 +101,6 @@ class PreferencesUi : BasePreferenceFragment(), SharedPreferences.OnSharedPrefer
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         if (preference.key == null) return false
         when (preference.key) {
-            SHOW_VIDEO_THUMBNAILS -> {
-                Settings.showVideoThumbs = (preference as TwoStatePreference).isChecked
-                (activity as PreferencesActivity).setRestart()
-                return true
-            }
             KEY_ARTISTS_SHOW_ALL -> (activity as PreferencesActivity).updateArtists()
         }
         return super.onPreferenceTreeClick(preference)

@@ -17,7 +17,6 @@ import org.videolan.tools.Settings.init
 @ObsoleteCoroutinesApi
 object Settings : SingletonHolder<SharedPreferences, Context>({ init(it.applicationContext) }) {
 
-    var showVideoThumbs = true
     var listTitleEllipsize = 0
     var videoHudDelay = 2
     var showAudioTrackInfo = false
@@ -32,7 +31,6 @@ object Settings : SingletonHolder<SharedPreferences, Context>({ init(it.applicat
 
     fun init(context: Context) : SharedPreferences{
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        showVideoThumbs = prefs.getBoolean(SHOW_VIDEO_THUMBNAILS, true)
         listTitleEllipsize = prefs.getString(LIST_TITLE_ELLIPSIZE, "0")?.toInt() ?: 0
         videoHudDelay = prefs.getInt(VIDEO_HUD_TIMEOUT, 4)
         device = DeviceInfo(context)
@@ -66,7 +64,6 @@ const val KEY_ARTISTS_SHOW_ALL = "artists_show_all"
 const val KEY_APP_THEME = "app_theme"
 const val KEY_BLACK_THEME = "enable_black_theme"
 const val KEY_DAYNIGHT = "daynight"
-const val SHOW_VIDEO_THUMBNAILS = "show_video_thumbnails"
 const val KEY_VIDEO_CONFIRM_RESUME = "video_confirm_resume"
 const val KEY_TV_ONBOARDING_DONE = "key_tv_onboarding_done"
 
