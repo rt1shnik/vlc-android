@@ -18,7 +18,6 @@ import org.videolan.tools.Settings.init
 object Settings : SingletonHolder<SharedPreferences, Context>({ init(it.applicationContext) }) {
 
     var showVideoThumbs = true
-    var tvUI = false
     var listTitleEllipsize = 0
     var overrideTvUI = false
     var videoHudDelay = 2
@@ -37,7 +36,6 @@ object Settings : SingletonHolder<SharedPreferences, Context>({ init(it.applicat
     fun init(context: Context) : SharedPreferences{
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         showVideoThumbs = prefs.getBoolean(SHOW_VIDEO_THUMBNAILS, true)
-        tvUI = prefs.getBoolean(PREF_TV_UI, false)
         listTitleEllipsize = prefs.getString(LIST_TITLE_ELLIPSIZE, "0")?.toInt() ?: 0
         videoHudDelay = prefs.getInt(VIDEO_HUD_TIMEOUT, 4)
         device = DeviceInfo(context)
@@ -104,7 +102,6 @@ const val KEY_SHOW_TRACK_INFO = "show_track_info"
 
 const val PREF_TIPS_SHOWN = "video_player_tips_shown"
 
-const val PREF_TV_UI = "tv_ui"
 const val FORCE_PLAY_ALL = "force_play_all"
 
 const val SCREEN_ORIENTATION = "screen_orientation"

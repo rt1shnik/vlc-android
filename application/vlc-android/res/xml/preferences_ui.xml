@@ -13,12 +13,6 @@
             android:entries="@array/daynight_mode_entries"
             android:entryValues="@array/daynight_mode_values"/>
 
-    <CheckBoxPreference
-            app:singleLineTitle="false"
-            android:key="tv_ui"
-            android:summary="@string/tv_ui_summary"
-            android:title="@string/tv_ui_title"/>
-
     <ListPreference
             android:defaultValue=""
             android:key="set_locale"
