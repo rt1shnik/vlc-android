@@ -34,12 +34,6 @@
 
         <CheckBoxPreference
                 app:singleLineTitle="false"
-                android:defaultValue="true"
-                android:key="media_seen"
-                android:summary="@string/media_seen_summary"
-                android:title="@string/media_seen"/>
-        <CheckBoxPreference
-                app:singleLineTitle="false"
                 android:defaultValue="false"
                 android:key="force_play_all"
                 android:summary="@string/force_play_all_summary"

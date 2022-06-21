@@ -97,16 +97,6 @@ class PreferencesUIUITest: BasePreferenceUITest() {
     }
 
     @Test
-    fun checkSeenVideoMarkerSetting_dueUpdateSeenMedia() {
-        val key = "media_seen"
-
-        checkToggleWorks(key, settings)
-
-        intentsTestRule.finishActivity()
-        assertThat(intentsTestRule.activityResult.resultCode, equalTo(RESULT_UPDATE_SEEN_MEDIA))
-    }
-
-    @Test
     fun checkVideoPlaylistMode() {
         val key = FORCE_PLAY_ALL
 

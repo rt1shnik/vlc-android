@@ -132,7 +132,6 @@ const val VIDEO_HUD_TIMEOUT = "video_hud_timeout_in_s"
 const val RESULT_RESCAN = Activity.RESULT_FIRST_USER + 1
 const val RESULT_RESTART = Activity.RESULT_FIRST_USER + 2
 const val RESULT_RESTART_APP = Activity.RESULT_FIRST_USER + 3
-const val RESULT_UPDATE_SEEN_MEDIA = Activity.RESULT_FIRST_USER + 4
 const val RESULT_UPDATE_ARTISTS = Activity.RESULT_FIRST_USER + 5
 
 const val BETA_WELCOME = "beta_welcome"
