@@ -31,10 +31,6 @@
             android:summary="@string/clear_app_data_summary"
             android:title="@string/clear_app_data"/>
 
-    <PreferenceScreen
-            android:key="clear_history"
-            android:title="@string/clear_playback_history"/>
-
     <Preference
             android:enabled="true"
             android:key="quit_app"
