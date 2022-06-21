@@ -2,7 +2,7 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
                                       xmlns:app="http://schemas.android.com/apk/res-auto"
                                       android:title="@string/preferences">
-    
+
     <PreferenceCategory android:title="@string/video_prefs_category">
         <ListPreference
                 android:key="video_action_switch"
@@ -25,15 +25,6 @@
                 android:key="screen_orientation"
                 android:summary="%s"
                 android:title="@string/screen_orientation"/>
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="@string/history">
-        <CheckBoxPreference
-                app:singleLineTitle="false"
-                android:defaultValue="true"
-                android:key="playback_history"
-                android:summary="@string/playback_history_summary"
-                android:title="@string/playback_history_title"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/extra_prefs_category">

@@ -148,7 +148,6 @@ const val RESULT_UPDATE_ARTISTS = Activity.RESULT_FIRST_USER + 5
 const val BETA_WELCOME = "beta_welcome"
 const val CRASH_DONT_ASK_AGAIN = "crash_dont_ask_again"
 
-const val PLAYBACK_HISTORY = "playback_history"
 const val RESUME_PLAYBACK = "resume_playback"
 const val AUDIO_DUCKING = "audio_ducking"
 

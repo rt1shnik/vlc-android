@@ -33,12 +33,9 @@ import androidx.preference.Preference
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.videolan.libvlc.util.AndroidUtil
-import org.videolan.medialibrary.interfaces.Medialibrary
-import org.videolan.tools.PLAYBACK_HISTORY
 import org.videolan.tools.RESULT_RESTART
 import org.videolan.vlc.BuildConfig
 import org.videolan.vlc.R
-import org.videolan.vlc.gui.helpers.UiTools
 import org.videolan.vlc.gui.preferences.search.PreferenceItem
 import org.videolan.vlc.util.Permissions
 
@@ -99,11 +96,6 @@ class PreferencesFragment : BasePreferenceFragment(), SharedPreferences.OnShared
             "audio_category" -> loadFragment(PreferencesAudio())
             "adv_category" -> loadFragment(PreferencesAdvanced())
             "casting_category" -> loadFragment(PreferencesCasting())
-            PLAYBACK_HISTORY -> {
-                val activity = activity
-                activity?.setResult(RESULT_RESTART)
-                return true
-            }
             else -> return super.onPreferenceTreeClick(preference)
         }
         return true
