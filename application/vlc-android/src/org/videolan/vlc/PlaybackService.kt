@@ -81,7 +81,7 @@ import videolan.org.commontools.LiveEvent
 import java.util.*
 import kotlin.math.abs
 
-private const val TAG = "VLC/PlaybackService"
+private const val TAG = "VLC:PlaybackService"
 
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
