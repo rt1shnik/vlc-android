@@ -43,13 +43,7 @@
     <PreferenceCategory
             android:title="@string/audio"
             android:key="ui_audio_category">
-
-        <CheckBoxPreference
-                app:singleLineTitle="false"
-                android:defaultValue="true"
-                android:key="audio_resume_card"
-                android:title="@string/audio_resume_card_title"
-                android:summary="@string/audio_resume_card_summary"/>
+        
         <CheckBoxPreference
                 app:singleLineTitle="false"
                 android:defaultValue="true"

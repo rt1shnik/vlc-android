@@ -121,13 +121,6 @@ class PreferencesUIUITest: BasePreferenceUITest() {
     }
 
     @Test
-    fun checkLastAudioResumePlayHintSetting() {
-        val key = "audio_resume_card"
-
-        checkToggleWorks(key, settings)
-    }
-
-    @Test
     fun checkMediaCoverLockscreenSetting() {
         val key = "lockscreen_cover"
 
