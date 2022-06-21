@@ -20,7 +20,6 @@ object Settings : SingletonHolder<SharedPreferences, Context>({ init(it.applicat
     var showVideoThumbs = true
     var listTitleEllipsize = 0
     var videoHudDelay = 2
-    var includeMissing = true
     var showAudioTrackInfo = false
     var videoJumpDelay = 10
     var videoLongJumpDelay = 20
@@ -37,7 +36,6 @@ object Settings : SingletonHolder<SharedPreferences, Context>({ init(it.applicat
         listTitleEllipsize = prefs.getString(LIST_TITLE_ELLIPSIZE, "0")?.toInt() ?: 0
         videoHudDelay = prefs.getInt(VIDEO_HUD_TIMEOUT, 4)
         device = DeviceInfo(context)
-        includeMissing = prefs.getBoolean(KEY_INCLUDE_MISSING, true)
         showAudioTrackInfo = prefs.getBoolean(KEY_SHOW_TRACK_INFO, false)
         videoJumpDelay = prefs.getInt(KEY_VIDEO_JUMP_DELAY, 10)
         videoLongJumpDelay = prefs.getInt(KEY_VIDEO_LONG_JUMP_DELAY, 20)
@@ -71,7 +69,6 @@ const val KEY_DAYNIGHT = "daynight"
 const val SHOW_VIDEO_THUMBNAILS = "show_video_thumbnails"
 const val KEY_VIDEO_CONFIRM_RESUME = "video_confirm_resume"
 const val KEY_TV_ONBOARDING_DONE = "key_tv_onboarding_done"
-const val KEY_INCLUDE_MISSING = "include_missing"
 
 //UI
 const val LIST_TITLE_ELLIPSIZE = "list_title_ellipsize"
