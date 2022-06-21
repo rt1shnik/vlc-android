@@ -125,7 +125,7 @@
     <string name="internal_memory">Внутренняя память</string>
     <string name="audio">Аудио</string>
     <string name="video">Видео</string>
-    <string name="bookmarks">Избранное</string>
+    <string name="bookmarks">Аннотации</string>
     <string name="equalizer">Эквалайзер</string>
     <string name="all_albums">Все альбомы</string>
     <string name="genres">Жанры</string>
@@ -843,7 +843,7 @@
     <string name="stop_unpaubale">Это медиа нельзя поставить на паузу. Остановить его?</string>
     <string name="delete_forever">Удалить навсегда</string>
     <string name="add_to_existing_playlist">Добавить в существующий плейлист</string>
-    <string name="bookmarks_title">Избранное</string>
+    <string name="bookmarks_title">Аннотации</string>
     <string name="no_bookmark">В избранном пока пусто</string>
     <string name="bookmark_name">Избранное %s</string>
     <string name="optional_features">Дополнительные возможности</string>

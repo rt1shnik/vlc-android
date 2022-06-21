@@ -27,7 +27,7 @@ import android.os.Parcel;
 
 import org.videolan.libvlc.interfaces.IMedia;
 import org.videolan.medialibrary.interfaces.Medialibrary;
-import org.videolan.medialibrary.interfaces.media.Bookmark;
+import org.videolan.medialibrary.interfaces.media.BookmarkBase;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
 
 @SuppressWarnings("JniMissingFunction")
@@ -97,12 +97,12 @@ public class MediaWrapperImpl extends MediaWrapper {
         return mId == 0 || !ml.isInitiated() ? null : nativeGetMediaStringMetadata(ml, mId, metaDataType);
     }
 
-    public Bookmark[] getBookmarks() {
+    public BookmarkBase[] getBookmarks() {
         Medialibrary ml = Medialibrary.getInstance();
         return mId == 0 || !ml.isInitiated() ? null : nativeGetBookmarks(ml, mId);
     }
 
-    public Bookmark addBookmark(long time) {
+    public BookmarkBase addBookmark(long time) {
         Medialibrary ml = Medialibrary.getInstance();
         return mId == 0 || !ml.isInitiated() ? null : nativeAddBookmark(ml, mId, time);
     }
@@ -145,8 +145,8 @@ public class MediaWrapperImpl extends MediaWrapper {
     private native void nativeSetMediaLongMetadata(Medialibrary ml, long id, int metaDataType, long metadataValue);
     private native void nativeSetMediaTitle(Medialibrary ml, long id, String name);
     private native boolean nativeSetMediaPlayCount(Medialibrary ml, long id, long playCount);
-    private native Bookmark[] nativeGetBookmarks(Medialibrary ml, long id);
-    private native Bookmark nativeAddBookmark(Medialibrary ml, long id, long time);
+    private native BookmarkBase[] nativeGetBookmarks(Medialibrary ml, long id);
+    private native BookmarkBase nativeAddBookmark(Medialibrary ml, long id, long time);
     private native boolean nativeRemoveBookmark(Medialibrary ml, long id, long time);
     private native boolean nativeRemoveAllBookmarks(Medialibrary ml, long id);
 }

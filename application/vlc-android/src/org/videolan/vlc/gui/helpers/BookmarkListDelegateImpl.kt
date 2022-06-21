@@ -41,29 +41,32 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
 import org.videolan.medialibrary.interfaces.media.Bookmark
+import org.videolan.medialibrary.interfaces.media.BookmarkBase
 import org.videolan.tools.setGone
 import org.videolan.tools.setVisible
 import org.videolan.vlc.BuildConfig
 import org.videolan.vlc.PlaybackService
 import org.videolan.vlc.R
 import org.videolan.vlc.gui.dialogs.RenameDialog
+import org.videolan.vlc.gui.video.BookmarkListDelegate
+import org.videolan.vlc.gui.video.VideoPlayerActivity
 import org.videolan.vlc.viewmodels.BookmarkModel
 
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
-class BookmarkListDelegate(val activity: FragmentActivity, val service: PlaybackService, private val bookmarkModel: BookmarkModel) :
-    LifecycleObserver, BookmarkAdapter.IBookmarkManager {
+open class BookmarkListDelegateImpl(val activity: VideoPlayerActivity, val service: PlaybackService, private val bookmarkModel: BookmarkModel) :
+    LifecycleObserver, BookmarkListDelegate {
 
-    lateinit var markerContainer: ConstraintLayout
+    override lateinit var markerContainer: ConstraintLayout
     private lateinit var adapter: BookmarkAdapter
     lateinit var bookmarkList: RecyclerView
     lateinit var rootView: ConstraintLayout
     private lateinit var emptyView: View
-    lateinit var visibilityListener: () -> Unit
-    val visible: Boolean
+    override lateinit var visibilityListener: () -> Unit
+    override val visible: Boolean
         get() = rootView.visibility != View.GONE
 
-    fun show() {
+    override fun show() {
         activity.findViewById<ViewStub>(R.id.bookmarks_stub)?.let {
             rootView = it.inflate() as ConstraintLayout
             bookmarkList = rootView.findViewById(R.id.bookmark_list)
@@ -123,7 +126,7 @@ class BookmarkListDelegate(val activity: FragmentActivity, val service: Playback
         visibilityListener.invoke()
     }
 
-    fun hide() {
+    override fun hide() {
         rootView.setGone()
         markerContainer.setGone()
         visibilityListener.invoke()
@@ -135,18 +138,6 @@ class BookmarkListDelegate(val activity: FragmentActivity, val service: Playback
         menu.inflate(R.menu.bookmark_options)
         menu.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.bookmark_rename -> {
-                    val dialog = RenameDialog.newInstance(bookmark)
-                    dialog.show(activity.supportFragmentManager, RenameDialog::class.simpleName)
-                    dialog.setListener { media, name ->
-                        activity.lifecycleScope.launch {
-                            val bookmarks = bookmarkModel.rename(media as Bookmark, name)
-                            adapter.update(bookmarks)
-                            bookmarkModel.refresh()
-                        }
-                    }
-                    true
-                }
                 R.id.bookmark_delete -> {
                     bookmarkModel.delete(bookmark)
                     true
@@ -161,7 +152,7 @@ class BookmarkListDelegate(val activity: FragmentActivity, val service: Playback
         service.setTime(item.time)
     }
 
-    fun setProgressHeight(y: Float) {
+    override fun setProgressHeight(y: Float) {
         val constraintSet = ConstraintSet()
         constraintSet.clone(rootView)
         constraintSet.setGuidelineBegin(R.id.progressbar_guideline, y.toInt())

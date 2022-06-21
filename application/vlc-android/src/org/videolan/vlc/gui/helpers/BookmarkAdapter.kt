@@ -44,7 +44,7 @@ import org.videolan.vlc.gui.DiffUtilAdapter
 
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
-class BookmarkAdapter(val bookmarkManager: IBookmarkManager) :
+open class BookmarkAdapter(val bookmarkManager: IBookmarkManager) :
     DiffUtilAdapter<Bookmark, BookmarkAdapter.ViewHolder>() {
     private val handler by lazy(LazyThreadSafetyMode.NONE) { Handler() }
 

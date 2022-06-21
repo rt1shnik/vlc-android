@@ -325,7 +325,7 @@ open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackS
 
     private var optionsDelegate: PlayerOptionsDelegate? = null
 
-    lateinit var bookmarkModel: BookmarkModel
+    open lateinit var bookmarkModel: BookmarkModel
 
     private val btReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
@@ -475,7 +475,7 @@ open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackS
             }
         }
 
-        bookmarkModel = BookmarkModel.get(this)
+        bookmarkModel = createBookmarksModel()
         overlayDelegate.playToPause = AnimatedVectorDrawableCompat.create(this, R.drawable.anim_play_pause_video)!!
         overlayDelegate.pauseToPlay = AnimatedVectorDrawableCompat.create(this, R.drawable.anim_pause_play_video)!!
 
@@ -495,6 +495,8 @@ open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackS
             }
         }
     }
+
+    open fun createBookmarksModel() : BookmarkModel = BookmarkModel.get(this)
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()

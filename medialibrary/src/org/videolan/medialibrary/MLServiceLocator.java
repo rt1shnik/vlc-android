@@ -5,7 +5,7 @@ import android.os.Parcel;
 
 import org.videolan.libvlc.interfaces.IMedia;
 import org.videolan.medialibrary.interfaces.Medialibrary;
-import org.videolan.medialibrary.interfaces.media.Bookmark;
+import org.videolan.medialibrary.interfaces.media.BookmarkBase;
 import org.videolan.medialibrary.interfaces.media.MediaWrapper;
 import org.videolan.medialibrary.media.BookmarkImpl;
 import org.videolan.medialibrary.media.MediaWrapperImpl;
@@ -33,7 +33,7 @@ public class MLServiceLocator {
         return new MediaWrapperImpl(in);
     }
 
-    public static Bookmark getAbstractBookmark(Parcel in) {
+    public static BookmarkBase getAbstractBookmark(Parcel in) {
         return new BookmarkImpl(in);
     }
 }

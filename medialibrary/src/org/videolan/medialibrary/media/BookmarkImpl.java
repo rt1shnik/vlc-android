@@ -27,10 +27,10 @@ package org.videolan.medialibrary.media;
 import android.os.Parcel;
 
 import org.videolan.medialibrary.interfaces.Medialibrary;
-import org.videolan.medialibrary.interfaces.media.Bookmark;
+import org.videolan.medialibrary.interfaces.media.BookmarkBase;
 
 @SuppressWarnings("JniMissingFunction")
-public class BookmarkImpl extends Bookmark {
+public class BookmarkImpl extends BookmarkBase {
 
     public BookmarkImpl(long id, String name, String description, long mediaId, long time) {
         super(id, name,description, mediaId, time);
