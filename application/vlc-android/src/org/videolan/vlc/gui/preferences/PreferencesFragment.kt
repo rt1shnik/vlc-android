@@ -62,7 +62,6 @@ class PreferencesFragment : BasePreferenceFragment(), SharedPreferences.OnShared
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findPreference<Preference>("extensions_category")?.isVisible = BuildConfig.DEBUG
         arguments?.getParcelable<PreferenceItem>(EXTRA_PREF_END_POINT)?.let { endPoint ->
             when (endPoint.parentScreen) {
                 R.xml.preferences_ui -> loadFragment(PreferencesUi().apply {
