@@ -93,15 +93,6 @@ class PreferencesFragment : BasePreferenceFragment(), SharedPreferences.OnShared
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
-            "directories" -> {
-                if (Medialibrary.getInstance().isWorking) {
-                    UiTools.snacker(requireActivity(), getString(R.string.settings_ml_block_scan))
-                } else {
-                    val activity = requireActivity()
-                    activity.setResult(RESULT_RESTART)
-                }
-                return true
-            }
             "ui_category" -> loadFragment(PreferencesUi())
             "video_category" -> loadFragment(PreferencesVideo())
             "subtitles_category" -> loadFragment(PreferencesSubtitles())

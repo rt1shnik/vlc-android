@@ -48,11 +48,6 @@ class PreferencesFragmentUITest: BasePreferenceUITest() {
     }
 
     @Test
-    fun clickOnToggleRescan_keyToggled() {
-        checkToggleWorks(KEY_MEDIALIBRARY_AUTO_RESCAN, settings)
-    }
-
-    @Test
     fun checkPipModeSetting() {
         val key = KEY_VIDEO_APP_SWITCH
 

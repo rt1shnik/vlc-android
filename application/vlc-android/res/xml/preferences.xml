@@ -2,21 +2,7 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
                                       xmlns:app="http://schemas.android.com/apk/res-auto"
                                       android:title="@string/preferences">
-
-    <PreferenceCategory android:title="@string/medialibrary">
-        <PreferenceScreen
-                android:key="directories"
-                android:summary="@string/directories_summary"
-                android:title="@string/medialibrary_directories"/>
-
-        <CheckBoxPreference
-                app:singleLineTitle="false"
-                android:defaultValue="true"
-                android:key="auto_rescan"
-                android:summary="@string/auto_rescan_summary"
-                android:title="@string/auto_rescan"/>
-    </PreferenceCategory>
-
+    
     <PreferenceCategory android:title="@string/video_prefs_category">
         <ListPreference
                 android:key="video_action_switch"
