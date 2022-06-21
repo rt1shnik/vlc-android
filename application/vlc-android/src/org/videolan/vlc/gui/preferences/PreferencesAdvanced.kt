@@ -103,10 +103,6 @@ class PreferencesAdvanced : BasePreferenceFragment(), SharedPreferences.OnShared
                 startActivity(intent)
                 return true
             }
-            "quit_app" -> {
-                android.os.Process.killProcess(android.os.Process.myPid())
-                return true
-            }
             "optional_features" -> {
                 loadFragment(PreferencesOptional())
                 return true
