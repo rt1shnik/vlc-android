@@ -19,10 +19,8 @@ object Settings : SingletonHolder<SharedPreferences, Context>({ init(it.applicat
 
     var showVideoThumbs = true
     var listTitleEllipsize = 0
-    var overrideTvUI = false
     var videoHudDelay = 2
     var includeMissing = true
-    var showHeaders = true
     var showAudioTrackInfo = false
     var videoJumpDelay = 10
     var videoLongJumpDelay = 20
@@ -40,7 +38,6 @@ object Settings : SingletonHolder<SharedPreferences, Context>({ init(it.applicat
         videoHudDelay = prefs.getInt(VIDEO_HUD_TIMEOUT, 4)
         device = DeviceInfo(context)
         includeMissing = prefs.getBoolean(KEY_INCLUDE_MISSING, true)
-        showHeaders = prefs.getBoolean(KEY_SHOW_HEADERS, true)
         showAudioTrackInfo = prefs.getBoolean(KEY_SHOW_TRACK_INFO, false)
         videoJumpDelay = prefs.getInt(KEY_VIDEO_JUMP_DELAY, 10)
         videoLongJumpDelay = prefs.getInt(KEY_VIDEO_LONG_JUMP_DELAY, 20)
@@ -68,7 +65,6 @@ const val KEY_CURRENT_SETTINGS_VERSION = "current_settings_version"
 
 // Keys
 const val KEY_ARTISTS_SHOW_ALL = "artists_show_all"
-const val KEY_SHOW_HEADERS = "show_headers"
 const val KEY_APP_THEME = "app_theme"
 const val KEY_BLACK_THEME = "enable_black_theme"
 const val KEY_DAYNIGHT = "daynight"
