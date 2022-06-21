@@ -97,16 +97,6 @@ class PreferencesUIUITest: BasePreferenceUITest() {
     }
 
     @Test
-    fun checkSeenVideoMarkerSetting_dueUpdateSeenMedia() {
-        val key = "media_seen"
-
-        checkToggleWorks(key, settings)
-
-        intentsTestRule.finishActivity()
-        assertThat(intentsTestRule.activityResult.resultCode, equalTo(RESULT_UPDATE_SEEN_MEDIA))
-    }
-
-    @Test
     fun checkVideoPlaylistMode() {
         val key = FORCE_PLAY_ALL
 
@@ -126,13 +116,6 @@ class PreferencesUIUITest: BasePreferenceUITest() {
     @Test
     fun checkAudioCoverBlurredBackgroundSetting() {
         val key = "blurred_cover_background"
-
-        checkToggleWorks(key, settings)
-    }
-
-    @Test
-    fun checkLastAudioResumePlayHintSetting() {
-        val key = "audio_resume_card"
 
         checkToggleWorks(key, settings)
     }

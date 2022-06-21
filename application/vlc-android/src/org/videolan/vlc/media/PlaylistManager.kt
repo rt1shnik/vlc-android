@@ -935,7 +935,6 @@ open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.Even
                         saveCurrentMedia()
                         newMedia = false
                         if (player.hasRenderer || !player.isVideoPlaying()) showAudioPlayer.value = true
-                        savePlaycount(mw)
                         if (mw.type == MediaWrapper.TYPE_STREAM && (mw.title != player.mediaplayer.media?.getMeta(IMedia.Meta.Title, true))) {
                             // used for initial metadata update. We avoid the metadata load when the initial MediaPlayer.Event.ESSelected is sent to avoid race conditions
                             refreshTrackMeta(mw)
@@ -1008,27 +1007,6 @@ open class PlaylistManager(val service: PlaybackService) : MediaWrapperList.Even
         mw.updateMeta(player.mediaplayer)
         service.onMediaListChanged()
         service.showNotification()
-    }
-
-    private suspend fun savePlaycount(mw: MediaWrapper) {
-        if (settings.getBoolean(PLAYBACK_HISTORY, true)) withContext(Dispatchers.IO) {
-            var id = mw.id
-            if (id == 0L) {
-                var internalMedia = medialibrary.findMedia(mw)
-                if (internalMedia != null && internalMedia.id != 0L) {
-                    id = internalMedia.id
-                } else {
-                    internalMedia = medialibrary.addMedia(mw.uri.toString(), mw.length)
-                    if (internalMedia != null) {
-                        id = internalMedia.id
-                        getCurrentMedia()?.let { currentMedia -> if (internalMedia.title != currentMedia.title) internalMedia.rename(currentMedia.title) }
-                    }
-                }
-            }
-            val time = player.getCurrentTime()
-            val canSwitchToVideo = player.canSwitchToVideo()
-            if (id != 0L && mw.type != MediaWrapper.TYPE_VIDEO && !canSwitchToVideo && !mw.isPodcast) if (mw.length == 0L) medialibrary.setLastPosition(id, player.lastPosition) else  medialibrary.setLastTime(id, time)
-        }
     }
 
     internal fun isAudioList() = !player.isVideoPlaying() && mediaList.isAudioList

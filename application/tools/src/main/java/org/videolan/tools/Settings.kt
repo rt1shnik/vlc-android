@@ -17,13 +17,8 @@ import org.videolan.tools.Settings.init
 @ObsoleteCoroutinesApi
 object Settings : SingletonHolder<SharedPreferences, Context>({ init(it.applicationContext) }) {
 
-    var showVideoThumbs = true
-    var tvUI = false
     var listTitleEllipsize = 0
-    var overrideTvUI = false
     var videoHudDelay = 2
-    var includeMissing = true
-    var showHeaders = true
     var showAudioTrackInfo = false
     var videoJumpDelay = 10
     var videoLongJumpDelay = 20
@@ -36,13 +31,9 @@ object Settings : SingletonHolder<SharedPreferences, Context>({ init(it.applicat
 
     fun init(context: Context) : SharedPreferences{
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        showVideoThumbs = prefs.getBoolean(SHOW_VIDEO_THUMBNAILS, true)
-        tvUI = prefs.getBoolean(PREF_TV_UI, false)
         listTitleEllipsize = prefs.getString(LIST_TITLE_ELLIPSIZE, "0")?.toInt() ?: 0
         videoHudDelay = prefs.getInt(VIDEO_HUD_TIMEOUT, 4)
         device = DeviceInfo(context)
-        includeMissing = prefs.getBoolean(KEY_INCLUDE_MISSING, true)
-        showHeaders = prefs.getBoolean(KEY_SHOW_HEADERS, true)
         showAudioTrackInfo = prefs.getBoolean(KEY_SHOW_TRACK_INFO, false)
         videoJumpDelay = prefs.getInt(KEY_VIDEO_JUMP_DELAY, 10)
         videoLongJumpDelay = prefs.getInt(KEY_VIDEO_LONG_JUMP_DELAY, 20)
@@ -70,15 +61,11 @@ const val KEY_CURRENT_SETTINGS_VERSION = "current_settings_version"
 
 // Keys
 const val KEY_ARTISTS_SHOW_ALL = "artists_show_all"
-const val KEY_SHOW_HEADERS = "show_headers"
 const val KEY_APP_THEME = "app_theme"
 const val KEY_BLACK_THEME = "enable_black_theme"
 const val KEY_DAYNIGHT = "daynight"
-const val SHOW_VIDEO_THUMBNAILS = "show_video_thumbnails"
 const val KEY_VIDEO_CONFIRM_RESUME = "video_confirm_resume"
-const val KEY_MEDIALIBRARY_AUTO_RESCAN = "auto_rescan"
 const val KEY_TV_ONBOARDING_DONE = "key_tv_onboarding_done"
-const val KEY_INCLUDE_MISSING = "include_missing"
 
 //UI
 const val LIST_TITLE_ELLIPSIZE = "list_title_ellipsize"
@@ -105,7 +92,6 @@ const val KEY_SHOW_TRACK_INFO = "show_track_info"
 
 const val PREF_TIPS_SHOWN = "video_player_tips_shown"
 
-const val PREF_TV_UI = "tv_ui"
 const val FORCE_PLAY_ALL = "force_play_all"
 
 const val SCREEN_ORIENTATION = "screen_orientation"
@@ -143,13 +129,11 @@ const val VIDEO_HUD_TIMEOUT = "video_hud_timeout_in_s"
 const val RESULT_RESCAN = Activity.RESULT_FIRST_USER + 1
 const val RESULT_RESTART = Activity.RESULT_FIRST_USER + 2
 const val RESULT_RESTART_APP = Activity.RESULT_FIRST_USER + 3
-const val RESULT_UPDATE_SEEN_MEDIA = Activity.RESULT_FIRST_USER + 4
 const val RESULT_UPDATE_ARTISTS = Activity.RESULT_FIRST_USER + 5
 
 const val BETA_WELCOME = "beta_welcome"
 const val CRASH_DONT_ASK_AGAIN = "crash_dont_ask_again"
 
-const val PLAYBACK_HISTORY = "playback_history"
 const val RESUME_PLAYBACK = "resume_playback"
 const val AUDIO_DUCKING = "audio_ducking"
 

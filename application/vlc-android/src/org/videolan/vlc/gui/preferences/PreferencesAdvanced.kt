@@ -103,23 +103,6 @@ class PreferencesAdvanced : BasePreferenceFragment(), SharedPreferences.OnShared
                 startActivity(intent)
                 return true
             }
-            "clear_app_data" -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    val dialog = ConfirmDeleteDialog.newInstance(title = getString(R.string.clear_app_data), description = getString(R.string.clear_app_data_message), buttonText = getString(R.string.clear))
-                    dialog.show(requireActivity().supportFragmentManager, RenameDialog::class.simpleName)
-                    dialog.setListener { (requireActivity().getSystemService(ACTIVITY_SERVICE) as ActivityManager).clearApplicationUserData() }
-                } else {
-                    val i = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                    i.addCategory(Intent.CATEGORY_DEFAULT)
-                    i.data = Uri.parse("package:" + requireActivity().applicationContext.packageName)
-                    startActivity(i)
-                }
-                return true
-            }
-            "quit_app" -> {
-                android.os.Process.killProcess(android.os.Process.myPid())
-                return true
-            }
             "optional_features" -> {
                 loadFragment(PreferencesOptional())
                 return true

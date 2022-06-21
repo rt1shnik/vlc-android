@@ -3,20 +3,6 @@
                                       xmlns:app="http://schemas.android.com/apk/res-auto"
                                       android:title="@string/preferences">
 
-    <PreferenceCategory android:title="@string/medialibrary">
-        <PreferenceScreen
-                android:key="directories"
-                android:summary="@string/directories_summary"
-                android:title="@string/medialibrary_directories"/>
-
-        <CheckBoxPreference
-                app:singleLineTitle="false"
-                android:defaultValue="true"
-                android:key="auto_rescan"
-                android:summary="@string/auto_rescan_summary"
-                android:title="@string/auto_rescan"/>
-    </PreferenceCategory>
-
     <PreferenceCategory android:title="@string/video_prefs_category">
         <ListPreference
                 android:key="video_action_switch"
@@ -41,15 +27,6 @@
                 android:title="@string/screen_orientation"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/history">
-        <CheckBoxPreference
-                app:singleLineTitle="false"
-                android:defaultValue="true"
-                android:key="playback_history"
-                android:summary="@string/playback_history_summary"
-                android:title="@string/playback_history_title"/>
-    </PreferenceCategory>
-
     <PreferenceCategory android:title="@string/extra_prefs_category">
         <Preference
                 android:title="@string/interface_prefs_screen"
@@ -70,9 +47,6 @@
         <Preference
                 android:title="@string/casting_category"
                 android:key="casting_category"/>
-        <Preference
-                android:title="@string/extensions_prefs_category"
-                android:key="extensions_category"/>
         <Preference
                 android:title="@string/advanced_prefs_category"
                 android:key="adv_category"

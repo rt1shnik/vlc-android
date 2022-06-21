@@ -101,22 +101,6 @@ class PreferencesUi : BasePreferenceFragment(), SharedPreferences.OnSharedPrefer
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         if (preference.key == null) return false
         when (preference.key) {
-            PREF_TV_UI -> {
-                Settings.tvUI = (preference as TwoStatePreference).isChecked
-                (activity as PreferencesActivity).setRestartApp()
-                return true
-            }
-            SHOW_VIDEO_THUMBNAILS -> {
-                Settings.showVideoThumbs = (preference as TwoStatePreference).isChecked
-                (activity as PreferencesActivity).setRestart()
-                return true
-            }
-            KEY_SHOW_HEADERS -> {
-                Settings.showHeaders = (preference as TwoStatePreference).isChecked
-                (activity as PreferencesActivity).setRestart()
-                return true
-            }
-            "media_seen" -> requireActivity().setResult(RESULT_UPDATE_SEEN_MEDIA)
             KEY_ARTISTS_SHOW_ALL -> (activity as PreferencesActivity).updateArtists()
         }
         return super.onPreferenceTreeClick(preference)
@@ -142,10 +126,6 @@ class PreferencesUi : BasePreferenceFragment(), SharedPreferences.OnSharedPrefer
                 } catch (e: NumberFormatException) {
                     6
                 }
-                (activity as PreferencesActivity).setRestart()
-            }
-            "include_missing" -> {
-                Settings.includeMissing = sharedPreferences.getBoolean(key, true)
                 (activity as PreferencesActivity).setRestart()
             }
         }

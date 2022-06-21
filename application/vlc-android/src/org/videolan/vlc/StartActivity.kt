@@ -123,12 +123,11 @@ class StartActivity : FragmentActivity() {
         /* Check if it's the first run */
         val firstRun = savedVersionNumber == -1
         val upgrade = firstRun || savedVersionNumber != currentVersionNumber
-        val tv = showTvUi()
-        if (upgrade && (tv || !firstRun)) settings.putSingle(PREF_FIRST_RUN, currentVersionNumber)
+        if (upgrade && !firstRun) settings.putSingle(PREF_FIRST_RUN, currentVersionNumber)
         val removeOldDevices = savedVersionNumber in 3028201..3028399
         // Route search query
         if (Intent.ACTION_SEARCH == action || ACTION_SEARCH_GMS == action) {
-            intent.setClassName(applicationContext, if (tv) TV_SEARCH_ACTIVITY else MOBILE_SEARCH_ACTIVITY)
+            intent.setClassName(applicationContext, MOBILE_SEARCH_ACTIVITY)
             startActivity(intent)
             finish()
             return
@@ -143,7 +142,7 @@ class StartActivity : FragmentActivity() {
                 if (target == R.id.ml_menu_last_playlist)
                     PlaybackService.loadLastAudio(this)
                 else
-                    startApplication(tv, firstRun, upgrade, target, removeOldDevices)
+                    startApplication(firstRun, upgrade, target, removeOldDevices)
             }
         }
         FileUtils.copyLua(applicationContext, upgrade)
@@ -158,7 +157,7 @@ class StartActivity : FragmentActivity() {
         }
     }
 
-    private fun startApplication(tv: Boolean, firstRun: Boolean, upgrade: Boolean, target: Int, removeDevices:Boolean = false) {
+    private fun startApplication(firstRun: Boolean, upgrade: Boolean, target: Int, removeDevices:Boolean = false) {
         val settings = Settings.getInstance(this@StartActivity)
         // Start Medialibrary from background to workaround Dispatchers.Main causing ANR
         // cf https://github.com/Kotlin/kotlinx.coroutines/issues/878
@@ -173,10 +172,9 @@ class StartActivity : FragmentActivity() {
                 }
             }.start()
             val mainIntent = Intent(Intent.ACTION_VIEW)
-                    .setClassName(applicationContext, if (tv) TV_MAIN_ACTIVITY else MOBILE_MAIN_ACTIVITY)
+                    .setClassName(applicationContext, MOBILE_MAIN_ACTIVITY)
                     .putExtra(EXTRA_FIRST_RUN, firstRun)
                     .putExtra(EXTRA_UPGRADE, upgrade)
-            if (tv && intent.hasExtra(EXTRA_PATH)) mainIntent.putExtra(EXTRA_PATH, intent.getStringExtra(EXTRA_PATH))
             if (target != 0) mainIntent.putExtra(EXTRA_TARGET, target)
             startActivity(mainIntent)
         }
@@ -198,13 +196,5 @@ class StartActivity : FragmentActivity() {
             else -> withContext(Dispatchers.IO) { FileUtils.getUri(intent.data)}?.let { MediaUtils.openMediaNoUi(it) }
         }
         finish()
-    }
-
-    private fun showTvUi(): Boolean {
-        val settings = Settings.getInstance(this)
-        //because the [VersionMigration] is done after the first call to this method, we have to keep the old implementation for people coming from an older version of the app
-        if (settings.getInt(KEY_CURRENT_SETTINGS_VERSION, 0) < 5) return AndroidDevices.isAndroidTv || !AndroidDevices.isChromeBook && !AndroidDevices.hasTsp ||
-                settings.getBoolean("tv_ui", false)
-        return  settings.getBoolean("tv_ui", false)
     }
 }

@@ -79,7 +79,6 @@ class TvScreenhotsInstrumentedTest : BaseUITest() {
 
     override fun beforeTest() {
         Screengrab.setDefaultScreenshotStrategy(UiAutomatorScreenshotStrategy())
-        Settings.getInstance(context).edit().putBoolean("auto_rescan", false).putBoolean("audio_resume_card", false).commit()
         val intent = Intent().apply {
             putExtra(EXTRA_TARGET, R.id.nav_audio)
         }
