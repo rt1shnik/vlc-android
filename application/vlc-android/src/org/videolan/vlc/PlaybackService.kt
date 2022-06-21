@@ -74,9 +74,6 @@ import org.videolan.vlc.gui.video.PopupManager
 import org.videolan.vlc.gui.video.VideoPlayerActivity
 import org.videolan.vlc.media.*
 import org.videolan.vlc.util.*
-import org.videolan.vlc.widget.VLCAppWidgetProvider
-import org.videolan.vlc.widget.VLCAppWidgetProviderBlack
-import org.videolan.vlc.widget.VLCAppWidgetProviderWhite
 import videolan.org.commontools.LiveEvent
 import java.util.*
 import kotlin.math.abs
@@ -119,7 +116,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
     private var lastChapter = 0
     private var lastChaptersCount = 0
     private var lastParentId = ""
-    private var widget = 0
     /**
      * Last widget position update timestamp
      */
@@ -154,9 +150,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
                     executeUpdate()
                     showNotification()
                 }
-                VLCAppWidgetProvider.ACTION_WIDGET_INIT -> updateWidget()
-                VLCAppWidgetProvider.ACTION_WIDGET_ENABLED, VLCAppWidgetProvider.ACTION_WIDGET_DISABLED -> updateHasWidget()
-                VLCAppWidgetProvider.ACTION_WIDGET_ENABLED, VLCAppWidgetProvider.ACTION_WIDGET_DISABLED -> updateHasWidget()
                 AudioManager.ACTION_AUDIO_BECOMING_NOISY -> if (detectHeadset) {
                     if (BuildConfig.DEBUG) Log.i(TAG, "Becoming noisy")
                     wasPlaying = isPlaying
@@ -202,7 +195,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
                 if (length == 0L) position = (NO_LENGTH_PROGRESS_MAX.toLong() * event.positionChanged).toLong()
                 if (getTime() < 1000L && getTime() < lastTime) publishState()
                 lastTime = getTime()
-                if (widget != 0) updateWidgetPosition(event.positionChanged)
                 val curChapter = chapterIdx
                 if (lastChapter != curChapter) {
                     executeUpdate()
@@ -597,14 +589,10 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
         val pm = applicationContext.getSystemService<PowerManager>()!!
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG)
 
-        updateHasWidget()
         if (!this::mediaSession.isInitialized) initMediaSession()
 
         val filter = IntentFilter().apply {
             priority = Integer.MAX_VALUE
-            addAction(VLCAppWidgetProvider.ACTION_WIDGET_INIT)
-            addAction(VLCAppWidgetProvider.ACTION_WIDGET_ENABLED)
-            addAction(VLCAppWidgetProvider.ACTION_WIDGET_DISABLED)
             addAction(Intent.ACTION_HEADSET_PLUG)
             addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
             addAction(ACTION_CAR_MODE_EXIT)
@@ -636,15 +624,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
                 is HideNotification -> hideNotificationInternal(update.remove)
                 UpdateMeta -> updateMetadataInternal()
             }
-        }
-    }
-
-    private fun updateHasWidget() {
-        val manager = AppWidgetManager.getInstance(this) ?: return
-        widget = when {
-            manager.getAppWidgetIds(ComponentName(this, VLCAppWidgetProviderWhite::class.java)).isNotEmpty() -> 1
-            manager.getAppWidgetIds(ComponentName(this, VLCAppWidgetProviderBlack::class.java)).isNotEmpty() -> 2
-            else -> 0
         }
     }
 
@@ -789,7 +768,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
 
     fun executeUpdate(pubState: Boolean = false) {
         cbActor.trySend(CbUpdate)
-        updateWidget()
         updateMetadata()
         broadcastMetadata()
         if (pubState)
@@ -1121,7 +1099,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
 
     fun notifyTrackChanged() {
         updateMetadata()
-        updateWidget()
         broadcastMetadata()
     }
 
@@ -1140,59 +1117,6 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
     fun shuffle() {
         playlistManager.shuffle()
         publishState()
-    }
-
-    private fun updateWidget() {
-        if (widget != 0 && !isVideoPlaying) {
-            updateWidgetState()
-            updateWidgetCover()
-        }
-    }
-
-    private fun sendWidgetBroadcast(intent: Intent) {
-        intent.component = ComponentName(this@PlaybackService, if (widget == 1) VLCAppWidgetProviderWhite::class.java else VLCAppWidgetProviderBlack::class.java)
-        sendBroadcast(intent)
-    }
-
-    private fun updateWidgetState() {
-        val media = playlistManager.getCurrentMedia()
-        val widgetIntent = Intent(VLCAppWidgetProvider.ACTION_WIDGET_UPDATE)
-        if (playlistManager.hasCurrentMedia()) {
-            widgetIntent.putExtra("title", media!!.title)
-            widgetIntent.putExtra("artist", if (media.nowPlaying != null)
-                media.nowPlaying
-            else
-                MediaUtils.getMediaArtist(this@PlaybackService, media))
-        } else {
-            widgetIntent.putExtra("title", getString(R.string.widget_default_text))
-            widgetIntent.putExtra("artist", "")
-        }
-        widgetIntent.putExtra("isplaying", isPlaying)
-        lifecycleScope.launch(Dispatchers.Default) { sendWidgetBroadcast(widgetIntent) }
-    }
-
-    private fun updateWidgetCover() {
-        val mw = playlistManager.getCurrentMedia()
-        val newWidgetCover = mw?.artworkMrl
-        if (currentWidgetCover != newWidgetCover) {
-            currentWidgetCover = newWidgetCover
-            lifecycleScope.launch(Dispatchers.Default) {
-                sendWidgetBroadcast(Intent(VLCAppWidgetProvider.ACTION_WIDGET_UPDATE_COVER)
-                        .putExtra("artworkMrl", newWidgetCover))
-            }
-        }
-    }
-
-    private fun updateWidgetPosition(pos: Float) {
-        val mw = playlistManager.getCurrentMedia()
-        if (mw == null || widget == 0 || isVideoPlaying) return
-        // no more than one widget mUpdateMeta for each 1/50 of the song
-        val timestamp = System.currentTimeMillis()
-        if (!playlistManager.hasCurrentMedia() || timestamp - widgetPositionTimestamp < mw.length / 50)
-            return
-        widgetPositionTimestamp = timestamp
-        sendWidgetBroadcast(Intent(VLCAppWidgetProvider.ACTION_WIDGET_UPDATE_POSITION)
-                .putExtra("position", pos))
     }
 
     private fun broadcastMetadata() {
