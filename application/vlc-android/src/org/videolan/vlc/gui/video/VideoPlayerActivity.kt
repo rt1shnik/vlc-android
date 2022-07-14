@@ -419,7 +419,7 @@ open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackS
         overlayDelegate.dimStatusBar(true)
         handler.sendEmptyMessageDelayed(LOADING_ANIMATION, LOADING_ANIMATION_DELAY.toLong())
 
-        switchingView = intent.hasExtra(FROM_EXTERNAL)
+        switchingView = intent.hasExtra(SWITCHING_VIEW)
 
         askResume = settings.getString(KEY_VIDEO_CONFIRM_RESUME, "0") == "2"
         sDisplayRemainingTime = settings.getBoolean(KEY_REMAINING_TIME_DISPLAY, false)
@@ -2134,6 +2134,7 @@ open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackS
         private const val EXTRA_DURATION = "extra_duration"
         private const val EXTRA_URI = "extra_uri"
         const val FROM_EXTERNAL = "from_external"
+        const val SWITCHING_VIEW = "switching_view"
         private const val RESULT_CONNECTION_FAILED = Activity.RESULT_FIRST_USER + 1
         private const val RESULT_PLAYBACK_ERROR = Activity.RESULT_FIRST_USER + 2
         private const val RESULT_VIDEO_TRACK_LOST = Activity.RESULT_FIRST_USER + 3

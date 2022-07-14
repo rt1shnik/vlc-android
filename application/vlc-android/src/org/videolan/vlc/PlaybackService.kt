@@ -217,7 +217,7 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
         get() {
             return when {
                 playlistManager.player.isVideoPlaying() -> {//PIP
-                    val notificationIntent = Intent(this, playerClass).apply { putExtra(VideoPlayerActivity.FROM_EXTERNAL, true) }
+                    val notificationIntent = Intent(this, playerClass).apply { putExtra(VideoPlayerActivity.SWITCHING_VIEW, true) }
                     PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                 }
                 playlistManager.videoBackground || canSwitchToVideo() && !currentMediaHasFlag(MediaWrapper.MEDIA_FORCE_AUDIO) -> {//resume video playback
@@ -226,7 +226,7 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
                     PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                 }
                 else -> { /* Show audio player */
-                    val notificationIntent = Intent(this, playerClass).apply { putExtra(VideoPlayerActivity.FROM_EXTERNAL, true) }
+                    val notificationIntent = Intent(this, playerClass).apply { putExtra(VideoPlayerActivity.SWITCHING_VIEW, true) }
                     PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                 }
             }

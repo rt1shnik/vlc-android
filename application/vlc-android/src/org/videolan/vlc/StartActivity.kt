@@ -189,12 +189,22 @@ class StartActivity : FragmentActivity() {
         }
         if (Permissions.canReadStorage(applicationContext) || getStoragePermission()) when {
             intent.type?.startsWith("video") == true -> try {
-                startActivity(intent.setClass(this@StartActivity, VideoPlayerActivity::class.java).apply { putExtra(VideoPlayerActivity.FROM_EXTERNAL, true) })
+                val app = AppContextProvider.appContext
+                val playerClass = if (app is ClassProvider) {
+                    app.playerClass
+                } else {
+                    VideoPlayerActivity::class.java
+                }
+                startActivity(intent.setClass(this@StartActivity, playerClass).apply { putExtra(VideoPlayerActivity.FROM_EXTERNAL, true) })
             } catch (ex: SecurityException) {
                 intent.data?.let { MediaUtils.openMediaNoUi(it) }
             }
             else -> withContext(Dispatchers.IO) { FileUtils.getUri(intent.data)}?.let { MediaUtils.openMediaNoUi(it) }
         }
         finish()
+    }
+
+    interface ClassProvider {
+        val playerClass: Class<*>
     }
 }
