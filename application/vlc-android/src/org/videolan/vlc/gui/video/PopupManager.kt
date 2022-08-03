@@ -69,7 +69,6 @@ class PopupManager constructor(private val service: PlaybackService) : PlaybackS
     }
 
     fun removePopup() {
-        hideNotification()
         if (rootView == null) return
         service.removeCallback(this)
         val vlcVout = service.vout
@@ -196,14 +195,12 @@ class PopupManager constructor(private val service: PlaybackService) : PlaybackS
                     if (!alwaysOn) rootView!!.keepScreenOn = true
                     playPauseButton.setImageResource(R.drawable.ic_popup_pause)
                 }
-                showNotification()
             }
             MediaPlayer.Event.Paused -> {
                 if (rootView != null) {
                     if (!alwaysOn) rootView!!.keepScreenOn = false
                     playPauseButton.setImageResource(R.drawable.ic_popup_play)
                 }
-                showNotification()
             }
         }
     }
@@ -243,36 +240,6 @@ class PopupManager constructor(private val service: PlaybackService) : PlaybackS
         service.stop()
     }
 
-    private fun showNotification() {
-        val piStop = service.getPendingIntent(Intent(ACTION_REMOTE_STOP))
-        val builder = NotificationCompat.Builder(service, MISC_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notif_video)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setContentTitle(service.title)
-                .setContentText(service.getString(R.string.popup_playback))
-                .setAutoCancel(false)
-                .setOngoing(true)
-                .setContentIntent(service.sessionPendingIntent)
-                .setDeleteIntent(piStop)
-
-        //Switch
-        val notificationIntent = Intent(ACTION_REMOTE_SWITCH_VIDEO)
-        val piExpand = service.getPendingIntent(notificationIntent)
-        //PLay Pause
-        val piPlay = service.getPendingIntent(Intent(ACTION_REMOTE_PLAYPAUSE))
-
-        if (service.isPlaying)
-            builder.addAction(R.drawable.ic_popup_pause, service.getString(R.string.pause), piPlay)
-        else
-            builder.addAction(R.drawable.ic_popup_play, service.getString(R.string.play), piPlay)
-        builder.addAction(R.drawable.ic_popup_fullscreen, service.getString(R.string.popup_expand), piExpand)
-        service.startForeground(42, builder.build())
-    }
-
-    private fun hideNotification() {
-        service.stopForeground(true)
-    }
-
     override fun onSurfacesCreated(vlcVout: IVLCVout) {
         service.setVideoAspectRatio(null)
         service.setVideoScale(0f)
@@ -282,7 +249,6 @@ class PopupManager constructor(private val service: PlaybackService) : PlaybackS
             playPauseButton!!.setImageResource(if (service.isPlaying) R.drawable.ic_popup_pause else R.drawable.ic_popup_play)
         } else
             service.playIndex(service.currentMediaPosition)
-        showNotification()
     }
 
     override fun onSurfacesDestroyed(vlcVout: IVLCVout) {
