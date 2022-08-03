@@ -33,6 +33,7 @@ import org.videolan.vlc.media.PlayerController
 private const val ACTION_AUDIO_DELAY = 2
 private const val ACTION_SPU_DELAY = 3
 
+private const val ID_PLAY_AS_AUDIO = 0L
 private const val ID_SLEEP = 1L
 private const val ID_JUMP_TO = 2L
 private const val ID_PLAY_AS_VIDEO = 3L
@@ -151,6 +152,7 @@ open class PlayerOptionsDelegate(val activity: FragmentActivity, val service: Pl
             ID_SLEEP -> {
                 showFragment(ID_SLEEP)
             }
+            ID_PLAY_AS_AUDIO -> (activity as VideoPlayerActivity).switchToAudioMode(true)
             ID_POPUP_VIDEO -> {
                 (activity as VideoPlayerActivity).switchToPopup()
                 hide()

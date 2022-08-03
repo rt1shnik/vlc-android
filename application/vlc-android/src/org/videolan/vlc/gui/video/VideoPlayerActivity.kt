@@ -233,7 +233,8 @@ open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackS
                     AUDIO_SERVICE_CONNECTION_FAILED -> exit(RESULT_CONNECTION_FAILED)
                     RESET_BACK_LOCK -> lockBackButton = true
                     CHECK_VIDEO_TRACKS -> if (videoTracksCount < 1 && audioTracksCount > 0) {
-                        Log.i(TAG, "No video track")
+                        Log.i(TAG, "No video track, open in audio mode")
+                        switchToAudioMode(true)
                     }
                     LOADING_ANIMATION -> startLoading()
                     HIDE_INFO -> overlayDelegate.hideOverlay(true)
@@ -729,6 +730,11 @@ open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackS
 
         unregisterReceiver(btReceiver)
         alertDialog?.dismiss()
+        val playVideoInBackground = "1" == settings.getString(KEY_VIDEO_APP_SWITCH, "0")
+        if (displayManager.isPrimary && !isFinishing && service?.isPlaying == true
+                && playVideoInBackground) {
+            switchToAudioMode(false)
+        }
 
         cleanUI()
         stopPlayback()
@@ -1470,6 +1476,11 @@ open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackS
     override fun recreate() {
         handler.removeCallbacks(switchAudioRunnable)
         super.recreate()
+    }
+
+    fun switchToAudioMode(showUI: Boolean) {
+        if (service == null) return
+        switchingView = true
     }
 
     override fun isInPictureInPictureMode(): Boolean {
