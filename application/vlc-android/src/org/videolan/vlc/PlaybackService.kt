@@ -660,6 +660,9 @@ open class PlaybackService : MediaBrowserServiceCompat(), LifecycleOwner, Corout
                     playlistManager.switchToVideo()
                 }
             }
+            ACTION_CLOSE_PIP -> {
+                removePopup()
+            }
         }
         return Service.START_NOT_STICKY
     }

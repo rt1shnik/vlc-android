@@ -56,6 +56,7 @@ val ACTION_REMOTE_GENERIC = "remote.".buildPkgString()
 @JvmField val ACTION_REMOTE_PLAYPAUSE = "${ACTION_REMOTE_GENERIC}PlayPause"
 @JvmField val ACTION_REMOTE_PLAY = "${ACTION_REMOTE_GENERIC}Play"
 @JvmField val ACTION_REMOTE_BACKWARD = "${ACTION_REMOTE_GENERIC}Backward"
+@JvmField val ACTION_CLOSE_PIP = "${ACTION_REMOTE_GENERIC}ClosesPiP"
 @JvmField val CUSTOM_ACTION = "CustomAction".buildPkgString()
 @JvmField val CUSTOM_ACTION_BOOKMARK = "bookmark".buildPkgString()
 @JvmField val CUSTOM_ACTION_FAST_FORWARD = "fast_forward".buildPkgString()
