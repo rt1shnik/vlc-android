@@ -793,17 +793,21 @@ open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackS
                 } else
                     vlcVout.detachViews()
             }
-            val mediaPlayer = mediaplayer
             if (!displayManager.isOnRenderer) videoLayout?.let {
-                mediaPlayer.attachViews(it, displayManager, true, false)
-                val size = if (isBenchmark) MediaPlayer.ScaleType.SURFACE_FILL else MediaPlayer.ScaleType.values()[settings.getInt(VIDEO_RATIO, MediaPlayer.ScaleType.SURFACE_BEST_FIT.ordinal)]
-                mediaPlayer.videoScale = size
+                attachVideoLayout()
             }
 
             initUI()
 
             loadMedia()
         }
+    }
+
+    private fun attachVideoLayout() {
+        val mediaPlayer = service!!.mediaplayer
+        mediaPlayer.attachViews(videoLayout!!, displayManager, true, false)
+        val size = if (isBenchmark) MediaPlayer.ScaleType.SURFACE_FILL else MediaPlayer.ScaleType.values()[settings.getInt(VIDEO_RATIO, MediaPlayer.ScaleType.SURFACE_BEST_FIT.ordinal)]
+        mediaPlayer.videoScale = size
     }
 
     private fun initUI() {
@@ -2086,6 +2090,9 @@ open class VideoPlayerActivity : AppCompatActivity(), ServiceLauncher, PlaybackS
             //We may not have the permission to access files
             if (!switchingView)
                 handler.sendEmptyMessage(START_PLAYBACK)
+            else
+                attachVideoLayout()
+
             switchingView = false
             handler.post {
                 // delay mediaplayer loading, prevent ANR
